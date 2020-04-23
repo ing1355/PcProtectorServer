@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.result.mapper.ResultMapper">
+
+    <select id="selectResultAll" resultType="hashMap">
+        SELECT
+            user.user_Id,
+            user.department,
+            user.name,
+            user.pc_name,
+            user.os,
+            user.score,
+            user.ip_address,
+            pc_protector_version,
+            vaccine_version,
+            check_time,
+            item1_result, item2_result,
+            item3_result, item4_result,
+            item5_result, item6_result,
+            item7_result, item8_result,
+            item9_result, item10_result,
+            item11_result, item12_result,
+            item13_result, item14_result,
+            item15_result, item16_result
+        FROM user_result, user
+        WHERE user_result.ip_address = user.ip_address
+    </select>
+
+    <select id="selectResultDetailsById" resultType="oms.pc_protector.restApi.result.model.ResultVO"
+        parameterType="String">
+        SELECT * FROM user_result
+        WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
+    </select>
+
+    <select id="selectResultProcessById" resultType="oms.pc_protector.restApi.result.model.ResultProcessVO"
+            parameterType="String">
+        SELECT * FROM user_result_process
+        WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
+    </select>
+
+    <select id="selectByUserNameWithIpAddress" resultType="oms.pc_protector.util.CamelListMap"
+            parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
+        SELECT
+        user.user_id,
+        user.department,
+        user.name,
+        client.pc_name,
+        client.os,
+        client.score,
+        client.ip_address,
+        client.check_time,
+        item1_result, item2_result,
+        item3_result, item4_result,
+        item5_result, item6_result,
+        item7_result, item8_result,
+        item9_result, item10_result,
+        item11_result, item12_result,
+        item13_result, item14_result,
+        item15_result, item16_result
+        FROM user_result , user, client
+        WHERE user_result.user_id = user.user_id = client.user_id
+        <if test="name != null">
+            AND user.name = #{name}
+        </if>
+        <if test="ipAddress != null">
+            AND client.ip_address = #{ipAddress}
+        </if>
+        <if test="endDay != null">
+            And client.check_time BETWEEN #{startDay} AND #{endDay}
+        </if>
+    </select>
+
+    <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
+        INSERT INTO user_result (
+                user_id,
+                ip_address,
+                check_time,
+
+                item1_result, item2_result,
+                item3_result, item4_result,
+                item5_result, item6_result,
+                item7_result, item8_result,
+                item9_result, item10_result,
+                item11_result, item12_result,
+                item13_result, item14_result,
+                item15_result, item16_result,
+
+                item1_installation_status_check, item1_execution_status_check,
+                item2_execution_status_check, item2_update_status_check,
+                item3_count,
+                item4_count,
+                item5_reasons_vulnerability, item5_password_length, item5_detail_reasons,
+                item6_pw_last_change_past_date,
+                item7_execution_status_check, item7_pw_usage_status, item7_period,
+                item10_count
+            ) VALUES (
+                #{userId},
+                #{ipAddress},
+                #{checkTime},
+
+                #{item1Result}, #{item2Result},
+                #{item3Result}, #{item4Result},
+                #{item5Result}, #{item6Result},
+                #{item7Result}, #{item8Result},
+                #{item9Result}, #{item10Result},
+                #{item11Result}, #{item12Result},
+                #{item13Result}, #{item14Result},
+                #{item15Result}, #{item16Result},
+
+                #{item1InstallationStatusCheck}, #{item1ExecutionStatusCheck},
+                #{item2ExecutionStatusCheck}, #{item2UpdateStatusCheck},
+                #{item3Count},
+                #{item4Count},
+                #{item5ReasonsVulnerability}, #{item5PasswordLength}, #{item5DetailReasons},
+                #{item6PwLastChangePastDate},
+                #{item7ExecutionStatusCheck}, #{item7PwUsageStatus}, #{item7Period},
+                #{item10Count}
+            )
+    </insert>
+
+    <insert id="insertResultProcess" parameterType="oms.pc_protector.restApi.result.model.ResultProcessVO">
+        INSERT INTO user_result_process (
+            user_id,
+            ip_address,
+            process_name,
+            type,
+            check_time
+            ) VALUES (
+            #{userId},
+            #{ipAddress},
+            #{processName},
+            #{type},
+            #{checkTime}
+            )
+    </insert>
+
+
+</mapper>
+
+

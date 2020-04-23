@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.client.mapper.ClientMapper">
+
+    <select id="selectClientAll" resultType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT *
+        FROM client
+    </select>
+
+    <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        INSERT INTO client (user_id,
+                            score,
+                            ip_address,
+                            mac_address,
+                            os,
+                            pc_protector_version,
+                            pc_name,
+                            check_time)
+        VALUES (#{userId},
+                #{score},
+                #{ipAddress},
+                #{macAddress},
+                #{os},
+                #{pcProtectorVersion},
+                #{pcName},
+                #{checkTime})
+    </insert>
+
+    <update id="updateClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        UPDATE client
+        SET user_id              = #{userId},
+            os                   = #{os},
+            mac_address          = #{macAddress},
+            pc_name              = #{pcName},
+            pc_protector_version = #{pcProtectorVersion},
+            update_time          = now()
+        WHERE ip_address = #{ipAddress}
+    </update>
+
+    <update id="updateWrongMd5" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        UPDATE client
+        SET wrong_md5            = 'true',
+            pc_protector_version = #{pcProtectorVersion},
+            update_time          = now()
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>
+
+

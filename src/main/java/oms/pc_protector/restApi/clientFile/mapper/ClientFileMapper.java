@@ -1,0 +1,18 @@
+package oms.pc_protector.restApi.clientFile.mapper;
+
+import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ClientFileMapper {
+
+    public List<ClientFileVO> selectClientFileAll();
+
+    public ClientFileVO selectRecentClientFile();
+
+    public void insertClientFile(ClientFileVO clientFileVO);
+
+    public void deleteClientFile(ClientFileVO clientFileVO);
+}

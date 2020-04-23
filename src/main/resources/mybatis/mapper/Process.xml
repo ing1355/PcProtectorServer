@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.process.mapper.ProcessMapper">
+
+    <select id="selectProcessList"
+            resultType="oms.pc_protector.restApi.process.model.ProcessVO" parameterType="String">
+        SELECT * FROM process
+        WHERE type = #{value}
+    </select>
+
+    <select id="selectProcessAll" resultType="oms.pc_protector.restApi.process.model.ProcessVO">
+        SELECT * FROM process
+    </select>
+
+    <insert id="insertProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        INSERT INTO process (registry_item, display_name)
+        SELECT
+            #{registryItem},
+            #{displayName}
+        FROM DUAL WHERE NOT EXISTS (SELECT * FROM process WHERE registry_item = #{registryItem})
+    </insert>
+
+    <update id="processUpdate" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        UPDATE process SET type = #{type}, update_time = now()
+        WHERE process_idx = #{idx}
+    </update>
+
+    <delete id="processDelete" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        DELETE FROM process WHERE process_idx = #{idx}
+    </delete>
+
+
+</mapper>
+
+

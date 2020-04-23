@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.user.mapper.UserMapper">
+
+    <select id="selectUserInfoAll" resultType="oms.pc_protector.restApi.user.model.UserVO">
+        SELECT
+            u.user_id,
+            u.department_idx,
+            u.department,
+            u.name,
+            IFNULL(GROUP_CONCAT(ip_address SEPARATOR ' / ') , "") AS ip_address,
+            u.email,
+            u.phone
+        FROM user AS u LEFT join client AS c
+        ON u.user_id = c.user_id
+        GROUP BY u.user_id
+    </select>
+
+    <select id="selectById" resultType="oms.pc_protector.restApi.user.model.UserVO"
+            parameterType="String">
+        SELECT * FROM user
+        WHERE user_id = #{value}
+    </select>
+
+    <select id="selectUserWithClientByIpAddress" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
+            parameterType="String">
+        SELECT
+            u.user_id,
+            u.department,
+            u.department_idx,
+            u.email,
+            u.phone,
+            c.score,
+            c.ip_address,
+            c.mac_address,
+            c.pc_name,
+            c.pc_protector_version,
+            c.vaccine_version,
+            c.check_time
+          FROM user u LEFT JOIN client c ON u.user_id = c.user_id
+          WHERE ip_address = #{value}
+    </select>
+
+    <select id="selectUserWithClientInfoById" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
+            parameterType="String">
+        SELECT
+            u.user_id,
+            u.department,
+            u.department_idx,
+            u.email,
+            u.phone,
+            c.score,
+            c.ip_address,
+            c.mac_address,
+            c.pc_name,
+            c.pc_protector_version,
+            c.vaccine_version,
+            c.check_time
+        FROM user u LEFT JOIN client c ON u.user_id = c.user_id
+        WHERE u.user_id = #{value}
+    </select>
+
+    <insert id="insertUserInfo"  parameterType="String">
+        INSERT INTO user (
+            user_id
+        ) VALUES (
+            #{userId}
+        )
+    </insert>
+
+    <insert id="insertUserInfoUserInfoFromAdmin"  parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
+        INSERT INTO user (
+            user_id,
+            name,
+            email,
+            phone,
+            department,
+            department_idx
+        ) VALUES (
+            #{userId},
+            #{name},
+            #{email},
+            #{phone},
+            #{department},
+            #{departmentIdx}
+        )
+    </insert>
+
+    <update id="updateUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
+        UPDATE user SET
+            name = #{name},
+            department_idx = #{departmentIdx},
+            department = #{department},
+            email = #{email},
+            phone = #{phone}
+        WHERE user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserInfo" parameterType="String">
+        DELETE user, client
+        FROM user INNER JOIN client
+        ON user.user_id = client.user_id
+        WHERE user.user_id = #{value}
+    </delete>
+
+</mapper>
+
+
