@@ -4,20 +4,10 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.UpdateManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
-import oms.pc_protector.restApi.process.model.ProcessVO;
-import oms.pc_protector.restApi.user.model.UserVO;
-import org.apache.catalina.Manager;
-import org.apache.ibatis.annotations.Update;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.*;
 

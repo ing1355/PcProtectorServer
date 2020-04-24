@@ -3,7 +3,6 @@ package oms.pc_protector.restApi.manager.service;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.UpdateManagerVO;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -44,8 +43,6 @@ public class ManagerService {
         managerVO.setMobile((String) new_data.get("mobile"));
         managerVO.setEmail((String) new_data.get("email"));
 
-        log.info((String) jObject.get("old_id"));
-        log.info(managerVO);
         managerMapper.updateManagerInfo((String) jObject.get("old_id"),managerVO);
     }
 
