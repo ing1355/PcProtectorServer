@@ -1,5 +1,12 @@
 package oms.pc_protector.restApi.manager.model;
 
+
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
 public class ManagerVO {
 
 
@@ -10,3 +17,5 @@ public class ManagerVO {
     private String email;
 
 }
+
+

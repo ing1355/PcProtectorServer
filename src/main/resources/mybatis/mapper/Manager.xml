@@ -8,6 +8,41 @@
         FROM manager
     </select>
 
+    <insert id="insertManager" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
+        INSERT INTO manager (id,
+                             name,
+                             mobile,
+                             email)
+        VALUES (#{id},
+                #{name},
+                #{mobile},
+                #{email});
+
+        ALTER TABLE manager
+            AUTO_INCREMENT = 1;
+        SET @COUNT = 0;
+        UPDATE manager
+        SET manager.idx = @COUNT := @COUNT + 1;
+    </insert>
+
+    <delete id="deleteManager" parameterType="String">
+        DELETE
+        FROM manager
+        WHERE manager.id = #{value};
+        SET @COUNT = 0;
+        UPDATE manager
+        SET manager.idx = @COUNT := @COUNT + 1;
+    </delete>
+
+    <update id="updateManagerInfo">
+        UPDATE manager
+        SET id     = #{new_data.id},
+            name   = #{new_data.name},
+            mobile = #{new_data.mobile},
+            email  = #{new_data.email}
+        WHERE id = #{old_id};
+    </update>
+
 </mapper>
 
 
