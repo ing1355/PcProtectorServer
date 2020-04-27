@@ -31,12 +31,19 @@ public class ProcessController {
     }
 
 
+
+
     @GetMapping(value = "")
     public SingleResult<?> findProcessAll() {
         List<ProcessVO> processList = processService.findProcessAll();
         return responseService.getSingleResult(processList);
     }
 
+    @PostMapping(value = "/insert")
+    public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO) {
+        int resultNum = processService.insertProcessDirect(processVO);
+        return responseService.getSingleResult(resultNum);
+    }
 
     @PutMapping(value = "")
     public SingleResult<?> modifyProcess(@RequestBody @Valid ProcessVO processVO) {
@@ -52,12 +59,26 @@ public class ProcessController {
     }
 
 
+    @PutMapping(value = "modify-unapproved-process")
+    public void modifyToUnApprovedProcess(@RequestBody @Valid Long idx) {
+        processService.modifyToUnApprovedProcess(idx);
+    }
+    @PutMapping(value = "modify-required-process")
+    public void modifyToRequiredProcess(@RequestBody @Valid Long idx) {
+        processService.modifyToRequiredProcess(idx);
+    }
+
     @GetMapping(value = "/unapproved-process")
     public SingleResult<?> findUnApprovedProcess() {
         List<ProcessVO> unApprovedProcessList = processService.findUnApprovedProcessList();
         return responseService.getSingleResult(unApprovedProcessList);
     }
 
+    @PostMapping(value = "unapproved-process/insert")
+    public SingleResult<?> insertUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+        int resultNum = processService.insertUnApprovedProcess(processVO);
+        return responseService.getSingleResult(resultNum);
+    }
 
     @PostMapping(value = "/unapproved-process")
     public SingleResult<?> registerUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
@@ -66,6 +87,14 @@ public class ProcessController {
         return responseService.getSingleResult(responseResult);
     }
 
+    @PutMapping(value = "unapproved-process/delete")
+    public SingleResult<?> deleteUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+        int resultNum = processService.deleteUnApprovedProcess(processVO);
+        boolean responseResult = resultNum > 0;
+        return responseService.getSingleResult(responseResult);
+    }
+
+
 
     @GetMapping(value = "/required-process")
     public SingleResult<?> findRequiredProcess() {
@@ -73,6 +102,11 @@ public class ProcessController {
         return responseService.getSingleResult(requiredProcessList);
     }
 
+    @PostMapping(value = "required-process/insert")
+    public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+        int resultNum = processService.insertRequiredProcess(processVO);
+        return responseService.getSingleResult(resultNum);
+    }
 
     @PostMapping(value = "/required-process")
     public SingleResult<?> registerRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
@@ -81,4 +115,10 @@ public class ProcessController {
         return responseService.getSingleResult(responseResult);
     }
 
+    @PutMapping(value = "/required-process/delete")
+    public SingleResult<?> deleteRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+        int resultNum = processService.deleteRequiredProcess(processVO);
+        boolean responseResult = resultNum > 0;
+        return responseService.getSingleResult(responseResult);
+    }
 }

@@ -4,29 +4,85 @@
 
     <select id="selectProcessList"
             resultType="oms.pc_protector.restApi.process.model.ProcessVO" parameterType="String">
-        SELECT * FROM process
+        SELECT *
+        FROM process
         WHERE type = #{value}
     </select>
 
     <select id="selectProcessAll" resultType="oms.pc_protector.restApi.process.model.ProcessVO">
-        SELECT * FROM process
+        SELECT *
+        FROM process
+        WHERE type = 'none'
     </select>
+
 
     <insert id="insertProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
         INSERT INTO process (registry_item, display_name)
-        SELECT
-            #{registryItem},
-            #{displayName}
-        FROM DUAL WHERE NOT EXISTS (SELECT * FROM process WHERE registry_item = #{registryItem})
+        SELECT #{registryItem},
+               #{displayName}
+        FROM DUAL
+        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem})
     </insert>
 
+    <insert id="insertUnApprovedProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        INSERT INTO process (type, registry_item, display_name)
+        SELECT 'unApproved',
+               #{registryItem},
+               #{displayName}
+        FROM DUAL
+        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem})
+    </insert>
+
+    <insert id="insertRequiredProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        INSERT INTO process (type, registry_item, display_name)
+        SELECT 'required',
+               #{registryItem},
+               #{displayName}
+        FROM DUAL
+        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem})
+    </insert>
+
+
     <update id="processUpdate" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        UPDATE process SET type = #{type}, update_time = now()
-        WHERE process_idx = #{idx}
+        UPDATE process
+        SET type        = 'none',
+            update_time = now()
+        WHERE idx = #{idx}
     </update>
 
+    <update id="deleteUnApprovedProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        UPDATE process
+        SET type        = 'none',
+            update_time = now()
+        WHERE display_name = #{displayName} AND registry_item = #{registryItem}
+    </update>
+
+    <update id="deleteRequiredProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
+        UPDATE process
+        SET update_time = now(),
+            type        = 'none'
+        WHERE display_name = #{displayName} AND registry_item = #{registryItem}
+    </update>
+
+    <update id="modifyToRequiredProcess" parameterType="Long">
+        UPDATE process
+        SET update_time = now(),
+            type        = 'required'
+        WHERE idx = #{value}
+    </update>
+
+    <update id="modifyToUnApprovedProcess" parameterType="Long">
+        UPDATE process
+        SET update_time = now(),
+            type        = 'unApproved'
+        WHERE idx = #{value}
+    </update>
+
+
     <delete id="processDelete" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        DELETE FROM process WHERE process_idx = #{idx}
+        DELETE
+        FROM process
+        WHERE idx = #{idx}
     </delete>
 
 

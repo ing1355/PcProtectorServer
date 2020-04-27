@@ -13,9 +13,16 @@ public interface ProcessMapper {
     public List<ProcessVO> selectProcessList(String processType);
 
     public int insertProcess(ProcessVO processVO);
+    public int insertUnApprovedProcess(ProcessVO processVO);
+    public int insertRequiredProcess(ProcessVO processVO);
+
+    public void modifyToUnApprovedProcess(Long idx);
+    public void modifyToRequiredProcess(Long idx);
 
     public void processUpdate(ProcessVO processVO);
 
     public void processDelete(ProcessVO processVO);
 
+    public int deleteUnApprovedProcess(ProcessVO processVO);
+    public int deleteRequiredProcess(ProcessVO processVO);
 }

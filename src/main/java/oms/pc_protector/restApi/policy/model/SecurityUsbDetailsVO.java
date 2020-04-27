@@ -10,5 +10,4 @@ public class SecurityUsbDetailsVO {
     private String registryName;
     private String processName;
     private String runFileName;
-
 }

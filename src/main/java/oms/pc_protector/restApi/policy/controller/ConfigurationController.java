@@ -3,16 +3,16 @@ package oms.pc_protector.restApi.policy.controller;
 
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
-import oms.pc_protector.restApi.policy.model.ConfigurationVO;
-import oms.pc_protector.restApi.policy.model.PeriodDateVO;
-import oms.pc_protector.restApi.policy.model.RequestConfigurationVO;
+import oms.pc_protector.restApi.policy.model.*;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.process.model.ProcessVO;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Log4j2
@@ -34,17 +34,34 @@ public class ConfigurationController {
 
     @GetMapping(value = "/check")
     public SingleResult<?> findConfiguration() {
-        HashMap checkListMap = configurationService.findConfiguration();
+        LinkedHashMap checkListMap = configurationService.findConfiguration();
         return responseService.getSingleResult(checkListMap);
     }
 
 
-    @PostMapping(value = "/check")
-    public SingleResult<?> registerConfiguration(@RequestBody RequestConfigurationVO requestConfigurationVO) {
-        configurationService.registerConfiguration(requestConfigurationVO);
+    @PutMapping(value = "/check/setting/config")
+    public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO) {
+        configurationService.updateConfiguration_service(configurationVO);
         return responseService.getSingleResult(true);
     }
 
+    @PutMapping(value = "/check/setting/edit")
+    public SingleResult<?> updateEdit(@RequestBody @Valid EditProgramVO editProgramVO) {
+        configurationService.updateEditProgramFlag_service(editProgramVO);
+        return responseService.getSingleResult(true);
+    }
+
+    @PutMapping(value = "/check/setting/usb")
+    public SingleResult<?> updateUsb(@RequestBody @Valid SecurityUsbDetailsVO securityUsbDetailsVO) {
+        configurationService.updateSecurityUsbDetails_service(securityUsbDetailsVO);
+        return responseService.getSingleResult(true);
+    }
+
+    @PutMapping(value = "/check/force")
+    public SingleResult<?> updateForceRun(@RequestBody @Valid boolean param) {
+        configurationService.updateForceRun(param);
+        return responseService.getSingleResult(true);
+    }
 
     @GetMapping(value = "/schedule")
     public SingleResult<?> findScheduleAll() {
@@ -53,12 +70,25 @@ public class ConfigurationController {
     }
 
 
-    @PostMapping(value = "/schedule")
+    @PostMapping(value = "/schedule/insert")
     public SingleResult<?> registerSchedule(@RequestBody PeriodDateVO periodDateVO) {
         int resultNum = configurationService.registerSchedule(periodDateVO);
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);
     }
 
+    @PutMapping(value = "/schedule/update")
+    public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO) {
+        int resultNum = configurationService.updateSchedule(requestPeriodDateVO);
+        boolean responseResult = resultNum > 0;
+        return responseService.getSingleResult(responseResult);
+    }
+
+    @DeleteMapping(value = "/schedule/delete")
+    public SingleResult<?> deleteSchedule(@RequestBody PeriodDateVO periodDateVO) {
+        int resultNum = configurationService.deleteSchedule(periodDateVO);
+        boolean responseResult = resultNum > 0;
+        return responseService.getSingleResult(responseResult);
+    }
 }
 

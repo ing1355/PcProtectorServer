@@ -25,5 +25,4 @@ public class ConfigurationVO {
     private boolean securityUsb;
     private boolean unApprovedProcess;
     private boolean requiredProcess;
-
 }

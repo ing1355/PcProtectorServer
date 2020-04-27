@@ -7,12 +7,16 @@ import oms.pc_protector.restApi.process.model.ProcessVO;
 import oms.pc_protector.restApi.process.service.ProcessService;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Security;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Supplier;
 
 @Log4j2
 @Service
@@ -32,25 +36,52 @@ public class ConfigurationService {
 
 
     @Transactional
-    public HashMap findConfiguration() {
-        HashMap<String, Object> configMap = new HashMap<>();
+    public LinkedHashMap findConfiguration() {
+        LinkedHashMap<String, Object> configMap = new LinkedHashMap<>();
         ConfigurationVO configurationVO = configurationMapper.selectConfiguration();
-        List<SecurityUsbDetailsVO> securityUsbMap = findSecurityUsbDetails();
+        SecurityUsbDetailsVO securityUsbMap = findSecurityUsbDetails();
         EditProgramVO editProgramVO = findEditProgramFlag();
-        configMap.put("config", configurationVO);
-        configMap.put("securityUsb", securityUsbMap.get(0));
-        configMap.put("editProgram", editProgramVO);
+        if(configurationVO == null) {
+            ConfigurationVO empty_config = new ConfigurationVO();
+            configurationMapper.insertConfiguration(empty_config);
+        }
+        else {
+            configMap.put("config", configurationVO);
+        }
+        if(editProgramVO == null) {
+            EditProgramVO empty_edit = new EditProgramVO();
+            configurationMapper.insertEditProgramFlag(empty_edit);
+        }
+        else {
+            configMap.put("editProgram_set", editProgramVO);
+        }
+        if(securityUsbMap == null) {
+            SecurityUsbDetailsVO empty_security = new SecurityUsbDetailsVO();
+            configurationMapper.insertSecurityUsbDetails(empty_security);
+        }
+        else {
+            configMap.put("securityUsb_input", securityUsbMap);
+        }
         return configMap;
     }
 
-
     @Transactional
-    public void registerConfiguration(RequestConfigurationVO requestConfigurationVO) {
-        configurationMapper.updateEditProgramFlag(requestConfigurationVO.getEditProgramVO());
-        configurationMapper.insertSecurityUsbDetails(requestConfigurationVO.getSecurityUsbDetailsVO());
-        configurationMapper.insertConfiguration(requestConfigurationVO);
+    public void updateConfiguration_service(ConfigurationVO configurationVO) {
+        configurationMapper.updateConfiguration(configurationVO);
     }
 
+    @Transactional
+    public void updateSecurityUsbDetails_service(SecurityUsbDetailsVO securityUsbDetailsVO) {
+        configurationMapper.updateSecurityUsbDetails(securityUsbDetailsVO);
+    }
+    @Transactional
+    public void updateEditProgramFlag_service(EditProgramVO editProgramVO) {
+        configurationMapper.updateEditProgramFlag(editProgramVO);
+    }
+    @Transactional
+    public void updateForceRun(boolean param) {
+        configurationMapper.updateForceRun(param);
+    }
 
     @Transactional
     public List<PeriodDateVO> findScheduleAll() {
@@ -71,6 +102,15 @@ public class ConfigurationService {
         return configurationMapper.insertSchedule(periodDateVO);
     }
 
+    @Transactional
+    public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
+        return configurationMapper.updateSchedule(requestPeriodDateVO.getOld_data(), requestPeriodDateVO.getNew_data());
+    }
+
+    @Transactional
+    public int deleteSchedule(PeriodDateVO periodDateVO) {
+        return configurationMapper.deleteSchedule(periodDateVO);
+    }
 
     @Transactional
     public boolean hasAppliedFlag() {
@@ -79,9 +119,9 @@ public class ConfigurationService {
 
 
     @Transactional
-    public List<SecurityUsbDetailsVO> findSecurityUsbDetails() {
+    public SecurityUsbDetailsVO findSecurityUsbDetails() {
         return Optional.ofNullable(configurationMapper.selectSecurityUsbDetails())
-                .orElseGet(ArrayList::new);
+                .orElseGet(SecurityUsbDetailsVO::new);
     }
 
 

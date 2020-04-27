@@ -15,31 +15,30 @@
     </select>
 
     <select id="selectScheduleAll" resultType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
-        SELECT * FROM period_date_configuration
+        SELECT *
+        FROM period_date_configuration
     </select>
 
     <select id="selectAppliedSchedule" resultType="hashMap">
-        SELECT period, from_week, from_day, to_week, to_day FROM period_date_configuration WHERE apply = true
+        SELECT period, from_week, from_day, to_week, to_day
+        FROM period_date_configuration
+        WHERE apply = true
     </select>
 
     <select id="selectAppliedFlag" resultType="java.lang.Boolean">
-        SELECT apply FROM period_date_configuration WHERE apply = true
+        SELECT apply
+        FROM period_date_configuration
+        WHERE apply = true
     </select>
 
     <select id="selectForceRun" resultType="_boolean">
-        SELECT force_run FROM configuration
+        SELECT force_run
+        FROM configuration
     </select>
 
     <select id="selectEditProgramFlag" resultType="oms.pc_protector.restApi.policy.model.EditProgramVO">
-        SELECT * FROM edit_program_check
-    </select>
-
-    <select id="updateEditProgramFlag" parameterType="oms.pc_protector.restApi.policy.model.EditProgramVO">
-        UPDATE edit_program_check SET ms_word = #{msWord},
-                                      ms_excel = #{msExcel},
-                                      ms_power_point = #{msPowerPoint},
-                                      hwp = #{hwp},
-                                      pdf = #{pdf}
+        SELECT *
+        FROM edit_program_check
     </select>
 
     <insert id="insertConfiguration" parameterType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
@@ -77,16 +76,87 @@
                 #{requiredProcess})
 
     </insert>
-
+    <insert id="insertEditProgramFlag" parameterType="oms.pc_protector.restApi.policy.model.EditProgramVO">
+        INSERT INTO edit_program_check (ms_word, ms_excel, ms_power_point, hwp, pdf)
+        VALUES (#{msWord},
+                #{msExcel},
+                #{msPowerPoint},
+                #{hwp},
+                #{pdf})
+    </insert>
     <insert id="insertSecurityUsbDetails" parameterType="oms.pc_protector.restApi.policy.model.SecurityUsbDetailsVO">
         INSERT INTO security_usb_details (registry_name, process_name, run_file_name)
         VALUES (#{registryName}, #{processName}, #{runFileName})
     </insert>
 
+    <update id="updateConfiguration" parameterType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
+        UPDATE configuration
+        SET vaccine_installation_execution = ${vaccineInstallationExecution},
+            vaccine_patch                  = ${vaccinePatch},
+            os_with_ms_office_patch        = ${osWithMsOfficePatch},
+            hwp_patch                      = ${hwpPatch},
+            password_change                = ${passwordChange},
+            password_stability             = #{passwordStability},
+            screen_saver                   = ${screenSaver},
+            shared_folder                  = ${sharedFolder},
+            usb_auto_run                   = ${usbAutoRun},
+            over_date_active_x             = ${overDateActiveX},
+            acrobat_security_patch         = ${acrobatSecurityPatch},
+            edit_program                   = ${editProgram},
+            wireless_lan_card              = ${wirelessLanCard},
+            security_usb                   = ${securityUsb},
+            un_approved_process            = ${unApprovedProcess},
+            required_process               = ${requiredProcess}
+
+    </update>
+    <update id="updateEditProgramFlag" parameterType="oms.pc_protector.restApi.policy.model.EditProgramVO">
+        UPDATE edit_program_check
+        SET ms_word        = #{msWord},
+            ms_power_point = #{msExcel},
+            ms_excel       = #{msPowerPoint},
+            hwp            = #{hwp},
+            pdf            = #{pdf}
+    </update>
+    <update id="updateSecurityUsbDetails" parameterType="oms.pc_protector.restApi.policy.model.SecurityUsbDetailsVO">
+        UPDATE security_usb_details
+        SET registry_name = #{registryName},
+            process_name  = #{processName},
+            run_file_name = #{runFileName}
+    </update>
+
     <insert id="insertSchedule" parameterType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
         INSERT INTO period_date_configuration (period, from_week, from_day, to_week, to_day)
         VALUES (#{period}, #{fromWeek}, #{fromDay}, #{toWeek}, #{toDay})
     </insert>
+
+    <update id="updateSchedule" parameterType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
+        UPDATE period_date_configuration
+        SET period    = ${new_data.period},
+            from_week = ${new_data.fromWeek},
+            from_day  = ${new_data.fromDay},
+            to_week   = ${new_data.toWeek},
+            to_day    = ${new_data.toDay}
+        WHERE period = ${old_data.period}
+          AND from_week = ${old_data.fromWeek}
+          AND from_day = ${old_data.fromday}
+          AND to_week = ${old_data.toWeek}
+          AND to_day = ${old_data.toDay}
+    </update>
+
+    <update id="updateForceRun" parameterType="boolean">
+        UPDATE configuration
+        SET force_run    = ${value}
+    </update>
+
+    <delete id="deleteSchedule" parameterType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
+        DELETE
+        FROM period_date_configuration
+        WHERE period = ${period}
+          AND from_week = ${fromWeek}
+          AND from_day = ${fromDay}
+          AND to_week = ${toWeek}
+          AND to_day = ${toDay}
+    </delete>
 
 </mapper>
 

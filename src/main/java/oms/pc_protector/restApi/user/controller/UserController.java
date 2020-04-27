@@ -29,7 +29,7 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "")
+    @GetMapping(value = "/get")
     public SingleResult<?> findAll() {
         HashMap<String, Object> map = new HashMap<>();
         List<UserVO> list = Optional.ofNullable(userService.findAll())
@@ -39,7 +39,7 @@ public class UserController {
     }
 
 
-    @PostMapping(value = "")
+    @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
         HashMap<String, Object> map = new HashMap<>();
         userService.registryFromAdmin(userRequestVO);
@@ -47,7 +47,7 @@ public class UserController {
     }
 
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/update{id}")
     public SingleResult<?> modify(
             @PathVariable(value = "id") String id,
             @RequestBody UserRequestVO userRequestVO) {
@@ -58,7 +58,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping(value = "/delete{id}")
     public SingleResult<?> delete(@PathVariable(value = "id") String id) {
         log.info("사용자 정보 삭제 : " + id);
         HashMap<String, Object> map = new HashMap<>();

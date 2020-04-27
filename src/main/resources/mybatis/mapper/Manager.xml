@@ -34,7 +34,7 @@
         SET manager.idx = @COUNT := @COUNT + 1;
     </delete>
 
-    <update id="updateManagerInfo">
+    <update id="updateManagerInfo" parameterType="oms.pc_protector.restApi.manager.model.RequestManagerVO">
         UPDATE manager
         SET id     = #{new_data.id},
             name   = #{new_data.name},

@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
+import oms.pc_protector.restApi.manager.model.RequestManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +43,10 @@ public class ManagerController {
     }
 
     @PutMapping(value = "/update")
-    public SingleResult<?> update(@RequestBody @Valid String id) throws JSONException {
+    public SingleResult<?> update(@RequestBody @Valid RequestManagerVO requestManagerVO) throws JSONException {
         boolean result = true;
-
-        managerService.updateManager(id);
+        log.info(requestManagerVO.getOld_id());
+        managerService.updateManager(requestManagerVO);
         return responseService.getSingleResult(result);
     }
 
