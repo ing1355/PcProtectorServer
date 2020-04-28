@@ -8,6 +8,8 @@ import java.util.List;
 @Repository
 public interface ClientMapper {
 
+    public List<ClientVO> getClientList(String id);
+
     public int insertClientInfo(ClientVO clientVO);
 
     public List<ClientVO> selectClientAll();

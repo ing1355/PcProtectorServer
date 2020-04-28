@@ -5,6 +5,7 @@ import oms.pc_protector.restApi.user.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
+import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
@@ -86,6 +87,20 @@ public class UserService {
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
     }
 
+    @Transactional
+    public void registryFromAdminList(List<UserVO> userVOList) {
+        userMapper.deleteAllUserInfo();
+        for(UserVO user : userVOList) {
+            userMapper.RegisterUserInfo(user);
+        }
+    }
+
+
+
+    @Transactional
+    public boolean updateUserInfo(RequestUserVO requestUserVO) {
+        return userMapper.updateUserInfo_Front(requestUserVO);
+    }
 
     @Transactional
     public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {

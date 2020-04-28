@@ -52,22 +52,22 @@ public class ResultController {
 
     // 조건 검색하여 점검결과를 가져온다.
      @GetMapping(value = "/search")
-     public SingleResult<?> findByUserNameWithIpAddress(
-     @RequestParam(value = "name", required = false) String name,
+     public SingleResult<?> findByUserIdWithIpAddress(
+     @RequestParam(value = "id", required = false) String id,
      @RequestParam(value = "ip", required = false) String ipAddress,
      @RequestParam(value = "startDay", required = false) String startDay,
      @RequestParam(value = "endDay", required = false) String endDay) {
-     log.info("name : " + name);
+     log.info("id : " + id);
      log.info("ipAddress : " + ipAddress);
      log.info("startDay : " + startDay);
      log.info("endDay : " + endDay);
      HashMap<String, Object> map = new HashMap<>();
      UserRequestVO userRequestVO = new UserRequestVO();
-     Optional.ofNullable(name).ifPresent(userRequestVO::setName);
+     Optional.ofNullable(id).ifPresent(userRequestVO::setUserId);
      Optional.ofNullable(ipAddress).ifPresent(userRequestVO::setIpAddress);
      Optional.ofNullable(startDay).ifPresent(userRequestVO::setStartDay);
      Optional.ofNullable(endDay).ifPresent(userRequestVO::setEndDay);
-     List<?> list = resultService.findByUserNameWithIpAddress(userRequestVO);
+     List<?> list = resultService.findByUserIdWithIpAddress(userRequestVO);
      map.put("results", list);
      return responseService.getSingleResult(map);
      }

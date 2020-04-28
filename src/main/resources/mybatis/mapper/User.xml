@@ -3,104 +3,135 @@
 <mapper namespace="oms.pc_protector.restApi.user.mapper.UserMapper">
 
     <select id="selectUserInfoAll" resultType="oms.pc_protector.restApi.user.model.UserVO">
-        SELECT
-            u.user_id,
-            u.department_idx,
-            u.department,
-            u.name,
-            IFNULL(GROUP_CONCAT(ip_address SEPARATOR ' / ') , "") AS ip_address,
-            u.email,
-            u.phone
-        FROM user AS u LEFT join client AS c
-        ON u.user_id = c.user_id
+        SELECT u.user_id,
+               u.department_idx,
+               u.department,
+               u.name,
+               IFNULL(GROUP_CONCAT(ip_address SEPARATOR ' / '), "") AS ip_address,
+               u.email,
+               u.phone
+        FROM user AS u
+                 LEFT join client AS c
+                           ON u.user_id = c.user_id
         GROUP BY u.user_id
     </select>
 
     <select id="selectById" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="String">
-        SELECT * FROM user
+        SELECT *
+        FROM user
         WHERE user_id = #{value}
     </select>
 
     <select id="selectUserWithClientByIpAddress" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
             parameterType="String">
-        SELECT
-            u.user_id,
-            u.department,
-            u.department_idx,
-            u.email,
-            u.phone,
-            c.score,
-            c.ip_address,
-            c.mac_address,
-            c.pc_name,
-            c.pc_protector_version,
-            c.vaccine_version,
-            c.check_time
-          FROM user u LEFT JOIN client c ON u.user_id = c.user_id
-          WHERE ip_address = #{value}
+        SELECT u.user_id,
+               u.department,
+               u.department_idx,
+               u.email,
+               u.phone,
+               c.score,
+               c.ip_address,
+               c.mac_address,
+               c.pc_name,
+               c.pc_protector_version,
+               c.vaccine_version,
+               c.check_time
+        FROM user u
+                 LEFT JOIN client c ON u.user_id = c.user_id
+        WHERE ip_address = #{value}
     </select>
 
     <select id="selectUserWithClientInfoById" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
             parameterType="String">
-        SELECT
-            u.user_id,
-            u.department,
-            u.department_idx,
-            u.email,
-            u.phone,
-            c.score,
-            c.ip_address,
-            c.mac_address,
-            c.pc_name,
-            c.pc_protector_version,
-            c.vaccine_version,
-            c.check_time
-        FROM user u LEFT JOIN client c ON u.user_id = c.user_id
+        SELECT u.user_id,
+               u.department,
+               u.department_idx,
+               u.email,
+               u.phone,
+               c.score,
+               c.ip_address,
+               c.mac_address,
+               c.pc_name,
+               c.pc_protector_version,
+               c.vaccine_version,
+               c.check_time
+        FROM user u
+                 LEFT JOIN client c ON u.user_id = c.user_id
         WHERE u.user_id = #{value}
     </select>
 
-    <insert id="insertUserInfo"  parameterType="String">
+    <insert id="insertUserInfo" parameterType="String">
         INSERT INTO user (
             user_id
-        ) VALUES (
-            #{userId}
         )
+        VALUES (
+                   #{userId}
+               )
     </insert>
 
-    <insert id="insertUserInfoUserInfoFromAdmin"  parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
-        INSERT INTO user (
-            user_id,
-            name,
-            email,
-            phone,
-            department,
-            department_idx
-        ) VALUES (
-            #{userId},
-            #{name},
-            #{email},
-            #{phone},
-            #{department},
-            #{departmentIdx}
-        )
+    <insert id="insertUserInfoUserInfoFromAdmin" parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
+        INSERT INTO user (user_id,
+                          name,
+                          email,
+                          phone,
+                          department,
+                          department_idx)
+        VALUES (#{userId},
+                #{name},
+                #{email},
+                #{phone},
+                #{department},
+                #{departmentIdx})
+    </insert>
+
+    <insert id="RegisterUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
+        INSERT INTO user (user_id,
+                          name,
+                          email,
+                          phone,
+                          department)
+        VALUES (#{userId},
+                #{name},
+                #{email},
+                #{phone},
+                #{department})
     </insert>
 
     <update id="updateUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
-        UPDATE user SET
-            name = #{name},
-            department_idx = #{departmentIdx},
-            department = #{department},
-            email = #{email},
-            phone = #{phone}
+        UPDATE user, client
+        SET user.user_id        =#{userId},
+            client.user_id=#{userId},
+            user.name           = #{name},
+            user.department_idx = #{departmentIdx},
+            user.department     = #{department},
+            user.email          = #{email},
+            user.phone          = #{phone}
         WHERE user_id = #{userId}
+    </update>
+
+    <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
+        UPDATE user, client
+        SET user.user_id    ="${userId}",
+            client.user_id="${userId}",
+            user.name       = "${name}",
+            user.department = "${department}",
+            user.email      = "${email}",
+            user.phone      = "${phone}"
+        WHERE user.user_id = "${old_id}"
+          AND client.user_id = "${old_id}"
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
         DELETE user, client
-        FROM user INNER JOIN client
-        ON user.user_id = client.user_id
+        FROM user
+                 INNER JOIN client
+                            ON user.user_id = client.user_id
         WHERE user.user_id = #{value}
+    </delete>
+
+    <delete id="deleteAllUserInfo">
+        DELETE FROM user
     </delete>
 
 </mapper>

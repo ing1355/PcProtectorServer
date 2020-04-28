@@ -18,6 +18,10 @@ public class ClientService {
         this.clientMapper = clientMapper;
     }
 
+    @Transactional
+    public List<ClientVO> getClientList(String id) {
+        return clientMapper.getClientList(id);
+    }
 
     @Transactional
     public void registerWrongMd5(ClientVO clientVO) {

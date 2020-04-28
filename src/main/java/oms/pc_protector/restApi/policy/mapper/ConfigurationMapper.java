@@ -12,7 +12,7 @@ public interface ConfigurationMapper {
 
     public ConfigurationVO selectConfiguration();
 
-    public SecurityUsbDetailsVO selectSecurityUsbDetails();
+    public List<SecurityUsbDetailsVO> selectSecurityUsbDetails();
 
     public List<PeriodDateVO> selectScheduleAll();
 

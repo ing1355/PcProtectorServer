@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.user.controller;
 
+import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import lombok.extern.log4j.Log4j2;
@@ -15,8 +16,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Log4j2
+@CrossOrigin
 @RestController
-@RequestMapping("/v1/Users")  // 사용자 API
+@RequestMapping("/v1/users")  // 사용자 API
 public class UserController {
 
     private final ResponseService responseService;
@@ -29,15 +31,18 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/get")
+    @GetMapping(value = "")
     public SingleResult<?> findAll() {
-        HashMap<String, Object> map = new HashMap<>();
         List<UserVO> list = Optional.ofNullable(userService.findAll())
                 .orElseGet(() -> Collections.EMPTY_LIST);
-        map.put("userList", list);
-        return responseService.getSingleResult(map);
+        return responseService.getSingleResult(list);
     }
 
+    @PostMapping(value = "/registerList")
+    public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList) {
+        userService.registryFromAdminList(userVOList);
+        return responseService.getSingleResult(true);
+    }
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
@@ -46,8 +51,21 @@ public class UserController {
         return responseService.getSingleResult(map);
     }
 
+    @PutMapping(value = "/{id}")
+    public SingleResult<?> update(@PathVariable(value = "id") String id,
+                                  @RequestBody UserVO userVO) {
+        RequestUserVO requestUserVO = new RequestUserVO();
+        requestUserVO.setOld_id(id);
+        requestUserVO.setUserId(userVO.getUserId());
+        requestUserVO.setName(userVO.getName());
+        requestUserVO.setDepartment(userVO.getDepartment());
+        requestUserVO.setPhone(userVO.getPhone());
+        requestUserVO.setEmail(userVO.getEmail());
+        boolean update = userService.updateUserInfo(requestUserVO);
+        return responseService.getSingleResult(update);
+    }
 
-    @PutMapping(value = "/update{id}")
+    @PutMapping(value = "/update/{id}")
     public SingleResult<?> modify(
             @PathVariable(value = "id") String id,
             @RequestBody UserRequestVO userRequestVO) {
@@ -58,12 +76,14 @@ public class UserController {
     }
 
 
-    @DeleteMapping(value = "/delete{id}")
-    public SingleResult<?> delete(@PathVariable(value = "id") String id) {
+    @DeleteMapping(value = "/delete")
+    public SingleResult<?> delete(@RequestBody @Valid List<String> id) {
         log.info("사용자 정보 삭제 : " + id);
-        HashMap<String, Object> map = new HashMap<>();
-        boolean delete = userService.removeUserInfo(id);
-        return responseService.getSingleResult(delete);
+//        HashMap<String, Object> map = new HashMap<>();
+        for (String ID : id) {
+            userService.removeUserInfo(ID);
+        }
+        return responseService.getSingleResult(true);
     }
 
 }

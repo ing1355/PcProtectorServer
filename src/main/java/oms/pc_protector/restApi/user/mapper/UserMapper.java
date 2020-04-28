@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.user.mapper;
 
+import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
@@ -23,8 +24,11 @@ public interface UserMapper {
 
     public void insertUserInfoUserInfoFromAdmin(UserRequestVO userRequestVO);
 
+    public void RegisterUserInfo(UserVO userVO);
     public boolean updateUserInfo(UserVO userVO);
 
-    public boolean deleteUserInfo(String id);
+    public boolean updateUserInfo_Front(RequestUserVO requestUserVO);
 
+    public boolean deleteUserInfo(String id);
+    public void deleteAllUserInfo();
 }

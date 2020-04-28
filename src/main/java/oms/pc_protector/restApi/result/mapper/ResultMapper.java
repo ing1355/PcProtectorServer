@@ -13,7 +13,7 @@ public interface ResultMapper {
 
     public List<?> selectResultAll();
 
-    public List<?> selectByUserNameWithIpAddress(UserRequestVO userRequestVO);
+    public List<?> selectByUserIdWithIpAddress(UserRequestVO userRequestVO);
 
     public List<ResultProcessVO> selectResultProcessById(String ipAddress, String checkTime);
 

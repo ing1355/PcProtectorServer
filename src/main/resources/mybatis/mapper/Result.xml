@@ -38,7 +38,7 @@
         WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
 
-    <select id="selectByUserNameWithIpAddress" resultType="oms.pc_protector.util.CamelListMap"
+    <select id="selectByUserIdWithIpAddress" resultType="oms.pc_protector.util.CamelListMap"
             parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
         SELECT
         user.user_id,
@@ -46,7 +46,6 @@
         user.name,
         client.pc_name,
         client.os,
-        client.score,
         client.ip_address,
         client.check_time,
         item1_result, item2_result,

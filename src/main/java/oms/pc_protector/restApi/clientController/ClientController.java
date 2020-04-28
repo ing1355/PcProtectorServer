@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.clientController;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
+import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import lombok.extern.java.Log;
 import oms.pc_protector.restApi.client.model.ClientVO;
@@ -17,9 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.*;
 
 @Log
+@CrossOrigin
 @RestController
 @RequestMapping("/v1/client")
 public class ClientController {
@@ -44,6 +47,17 @@ public class ClientController {
         this.resultService = resultService;
         this.clientService = clientService;
     }
+
+
+    @GetMapping(value = "")
+    public SingleResult<?> getClientList(@RequestParam @Valid String id) {
+        List<ClientVO> clientVOList = clientService.getClientList(id);
+
+        return responseService.getSingleResult(clientVOList);
+    }
+
+
+
 
 
     @PostMapping(value = "/first-request")

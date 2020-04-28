@@ -7,6 +7,12 @@
         FROM client
     </select>
 
+    <select id="getClientList" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT *
+        FROM client
+        WHERE user_id = #{userId}
+    </select>
+
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
         INSERT INTO client (user_id,
                             score,

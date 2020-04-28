@@ -39,7 +39,7 @@ public class ConfigurationService {
     public LinkedHashMap findConfiguration() {
         LinkedHashMap<String, Object> configMap = new LinkedHashMap<>();
         ConfigurationVO configurationVO = configurationMapper.selectConfiguration();
-        SecurityUsbDetailsVO securityUsbMap = findSecurityUsbDetails();
+        List<SecurityUsbDetailsVO> securityUsbMap = findSecurityUsbDetails();
         EditProgramVO editProgramVO = findEditProgramFlag();
         if(configurationVO == null) {
             ConfigurationVO empty_config = new ConfigurationVO();
@@ -119,9 +119,9 @@ public class ConfigurationService {
 
 
     @Transactional
-    public SecurityUsbDetailsVO findSecurityUsbDetails() {
+    public List<SecurityUsbDetailsVO> findSecurityUsbDetails() {
         return Optional.ofNullable(configurationMapper.selectSecurityUsbDetails())
-                .orElseGet(SecurityUsbDetailsVO::new);
+                .orElse(Collections.EMPTY_LIST);
     }
 
 

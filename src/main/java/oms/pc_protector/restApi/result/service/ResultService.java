@@ -31,8 +31,8 @@ public class ResultService {
 
 
     /* 사용자의 이름과 IP주소에 해당하는 점검결과를 반환한다. */
-    public List<?> findByUserNameWithIpAddress(UserRequestVO userRequestVO) {
-        return Optional.ofNullable(resultMapper.selectByUserNameWithIpAddress(userRequestVO))
+    public List<?> findByUserIdWithIpAddress(UserRequestVO userRequestVO) {
+        return Optional.ofNullable(resultMapper.selectByUserIdWithIpAddress(userRequestVO))
                 .orElse(new ArrayList<>());
     }
 
