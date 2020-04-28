@@ -4,6 +4,7 @@ import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -15,6 +16,10 @@ public interface UserMapper {
     public List<UserVO> selectUserInfoAll();
 
     public UserVO selectById(String id);
+    public List<UserVO> search(@Param(value = "userId") String userId,
+                               @Param(value = "name") String name,
+                               @Param(value = "department") String department,
+                               @Param(value = "phone") String phone);
 
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 

@@ -40,6 +40,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public List<UserVO> search(String userId, String name, String department, String phone) {
+        return userMapper.search(userId, name, department, phone);
+    }
+
+    @Transactional(readOnly = true)
     public UserResponseVO findUserWithClientById(String id) {
         return Optional.ofNullable(userMapper.selectUserWithClientInfoById(id))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
@@ -90,11 +95,10 @@ public class UserService {
     @Transactional
     public void registryFromAdminList(List<UserVO> userVOList) {
         userMapper.deleteAllUserInfo();
-        for(UserVO user : userVOList) {
+        for (UserVO user : userVOList) {
             userMapper.RegisterUserInfo(user);
         }
     }
-
 
 
     @Transactional

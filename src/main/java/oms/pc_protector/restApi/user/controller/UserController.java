@@ -38,6 +38,16 @@ public class UserController {
         return responseService.getSingleResult(list);
     }
 
+    @GetMapping(value = "/search")
+    public SingleResult<?> search(@RequestParam(value = "userId", required = false) String userId,
+                                  @RequestParam(value = "name", required = false) String name,
+                                  @RequestParam(value = "department", required = false) String department,
+                                  @RequestParam(value = "phone", required = false) String phone){
+        List<UserVO> list = Optional.ofNullable(userService.search(userId,name,department,phone))
+                .orElseGet(() -> Collections.EMPTY_LIST);
+        return responseService.getSingleResult(list);
+    }
+
     @PostMapping(value = "/registerList")
     public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList) {
         userService.registryFromAdminList(userVOList);
