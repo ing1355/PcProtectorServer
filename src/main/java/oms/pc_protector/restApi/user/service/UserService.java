@@ -66,6 +66,13 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
+    public List<UserVO> findByDepartment(String departmentName) {
+        return Optional.ofNullable(userMapper.selectByDepartment(departmentName))
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 부서입니다."));
+    }
+
+
+    @Transactional(readOnly = true)
     public boolean duplicateCheckIpAddress(String ipAddress) {
         List<ClientVO> clientList = clientService.findAll();
         for (ClientVO client : clientList) {

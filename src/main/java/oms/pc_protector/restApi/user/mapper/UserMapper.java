@@ -21,6 +21,8 @@ public interface UserMapper {
                                @Param(value = "department") String department,
                                @Param(value = "phone") String phone);
 
+    public List<UserVO> selectByDepartment(String departmentName);
+
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 
     public UserResponseVO selectUserWithClientInfoById(String id);

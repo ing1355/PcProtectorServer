@@ -31,8 +31,6 @@ public class ProcessController {
     }
 
 
-
-
     @GetMapping(value = "")
     public SingleResult<?> findProcessAll() {
         List<ProcessVO> processList = processService.findProcessAll();

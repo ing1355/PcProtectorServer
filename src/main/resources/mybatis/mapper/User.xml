@@ -23,25 +23,6 @@
         WHERE user_id = #{value}
     </select>
 
-    <select id="search" parameterType="String"
-            resultType="oms.pc_protector.restApi.user.model.UserVO">
-        SELECT * FROM user
-        WHERE 1 = 1
-        <if test='userId != null and userId != ""'>
-            AND user_id LIKE CONCAT('%',#{userId},'%')
-        </if>
-        <if test='name != null and name != ""'>
-            AND name LIKE CONCAT('%',#{name},'%')
-        </if>
-        <if test='department != null and department != ""'>
-            AND department LIKE CONCAT('%',#{department},'%')
-        </if>
-        <if test='phone != null and phone != ""'>
-            AND phone LIKE CONCAT('%',#{phone},'%')
-        </if>
-        ORDER BY idx DESC
-    </select>
-
     <select id="selectUserWithClientByIpAddress" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
             parameterType="String">
         SELECT u.user_id,
@@ -130,29 +111,27 @@
     </update>
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
-        UPDATE user
-        SET user.user_id = #{userId},
-            user.name = #{name},
-            user.department = #{department},
-            user.email = #{email},
-            user.phone = #{phone},
-            user.update_time = now()
-        WHERE user.user_id = #{old_id};
-        UPDATE client
-        SET user_id = #{userId}
-        WHERE user_id = #{old_id};
+        UPDATE user, client
+        SET user.user_id    ="${userId}",
+            client.user_id="${userId}",
+            user.name       = "${name}",
+            user.department = "${department}",
+            user.email      = "${email}",
+            user.phone      = "${phone}"
+        WHERE user.user_id = "${old_id}"
+          AND client.user_id = "${old_id}"
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
-        DELETE FROM user
-        WHERE user.user_id = #{value};
-        DELETE FROM client
-        WHERE user_id = #{value};
+        DELETE user, client
+        FROM user
+                 INNER JOIN client
+                            ON user.user_id = client.user_id
+        WHERE user.user_id = #{value}
     </delete>
 
     <delete id="deleteAllUserInfo">
-        DELETE
-        FROM user
+        DELETE FROM user
     </delete>
 
 </mapper>

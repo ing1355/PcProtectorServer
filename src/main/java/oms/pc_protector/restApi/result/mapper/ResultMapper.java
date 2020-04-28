@@ -15,6 +15,8 @@ public interface ResultMapper {
 
     public List<?> selectByUserIdWithIpAddress(UserRequestVO userRequestVO);
 
+    public List<ResultVO> selectById(String id);
+
     public List<ResultProcessVO> selectResultProcessById(String ipAddress, String checkTime);
 
     public ResultVO selectResultDetailsById(String ipAddress, String checkTime);

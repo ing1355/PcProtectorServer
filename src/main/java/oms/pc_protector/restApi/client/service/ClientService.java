@@ -35,6 +35,11 @@ public class ClientService {
                 .orElse(Collections.EMPTY_LIST);
     }
 
+    @Transactional
+    public List<String> findById(String id) {
+        return clientMapper.selectClientById(id);
+    }
+
 
     @Transactional
     public void register(ClientVO clientVO){

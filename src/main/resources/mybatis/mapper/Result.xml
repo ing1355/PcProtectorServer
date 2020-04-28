@@ -7,13 +7,13 @@
             user.user_Id,
             user.department,
             user.name,
-            user.pc_name,
-            user.os,
-            user.score,
-            user.ip_address,
+            client.pc_name,
+            client.os,
+            client.score,
+            client.ip_address,
             pc_protector_version,
             vaccine_version,
-            check_time,
+            client.check_time,
             item1_result, item2_result,
             item3_result, item4_result,
             item5_result, item6_result,
@@ -22,8 +22,13 @@
             item11_result, item12_result,
             item13_result, item14_result,
             item15_result, item16_result
-        FROM user_result, user
-        WHERE user_result.ip_address = user.ip_address
+        FROM user_result, client, user
+        WHERE user_result.ip_address = client.ip_address
+          AND client.user_id = user.user_id;
+    </select>
+
+    <select id="selectById" resultType="oms.pc_protector.restApi.result.model.ResultVO">
+        select * from user_result WHERE user_id = #{value}
     </select>
 
     <select id="selectResultDetailsById" resultType="oms.pc_protector.restApi.result.model.ResultVO"

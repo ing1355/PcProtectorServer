@@ -102,6 +102,8 @@ public class ConfigurationService {
         return configurationMapper.insertSchedule(periodDateVO);
     }
 
+
+
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
         return configurationMapper.updateSchedule(requestPeriodDateVO.getOld_data(), requestPeriodDateVO.getNew_data());
@@ -214,7 +216,7 @@ public class ConfigurationService {
         map.put("securityUsb", securityUsbMap);
         map.put("unapprovedProcess", unApprovedProcessMap);
         map.put("requiredProcess", requiredProcessMap);
-        map.put("periodDateCheck", periodDateMap);
+        map.put("periodDate", periodDateMap);
         return map;
     }
 }
