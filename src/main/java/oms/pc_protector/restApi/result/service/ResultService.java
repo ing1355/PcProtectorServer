@@ -37,6 +37,13 @@ public class ResultService {
     }
 
 
+    /* 사용자의 아이디에 해당하는 점검결과를 반환한다. */
+    public List<ResultVO> findById(String id) {
+        return Optional.ofNullable(resultMapper.selectById(id))
+                .orElse(new ArrayList<>());
+    }
+
+
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
     public ResultVO findDetailsByUserId(String ipAddress, String checkTime) {
         return Optional.ofNullable(resultMapper.selectResultDetailsById(ipAddress, checkTime))

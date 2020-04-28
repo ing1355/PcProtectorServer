@@ -19,8 +19,8 @@
         FROM period_date_configuration
     </select>
 
-    <select id="selectAppliedSchedule" resultType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
-        SELECT *
+    <select id="selectAppliedSchedule" resultType="hashMap">
+        SELECT period, from_week, from_day, to_week, to_day
         FROM period_date_configuration
         WHERE apply = true
     </select>
@@ -141,15 +141,6 @@
           AND from_day = ${old_data.fromday}
           AND to_week = ${old_data.toWeek}
           AND to_day = ${old_data.toDay}
-    </update>
-
-    <update id="updateApply" parameterType="java.lang.Long">
-        UPDATE period_date_configuration
-        SET apply = 0
-        WHERE idx = ${old_idx};
-        UPDATE period_date_configuration
-        SET apply = 1
-        WHERE idx = ${new_idx};
     </update>
 
     <update id="updateForceRun" parameterType="boolean">

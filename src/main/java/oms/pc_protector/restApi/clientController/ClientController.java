@@ -58,8 +58,6 @@ public class ClientController {
 
 
 
-
-
     @PostMapping(value = "/first-request")
     public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
         log.info("요청 URL : /v1/client/first-request");

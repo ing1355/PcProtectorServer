@@ -16,6 +16,8 @@ public interface UserMapper {
 
     public UserVO selectById(String id);
 
+    public List<UserVO> selectByDepartment(String departmentName);
+
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 
     public UserResponseVO selectUserWithClientInfoById(String id);

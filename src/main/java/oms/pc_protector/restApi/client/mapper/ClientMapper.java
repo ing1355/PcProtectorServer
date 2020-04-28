@@ -14,6 +14,8 @@ public interface ClientMapper {
 
     public List<ClientVO> selectClientAll();
 
+    public List<String> selectClientById(String id);
+
     public boolean updateClientInfo(ClientVO clientVO);
 
     public void updateWrongMd5(ClientVO clientVO);
