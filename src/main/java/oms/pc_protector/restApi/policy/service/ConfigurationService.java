@@ -91,9 +91,9 @@ public class ConfigurationService {
 
 
     @Transactional
-    public HashMap findAppliedSchedule() {
+    public PeriodDateVO findAppliedSchedule() {
         return Optional.ofNullable(configurationMapper.selectAppliedSchedule())
-                .orElseGet(HashMap::new);
+                .orElseGet(PeriodDateVO::new);
     }
 
 
@@ -105,6 +105,11 @@ public class ConfigurationService {
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
         return configurationMapper.updateSchedule(requestPeriodDateVO.getOld_data(), requestPeriodDateVO.getNew_data());
+    }
+
+    @Transactional
+    public int updateApply(Long old_idx, Long new_idx) {
+        return configurationMapper.updateApply(old_idx, new_idx);
     }
 
     @Transactional

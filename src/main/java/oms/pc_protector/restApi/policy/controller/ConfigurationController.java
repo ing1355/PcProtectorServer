@@ -31,13 +31,11 @@ public class ConfigurationController {
         this.responseService = responseService;
     }
 
-
     @GetMapping(value = "/check")
     public SingleResult<?> findConfiguration() {
         LinkedHashMap checkListMap = configurationService.findConfiguration();
         return responseService.getSingleResult(checkListMap);
     }
-
 
     @PutMapping(value = "/check/setting/config")
     public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO) {
@@ -69,6 +67,12 @@ public class ConfigurationController {
         return responseService.getSingleResult(scheduleList);
     }
 
+    @GetMapping(value = "/schedule/applied")
+    public SingleResult<?> findApply() {
+        PeriodDateVO result = configurationService.findAppliedSchedule();
+        return responseService.getSingleResult(result);
+    }
+
 
     @PostMapping(value = "/schedule/insert")
     public SingleResult<?> registerSchedule(@RequestBody PeriodDateVO periodDateVO) {
@@ -80,6 +84,14 @@ public class ConfigurationController {
     @PutMapping(value = "/schedule/update")
     public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO) {
         int resultNum = configurationService.updateSchedule(requestPeriodDateVO);
+        boolean responseResult = resultNum > 0;
+        return responseService.getSingleResult(responseResult);
+    }
+
+    @PutMapping(value = "/schedule/apply")
+    public SingleResult<?> updateApply(@RequestParam(value = "old_idx") Long old_idx,
+                                       @RequestParam(value = "new_idx") Long new_idx) {
+        int resultNum = configurationService.updateApply(old_idx, new_idx);
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);
     }

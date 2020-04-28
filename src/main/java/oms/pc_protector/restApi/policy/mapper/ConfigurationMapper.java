@@ -16,7 +16,7 @@ public interface ConfigurationMapper {
 
     public List<PeriodDateVO> selectScheduleAll();
 
-    public HashMap selectAppliedSchedule();
+    public PeriodDateVO selectAppliedSchedule();
 
     public boolean selectAppliedFlag();
 
@@ -36,6 +36,9 @@ public interface ConfigurationMapper {
 
     public int updateSchedule(@Param("old_data") PeriodDateVO periodDateVO_old,
                               @Param("new_data") PeriodDateVO periodDateVO_new);
+
+    public int updateApply(Long old_idx, Long new_idx);
+
     public int deleteSchedule(PeriodDateVO periodDateVO);
 
     public boolean insertEditProgramFlag(EditProgramVO editProgramVO);

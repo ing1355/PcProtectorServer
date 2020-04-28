@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.log.mapper.LogMapper">
+
+
+    <select id="getAllLog" resultType="oms.pc_protector.restApi.log.model.LogVO">
+        SELECT *
+        FROM audit_log
+        ORDER BY idx DESC
+    </select>
+
+    <select id="search" parameterType="oms.pc_protector.restApi.log.model.LogRequestVO"
+            resultType="oms.pc_protector.restApi.log.model.LogVO">
+        SELECT * FROM audit_log
+        WHERE 1 = 1
+            <if test='userId != null and userId != ""'>
+                AND userId LIKE CONCAT('%',${userId},'%')
+            </if>
+            <if test='device != null and device != ""'>
+                AND device LIKE CONCAT('%',${device},'%')
+            </if>
+            <if test='method != null and method != ""'>
+                AND method LIKE CONCAT('%',${method},'%')
+            </if>
+            <if test='ipAddress != null and ipAddress != ""'>
+                AND ip_address LIKE CONCAT('%',${ipAddress},'%')
+            </if>
+            <if test="startDay != null and endDay != null">
+                AND check_time BETWEEN ${startDay} AND ${endDay}
+            </if>
+        ORDER BY idx DESC
+    </select>
+
+</mapper>
+
+

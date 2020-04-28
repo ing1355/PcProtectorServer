@@ -8,11 +8,11 @@ import lombok.Setter;
 @Setter
 public class PeriodDateVO {
 
+    private Long idx;
     private int period;
     private int fromWeek;
     private int fromDay;
     private int toWeek;
     private int toDay;
-    @JsonIgnore
-    private boolean isCheck;
+    private boolean apply;
 }
