@@ -37,6 +37,13 @@ public class ProcessController {
         return responseService.getSingleResult(processList);
     }
 
+    @GetMapping(value = "/search")
+    public SingleResult<?> searchProcess(@RequestParam(value = "displayName", required = false) String displayName,
+                                         @RequestParam(value = "registryName", required = false) String registryName) {
+        List<ProcessVO> processList = processService.searchProcess(displayName, registryName);
+        return responseService.getSingleResult(processList);
+    }
+
     @PostMapping(value = "/insert")
     public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO) {
         int resultNum = processService.insertProcessDirect(processVO);

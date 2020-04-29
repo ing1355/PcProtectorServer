@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,12 @@ public class DepartmentController {
     @PostMapping(value = "")
     public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
         departmentService.insertDepartment(departmentVO);
+        return responseService.getSingleResult(true);
+    }
+
+    @PutMapping(value = "")
+    public SingleResult<?> updateDepartment(@RequestBody @Valid UpdateDepartmentVO updateDepartmentVO) {
+        departmentService.updateDepartment(updateDepartmentVO);
         return responseService.getSingleResult(true);
     }
 }

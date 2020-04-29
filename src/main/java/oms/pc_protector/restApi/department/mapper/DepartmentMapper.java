@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.department.mapper;
 
 import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public interface DepartmentMapper {
 
     public void insertDepartment(DepartmentVO departmentVO);
 
-    public void updateDepartment(DepartmentVO departmentVO);
+    public void updateDepartment(UpdateDepartmentVO updateDepartmentVO);
 
     public void deleteDepartment(int departmentIdx);
 

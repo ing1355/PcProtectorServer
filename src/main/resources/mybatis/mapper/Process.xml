@@ -15,6 +15,18 @@
         WHERE type = 'none'
     </select>
 
+    <select id="searchProcess" parameterType="String"
+            resultType="oms.pc_protector.restApi.process.model.ProcessVO">
+        SELECT *
+        FROM process
+        WHERE type = 'none'
+        <if test='displayName != null and displayName != ""'>
+            AND display_name LIKE CONCAT('%',#{displayName},'%')
+        </if>
+        <if test='registryName != null and registryName != ""'>
+            AND registry_item LIKE CONCAT('%',#{registryName},'%')
+        </if>
+    </select>
 
     <insert id="insertProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
         INSERT INTO process (registry_item, display_name)

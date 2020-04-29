@@ -17,6 +17,12 @@
         VALUES (#{name}, #{code})
     </insert>
 
+    <update id="updateDepartment" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
+        UPDATE department
+        SET name = #{new_name}
+        WHERE name = #{old_name}
+    </update>
+
     <delete id="deleteDepartmentAll">
         DELETE FROM department
     </delete>

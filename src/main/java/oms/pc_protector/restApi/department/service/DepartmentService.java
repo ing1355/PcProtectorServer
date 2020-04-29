@@ -2,6 +2,7 @@ package oms.pc_protector.restApi.department.service;
 
 import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,9 @@ public class DepartmentService {
 
     public void insertDepartment(DepartmentVO departmentVO) {
         departmentMapper.insertDepartment(departmentVO);
+    }
+    public void updateDepartment(UpdateDepartmentVO updateDepartmentVO) {
+        departmentMapper.updateDepartment(updateDepartmentVO);
     }
 
     public void register() {

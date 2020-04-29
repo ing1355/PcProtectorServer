@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.process.mapper;
 
 import oms.pc_protector.restApi.process.model.ProcessVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface ProcessMapper {
     public List<ProcessVO> selectProcessAll();
 
     public List<ProcessVO> selectProcessList(String processType);
+    public List<ProcessVO> searchProcess(@Param(value = "displayName") String displayName,
+                                         @Param(value = "registryName") String registryName);
 
     public int insertProcess(ProcessVO processVO);
     public int insertUnApprovedProcess(ProcessVO processVO);

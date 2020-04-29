@@ -39,6 +39,10 @@ public class ProcessService {
         return processMapper.selectProcessList(processType);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProcessVO> searchProcess(String displayName, String registryName) {
+        return processMapper.searchProcess(displayName,registryName);
+    }
 
     /* 해당 종류의 프로세스 Registry Item 목록을 가져온다. */
     @Transactional(readOnly = true)
