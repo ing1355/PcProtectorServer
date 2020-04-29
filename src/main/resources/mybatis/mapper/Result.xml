@@ -50,6 +50,7 @@
         user.department,
         user.name,
         client.pc_name,
+        client.score,
         client.os,
         client.ip_address,
         client.check_time,

@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class ClientVO {
 
+
     private int score;
     private String userId;
     private String ipAddress;

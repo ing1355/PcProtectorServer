@@ -106,7 +106,7 @@ public class ConfigurationService {
 
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
-        return configurationMapper.updateSchedule(requestPeriodDateVO.getOld_data(), requestPeriodDateVO.getNew_data());
+        return configurationMapper.updateSchedule(requestPeriodDateVO.getNew_data());
     }
 
     @Transactional

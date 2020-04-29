@@ -34,8 +34,7 @@ public interface ConfigurationMapper {
 
     public int insertSchedule(PeriodDateVO periodDateVO);
 
-    public int updateSchedule(@Param("old_data") PeriodDateVO periodDateVO_old,
-                              @Param("new_data") PeriodDateVO periodDateVO_new);
+    public int updateSchedule(@Param("new_data") PeriodDateVO periodDateVO_new);
 
     public int updateApply(Long old_idx, Long new_idx);
 
