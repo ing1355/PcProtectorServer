@@ -35,6 +35,7 @@ public class ResultController {
         return responseService.getSingleResult(map);
     }
 
+
     @GetMapping(value = "/checked")
     public SingleResult<?> findAllChecked() {
         HashMap<String, Object> map = new HashMap<>();
@@ -42,6 +43,7 @@ public class ResultController {
         map.put("results", list);
         return responseService.getSingleResult(map);
     }
+
 
     @GetMapping(value = "/unchecked")
     public SingleResult<?> findAllUnChecked() {

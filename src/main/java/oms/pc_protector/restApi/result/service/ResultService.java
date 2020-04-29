@@ -241,7 +241,7 @@ public class ResultService {
         log.info("사용자 PC지킴이 버전 : " + clientVO.getPcProtectorVersion());
         log.info("사용자 백신 버전 : " + clientVO.getVaccineVersion());
         log.info("사용자 점검일자 : " + clientVO.getCheckTime());
-        log.info("사용자 전체 점수 : " + clientVO.getScore());
+        //log.info("사용자 전체 점수 : " + clientVO.getScore());
 
         Optional.ofNullable(resultVO).ifPresent(this::resultSet);
 
