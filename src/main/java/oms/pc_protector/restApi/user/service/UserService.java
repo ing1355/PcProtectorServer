@@ -99,12 +99,23 @@ public class UserService {
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
     }
 
+
     @Transactional
     public void registryFromAdminList(List<UserVO> userVOList) {
         userMapper.deleteAllUserInfo();
+        log.info("-------------------------");
+        log.info("------사용자 등록 EXCEL----");
         for (UserVO user : userVOList) {
+            log.info("-------------------------");
+            log.info("ID : " + user.getUserId());
+            log.info("NAME : " + user.getName());
+            log.info("DEPARTMENT : " + user.getDepartment());
+            log.info("PHONE : " + user.getPhone());
+            log.info("EMAIL : " + user.getEmail());
+            log.info("-------------------------");
             userMapper.RegisterUserInfo(user);
         }
+        log.info("-------------------------");
     }
 
 

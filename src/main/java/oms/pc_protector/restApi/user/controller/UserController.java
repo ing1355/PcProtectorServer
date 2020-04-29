@@ -56,6 +56,14 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
+        log.info("-------------------------");
+        log.info("------사용자 등록 API------");
+        log.info("ID : " + userRequestVO.getUserId());
+        log.info("NAME : " + userRequestVO.getName());
+        log.info("DEPARTMENT : " + userRequestVO.getDepartment());
+        log.info("PHONE : " + userRequestVO.getPhone());
+        log.info("EMAIL : " + userRequestVO.getEmail());
+        log.info("-------------------------");
         HashMap<String, Object> map = new HashMap<>();
         userService.registryFromAdmin(userRequestVO);
         return responseService.getSingleResult(map);

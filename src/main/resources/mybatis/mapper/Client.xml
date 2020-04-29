@@ -14,7 +14,6 @@
 
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
         INSERT INTO client (user_id,
-                            score,
                             ip_address,
                             mac_address,
                             os,
@@ -22,7 +21,6 @@
                             pc_name,
                             check_time)
         VALUES (#{userId},
-                #{score},
                 #{ipAddress},
                 #{macAddress},
                 #{os},
@@ -44,7 +42,7 @@
 
     <update id="updateWrongMd5" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
         UPDATE client
-        SET wrong_md5            = 'true',
+        SET wrong_md5            = true,
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
         WHERE user_id = #{userId}
