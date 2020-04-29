@@ -52,6 +52,7 @@
         (SELECT department FROM user WHERE user_id = #{userId}) AS department,
         (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
         (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
+        (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS os,
         item1_result, item2_result,
         item3_result, item4_result,
         item5_result, item6_result,

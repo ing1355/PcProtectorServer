@@ -12,6 +12,8 @@ public class ResponseResultVO {
         private String os;
         private String pcName;
         private String checkTime;
+        private boolean wrongMd5;
+
         private int score;
 
         private int item1Result;

@@ -53,7 +53,7 @@ public class ResultController {
     // 조건 검색하여 점검결과를 가져온다.
      @GetMapping(value = "/search")
      public SingleResult<?> findByUserIdWithIpAddress(
-     @RequestParam(value = "id", required = false) String id,
+     @RequestParam(value = "id", required = true) String id,
      @RequestParam(value = "ip", required = false) String ipAddress,
      @RequestParam(value = "name", required = false) String name,
      @RequestParam(value = "startDay", required = false) String startDay,
