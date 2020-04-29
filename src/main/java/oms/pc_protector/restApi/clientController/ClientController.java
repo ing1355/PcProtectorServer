@@ -52,7 +52,6 @@ public class ClientController {
     @GetMapping(value = "")
     public SingleResult<?> getClientList(@RequestParam @Valid String id) {
         List<ClientVO> clientVOList = clientService.getClientList(id);
-
         return responseService.getSingleResult(clientVOList);
     }
 

@@ -18,10 +18,12 @@ public class ClientService {
         this.clientMapper = clientMapper;
     }
 
+
     @Transactional
     public List<ClientVO> getClientList(String id) {
         return clientMapper.getClientList(id);
     }
+
 
     @Transactional
     public void registerWrongMd5(ClientVO clientVO) {
@@ -34,6 +36,7 @@ public class ClientService {
         return Optional.ofNullable(clientMapper.selectClientAll())
                 .orElse(Collections.EMPTY_LIST);
     }
+
 
     @Transactional
     public List<String> findById(String id) {
