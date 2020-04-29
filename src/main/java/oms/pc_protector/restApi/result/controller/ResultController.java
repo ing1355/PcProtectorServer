@@ -55,9 +55,11 @@ public class ResultController {
      public SingleResult<?> findByUserIdWithIpAddress(
      @RequestParam(value = "id", required = false) String id,
      @RequestParam(value = "ip", required = false) String ipAddress,
+     @RequestParam(value = "name", required = false) String name,
      @RequestParam(value = "startDay", required = false) String startDay,
      @RequestParam(value = "endDay", required = false) String endDay) {
      log.info("id : " + id);
+     log.info("name : " + name);
      log.info("ipAddress : " + ipAddress);
      log.info("startDay : " + startDay);
      log.info("endDay : " + endDay);

@@ -43,17 +43,15 @@
         WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
 
-    <select id="selectByUserIdWithIpAddress" resultType="oms.pc_protector.util.CamelListMap"
+    <select id="selectByUserIdWithIpAddress" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
-        SELECT
-        user.user_id,
-        user.department,
-        user.name,
-        client.pc_name,
-        client.score,
-        client.os,
-        client.ip_address,
-        client.check_time,
+        SELECT  user_result.user_id,
+        user_result.ip_address,
+        user_result.score,
+        user_result.check_time,
+        (SELECT department FROM user WHERE user_id = #{userId}) AS department,
+        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
+        (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
         item1_result, item2_result,
         item3_result, item4_result,
         item5_result, item6_result,
@@ -63,7 +61,7 @@
         item13_result, item14_result,
         item15_result, item16_result
         FROM user_result , user, client
-        WHERE user_result.user_id = user.user_id = client.user_id
+        where user.user_id = #{userId}
         <if test="name != null">
             AND user.name = #{name}
         </if>
@@ -73,6 +71,7 @@
         <if test="endDay != null">
             And client.check_time BETWEEN #{startDay} AND #{endDay}
         </if>
+        GROUP BY user_result.ip_address
     </select>
 
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
