@@ -20,6 +20,12 @@ public class DepartmentService {
         return departmentMapper.selectDepartmentAll();
     }
 
+    public void registerDepartmentByExcel(List<DepartmentVO> departmentVO) {
+        departmentMapper.deleteDepartmentAll();
+        for(DepartmentVO dept : departmentVO) {
+           departmentMapper.registerDepartmentByExcel(dept);
+        }
+    }
 
     public void register() {
 

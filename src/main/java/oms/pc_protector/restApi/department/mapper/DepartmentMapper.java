@@ -10,6 +10,9 @@ public interface DepartmentMapper {
 
     public List<DepartmentVO> selectDepartmentAll();
 
+    public void registerDepartmentByExcel(DepartmentVO departmentVO);
+    public void deleteDepartmentAll();
+
     public void insertDepartment(DepartmentVO departmentVO);
 
     public void updateDepartment(DepartmentVO departmentVO);
