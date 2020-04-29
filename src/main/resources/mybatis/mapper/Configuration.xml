@@ -136,11 +136,6 @@
             from_day  = ${new_data.fromDay},
             to_week   = ${new_data.toWeek},
             to_day    = ${new_data.toDay}
-        WHERE period = ${old_data.period}
-          AND from_week = ${old_data.fromWeek}
-          AND from_day = ${old_data.fromday}
-          AND to_week = ${old_data.toWeek}
-          AND to_day = ${old_data.toDay}
     </update>
 
     <update id="updateApply" parameterType="java.lang.Long">
