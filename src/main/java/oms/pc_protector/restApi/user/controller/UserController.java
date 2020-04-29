@@ -43,7 +43,7 @@ public class UserController {
                                   @RequestParam(value = "name", required = false) String name,
                                   @RequestParam(value = "department", required = false) String department,
                                   @RequestParam(value = "phone", required = false) String phone){
-        List<UserVO> list = Optional.ofNullable(userService.search(userId,name,department,phone))
+        List<UserVO> list = Optional.ofNullable(userService.search(userId, name, department, phone))
                 .orElseGet(() -> Collections.EMPTY_LIST);
         return responseService.getSingleResult(list);
     }

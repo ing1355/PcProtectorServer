@@ -5,6 +5,7 @@ import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
 import oms.pc_protector.restApi.statistics.model.StatisticsVO;
+import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +28,15 @@ public class StatisticsService {
 
     private final StatisticsMapper statisticsMapper;
 
+    private final UserService userService;
 
-    public StatisticsService(DepartmentService departmentService, StatisticsMapper statisticsMapper) {
+
+    public StatisticsService(DepartmentService departmentService,
+                             StatisticsMapper statisticsMapper,
+                             UserService userService) {
         this.departmentService = departmentService;
         this.statisticsMapper = statisticsMapper;
+        this.userService = userService;
     }
 
     @Transactional
@@ -45,8 +51,11 @@ public class StatisticsService {
             List<LinkedHashMap> statisticsList = statisticsMapper
                     .selectStatisticsByDepartment(department.getName());
 
-            int totalPc = statisticsList.size();
-            int runPc = totalPc;
+            // 전체 PC 수
+            int totalPc = userService.findByDepartment(department.getName()).size();
+
+            // 실행 PC 수
+            int runPc = statisticsList.size();
 
             int[] safeScore = new int[16];
             int[] safeScoreAll = new int[16];

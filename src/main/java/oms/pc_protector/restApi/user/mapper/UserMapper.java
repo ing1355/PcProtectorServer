@@ -16,6 +16,7 @@ public interface UserMapper {
     public List<UserVO> selectUserInfoAll();
 
     public UserVO selectById(String id);
+
     public List<UserVO> search(@Param(value = "userId") String userId,
                                @Param(value = "name") String name,
                                @Param(value = "department") String department,
@@ -32,10 +33,12 @@ public interface UserMapper {
     public void insertUserInfoUserInfoFromAdmin(UserRequestVO userRequestVO);
 
     public void RegisterUserInfo(UserVO userVO);
+
     public boolean updateUserInfo(UserVO userVO);
 
     public boolean updateUserInfo_Front(RequestUserVO requestUserVO);
 
     public boolean deleteUserInfo(String id);
+
     public void deleteAllUserInfo();
 }

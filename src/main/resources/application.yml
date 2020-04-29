@@ -25,7 +25,7 @@ server:
 spring:
   profiles: real-db
   datasource:
-    url: jdbc:mariadb://localhost:3306/pc_protector
+    url: jdbc:mariadb://localhost:3306/pc_protector?allowMultiQueries=true
     username: root
     password: qlskfkdgh~1
     driver-class-name: org.mariadb.jdbc.Driver

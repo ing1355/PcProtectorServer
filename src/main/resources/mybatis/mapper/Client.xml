@@ -3,8 +3,7 @@
 <mapper namespace="oms.pc_protector.restApi.client.mapper.ClientMapper">
 
     <select id="selectClientAll" resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT *
-        FROM client
+        SELECT * FROM client
     </select>
 
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
