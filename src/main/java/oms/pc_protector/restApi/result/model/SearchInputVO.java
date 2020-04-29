@@ -1,0 +1,13 @@
+package oms.pc_protector.restApi.result.model;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class SearchInputVO {
+    private String name;
+    private String ipAddress;
+    private String fromDay;
+    private String toDay;
+}

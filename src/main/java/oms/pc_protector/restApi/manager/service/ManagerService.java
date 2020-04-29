@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.RequestManagerVO;
+import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,12 @@ public class ManagerService {
 
     @Transactional(readOnly = true)
     public List<ManagerVO> findAll() {
-        return Optional.ofNullable(managerMapper.searchManager()).orElseGet(() -> Collections.EMPTY_LIST);
+        return Optional.ofNullable(managerMapper.findAll()).orElseGet(() -> Collections.EMPTY_LIST);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO) {
+        return Optional.ofNullable(managerMapper.searchManager(searchManagerVO)).orElseGet(() -> Collections.EMPTY_LIST);
     }
 
     @Transactional

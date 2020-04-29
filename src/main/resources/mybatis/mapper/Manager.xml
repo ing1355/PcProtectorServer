@@ -3,9 +3,28 @@
 <mapper namespace="oms.pc_protector.restApi.manager.mapper.ManagerMapper">
 
 
-    <select id="searchManager" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
+    <select id="findAll" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
         SELECT *
         FROM manager
+    </select>
+
+    <select id="searchManager" parameterType="oms.pc_protector.restApi.manager.model.SearchManagerVO"
+            resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
+        SELECT * FROM manager
+        WHERE 1 = 1
+        <if test='id != null and id != ""'>
+            AND id LIKE CONCAT('%',#{id},'%')
+        </if>
+        <if test='name != null and name != ""'>
+            AND name LIKE CONCAT('%',#{name},'%')
+        </if>
+        <if test='mobile != null and mobile != ""'>
+            AND mobile LIKE CONCAT('%',#{mobile},'%')
+        </if>
+        <if test='email != null and email != ""'>
+            AND email LIKE CONCAT('%',#{email},'%')
+        </if>
+        ORDER BY idx DESC
     </select>
 
     <insert id="insertManager" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">

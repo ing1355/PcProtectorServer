@@ -12,6 +12,11 @@
         VALUES (#{name}, #{code})
     </insert>
 
+    <insert id="insertDepartment" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+        INSERT INTO department (name, code)
+        VALUES (#{name}, #{code})
+    </insert>
+
     <delete id="deleteDepartmentAll">
         DELETE FROM department
     </delete>

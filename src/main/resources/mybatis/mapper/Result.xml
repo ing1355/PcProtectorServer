@@ -27,6 +27,88 @@
           AND client.user_id = user.user_id;
     </select>
 
+    <select id="selectCheckedResult" resultType="hashMap">
+        SELECT
+            user.user_Id,
+            user.department,
+            user.name,
+            client.pc_name,
+            client.os,
+            client.score,
+            client.ip_address,
+            pc_protector_version,
+            vaccine_version,
+            client.check_time,
+            item1_result, item2_result,
+            item3_result, item4_result,
+            item5_result, item6_result,
+            item7_result, item8_result,
+            item9_result, item10_result,
+            item11_result, item12_result,
+            item13_result, item14_result,
+            item15_result, item16_result
+        FROM user_result, client, user
+        WHERE user_result.ip_address = client.ip_address
+          AND client.user_id = user.user_id;
+    </select>
+
+    <select id="selectUnCheckedResult" resultType="hashMap">
+        SELECT
+            user.user_Id,
+            user.department,
+            user.name,
+            client.pc_name,
+            client.os,
+            client.score,
+            client.ip_address,
+            pc_protector_version,
+            vaccine_version,
+            client.check_time,
+            item1_result, item2_result,
+            item3_result, item4_result,
+            item5_result, item6_result,
+            item7_result, item8_result,
+            item9_result, item10_result,
+            item11_result, item12_result,
+            item13_result, item14_result,
+            item15_result, item16_result
+        FROM user_result, client, user
+        WHERE user_result.ip_address = client.ip_address
+          AND client.user_id = user.user_id;
+    </select>
+
+    <select id="selectByUserInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
+            parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
+        SELECT  user_result.user_id,
+        user_result.ip_address,
+        user_result.score,
+        user_result.check_time,
+        (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
+        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
+        (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
+        (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS os,
+        item1_result, item2_result,
+        item3_result, item4_result,
+        item5_result, item6_result,
+        item7_result, item8_result,
+        item9_result, item10_result,
+        item11_result, item12_result,
+        item13_result, item14_result,
+        item15_result, item16_result
+        FROM user_result , user, client
+        WHERE 1=1
+        <if test='name != null and name != ""'>
+            AND user.name = #{name}
+        </if>
+        <if test='ipAddress != null and ipAddress != ""'>
+            AND client.ip_address = #{ipAddress}
+        </if>
+        <if test="endDay != null">
+            And client.check_time BETWEEN #{startDay} AND #{endDay}
+        </if>
+        GROUP BY user_result.ip_address
+    </select>
+
     <select id="selectById" resultType="oms.pc_protector.restApi.result.model.ResultVO">
         select * from user_result WHERE user_id = #{value}
     </select>
@@ -49,7 +131,7 @@
         user_result.ip_address,
         user_result.score,
         user_result.check_time,
-        (SELECT department FROM user WHERE user_id = #{userId}) AS department,
+        (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
         (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
         (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
         (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS os,

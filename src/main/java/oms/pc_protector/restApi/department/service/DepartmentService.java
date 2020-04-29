@@ -27,6 +27,10 @@ public class DepartmentService {
         }
     }
 
+    public void insertDepartment(DepartmentVO departmentVO) {
+        departmentMapper.insertDepartment(departmentVO);
+    }
+
     public void register() {
 
     }

@@ -5,6 +5,7 @@ import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.RequestManagerVO;
+import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,23 @@ public class ManagerController {
     public SingleResult<?> findManagers() {
         HashMap<String, Object> map = new HashMap<>();
         List<ManagerVO> list = Optional.ofNullable(managerService.findAll())
+                .orElseGet(() -> Collections.EMPTY_LIST);
+        map.put("data", list);
+        return responseService.getSingleResult(map);
+    }
+
+    @GetMapping(value = "/search")
+    public SingleResult<?> searchManager(@RequestParam(value = "id", required = false) String id,
+                                         @RequestParam(value = "name", required = false) String name,
+                                         @RequestParam(value = "mobile", required = false) String mobile,
+                                         @RequestParam(value = "email", required = false) String email) {
+        HashMap<String, Object> map = new HashMap<>();
+        SearchManagerVO input = new SearchManagerVO();
+        input.setId(id);
+        input.setName(name);
+        input.setMobile(mobile);
+        input.setEmail(email);
+        List<ManagerVO> list = Optional.ofNullable(managerService.searchManager(input))
                 .orElseGet(() -> Collections.EMPTY_LIST);
         map.put("data", list);
         return responseService.getSingleResult(map);

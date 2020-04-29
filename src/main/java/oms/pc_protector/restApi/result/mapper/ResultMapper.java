@@ -11,7 +11,9 @@ import java.util.List;
 @Repository
 public interface ResultMapper {
 
-    public List<?> selectResultAll();
+    public List<?> selectAllResult();
+    public List<?> selectCheckedResult();
+    public List<?> selectUnCheckedResult();
 
     public List<?> selectByUserIdWithIpAddress(UserRequestVO userRequestVO);
 

@@ -28,9 +28,25 @@ public class ResultController {
 
     // 모든 점검결과를 가져온다.
     @GetMapping(value = "")
-    public SingleResult<?> findAll() {
+    public SingleResult<?> findAllResult() {
         HashMap<String, Object> map = new HashMap<>();
-        List<?> list = resultService.findAll();
+        List<?> list = resultService.findAllResult();
+        map.put("results", list);
+        return responseService.getSingleResult(map);
+    }
+
+    @GetMapping(value = "/checked")
+    public SingleResult<?> findAllChecked() {
+        HashMap<String, Object> map = new HashMap<>();
+        List<?> list = resultService.findAllCheckedResult();
+        map.put("results", list);
+        return responseService.getSingleResult(map);
+    }
+
+    @GetMapping(value = "/unchecked")
+    public SingleResult<?> findAllUnChecked() {
+        HashMap<String, Object> map = new HashMap<>();
+        List<?> list = resultService.findAllUnCheckedResult();
         map.put("results", list);
         return responseService.getSingleResult(map);
     }

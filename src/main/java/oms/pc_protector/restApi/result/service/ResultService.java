@@ -23,9 +23,20 @@ public class ResultService {
         this.resultMapper = resultMapper;
     }
 
+
+    public List<?> findAllResult() {
+        return Optional.ofNullable(resultMapper.selectAllResult())
+                .orElse(new ArrayList<>());
+    }
+
     /* 모든 사용자의 점검결과를 반환한다. */
-    public List<?> findAll() {
-        return Optional.ofNullable(resultMapper.selectResultAll())
+    public List<?> findAllCheckedResult() {
+        return Optional.ofNullable(resultMapper.selectCheckedResult())
+                .orElse(new ArrayList<>());
+    }
+
+    public List<?> findAllUnCheckedResult() {
+        return Optional.ofNullable(resultMapper.selectUnCheckedResult())
                 .orElse(new ArrayList<>());
     }
 

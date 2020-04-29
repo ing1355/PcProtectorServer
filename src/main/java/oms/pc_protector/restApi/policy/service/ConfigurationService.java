@@ -62,6 +62,7 @@ public class ConfigurationService {
         else {
             configMap.put("securityUsb_input", securityUsbMap);
         }
+        configMap.put("force_run",configurationMapper.selectForceRun());
         return configMap;
     }
 

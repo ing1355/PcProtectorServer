@@ -37,4 +37,10 @@ public class DepartmentController {
         departmentService.registerDepartmentByExcel(departmentVOList);
         return responseService.getSingleResult(true);
     }
+
+    @PostMapping(value = "")
+    public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
+        departmentService.insertDepartment(departmentVO);
+        return responseService.getSingleResult(true);
+    }
 }
