@@ -1,22 +1,27 @@
 package oms.pc_protector.jwt;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.FilterChain;
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +32,7 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private ManagerService managerService;
+
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService) {
         super(authenticationManager);
@@ -47,35 +53,38 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         // If header is present, try grab user principal from database and perform authorization
-        Authentication authentication = getUsernamePasswordAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            Authentication authentication = getUsernamePasswordAuthentication(request);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        catch(TokenExpiredException ex) {
+            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "토큰 만료!");
+        }
 
         // Continue filter execution
         chain.doFilter(request, response);
     }
 
+    @ExceptionHandler(ServletException.class)
     private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.HEADER_STRING);
         if(token != null){
             // parse the token and validate it (decode)
-            String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
-                    .getSubject();
+                JWTVerifier temp = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes())).build();
+                String userId = temp.verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
+                        .getSubject();
 
-            // Search in the DB if we find the user by token subject (username)
-            // If so, then grab user details and create spring auth token using username, pass, authorities/roles
-            if(userId != null){
-                ManagerVO manager = managerService.findById(userId);
-                ManagerPrincipal principal = new ManagerPrincipal(manager);
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
-                return auth;
-            }
-
+                // Search in the DB if we find the user by token subject (username)
+                // If so, then grab user details and create spring auth token using username, pass, authorities/roles
+                if (userId != null) {
+                    ManagerVO manager = managerService.findById(userId);
+                    ManagerPrincipal principal = new ManagerPrincipal(manager);
+                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
+                    return auth;
+                }
             return null;
         }
         return null;
     }
-
 
 }

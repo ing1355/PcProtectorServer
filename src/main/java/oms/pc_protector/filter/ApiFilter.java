@@ -28,7 +28,6 @@ public class ApiFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
@@ -39,6 +38,7 @@ public class ApiFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        log.info(request.getParameterMap());
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         LogVO logVO = new LogVO();

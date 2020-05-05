@@ -1,8 +1,12 @@
 package oms.pc_protector.restApi.result.service;
 
+import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
+import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
+import oms.pc_protector.restApi.policy.model.PeriodDateVO;
+import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.model.*;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.result.model.ResultVO;
@@ -14,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.*;
 
 @Log4j2
@@ -22,11 +29,14 @@ public class ResultService {
 
     private final ResultMapper resultMapper;
     private final DepartmentService departmentService;
+    private final ConfigurationMapper configurationMapper;
+    private final ClientMapper clientMapper;
 
-
-    public ResultService(ResultMapper resultMapper, DepartmentService departmentService) {
+    public ResultService(ResultMapper resultMapper, DepartmentService departmentService, ConfigurationMapper configurationMapper, ClientMapper clientMapper) {
         this.resultMapper = resultMapper;
+        this.configurationMapper = configurationMapper;
         this.departmentService = departmentService;
+        this.clientMapper = clientMapper;
     }
 
     @Transactional
@@ -40,7 +50,7 @@ public class ResultService {
     @Transactional
     public List<ResponseResultVO> findBySearchInput(SearchInputVO searchInputVO) {
         List<ResponseResultVO> resultList = new ArrayList<>();
-        if(searchInputVO.getDepartmentCode() != null) {
+        if (searchInputVO.getDepartmentCode() != null) {
             Long code = searchInputVO.getDepartmentCode();
             List<DepartmentVO> childCodeList = new ArrayList<>();
             childCodeList.add(departmentService.findByDepartmentCode(code));
@@ -60,7 +70,7 @@ public class ResultService {
 
     @Transactional
     public List<ResultVO> findUserDetailStaticInfo(String id) {
-        List <ResultVO> list = resultMapper.findUserDetailStaticInfo(id);
+        List<ResultVO> list = resultMapper.findUserDetailStaticInfo(id);
 
         return list;
     }
@@ -93,7 +103,7 @@ public class ResultService {
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
     public int countByMonth(String month) {
-       return resultMapper.selectCountAllByMonth(month);
+        return resultMapper.selectCountAllByMonth(month);
     }
 
     @Transactional
@@ -298,6 +308,7 @@ public class ResultService {
     /* 아이템별 결과값을 등록한다. */
     @Transactional
     public void resultSet(ResultVO resultVO) {
+
         Optional.ofNullable(resultVO)
                 .ifPresent(resultMapper::insertResult);
     }
@@ -313,7 +324,7 @@ public class ResultService {
         for (String key : keyList) {
             processList = (ArrayList<String>) processMap.get(key);
             for (String processName : processList) {
-                if(!processName.equals("")) {
+                if (!processName.equals("")) {
                     Optional.ofNullable(processName).ifPresentOrElse(p -> {
                         ResultProcessVO resultProcessVO = ResultProcessVO.builder()
                                 .userId(userId)
@@ -489,5 +500,50 @@ public class ResultService {
         map.put("resultInfo", resultVO);
         map.put("processList", hashMap);
         return map;
+    }
+
+    //스케쥴을 검사하여 해당 기간 내에 없으면 빈 점검결과 등록
+    @Transactional
+    public void insertEmptyResultBySchedule(ClientVO clientVO) {
+        PeriodDateVO Schedule = configurationMapper.selectAppliedSchedule();
+        java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
+        Calendar c1 = Calendar.getInstance();
+        Calendar c2 = Calendar.getInstance();
+        if(Schedule.getPeriod() == 1) { // 매달
+            c1.set(Calendar.WEEK_OF_MONTH,Schedule.getFromWeek());
+            c1.set(Calendar.DAY_OF_WEEK,Schedule.getFromDay());
+            c2.set(Calendar.WEEK_OF_MONTH,Schedule.getToWeek());
+            c2.set(Calendar.DAY_OF_WEEK,Schedule.getToDay());
+            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+                    df.format(c2.getTime())) == 0) {
+                List<ClientVO> temp = clientMapper.selectClientAll();
+                for (ClientVO client : temp) {
+                    client.setCheckTime(df.format(Calendar.getInstance().getTime()));
+                    resultMapper.insertEmptyResultBySchedule(client);
+                }
+            }
+        }
+        else if(Schedule.getPeriod() == 2) { // 매주
+            c1.set(Calendar.DAY_OF_WEEK,Schedule.getFromDay()+1);
+            c2.set(Calendar.DAY_OF_WEEK,Schedule.getToDay()+1);
+            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+                    df.format(c2.getTime())) == 0) {
+                List<ClientVO> temp = clientMapper.selectClientAll();
+                for (ClientVO client : temp) {
+                    client.setCheckTime(df.format(Calendar.getInstance().getTime()));
+                    resultMapper.insertEmptyResultBySchedule(client);
+                }
+            }
+        }
+        else { // 매일
+            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+                    df.format(c2.getTime())) == 0) {
+                List<ClientVO> temp = clientMapper.selectClientAll();
+                for (ClientVO client : temp) {
+                    client.setCheckTime(df.format(Calendar.getInstance().getTime()));
+                    resultMapper.insertEmptyResultBySchedule(client);
+                }
+            }
+        }
     }
 }

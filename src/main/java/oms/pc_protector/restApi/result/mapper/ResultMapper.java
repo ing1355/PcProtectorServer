@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.result.mapper;
 
+import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.ResultProcessVO;
 import oms.pc_protector.restApi.result.model.ResultVO;
@@ -33,7 +34,14 @@ public interface ResultMapper {
             @Param("department") String department,
             @Param("month") String month);
 
+    public int selectByScheduleIsExist(@Param(value = "startChecktime") String startChecktime,
+                                       @Param(value = "endChecktime") String endChecktime);
+
     public void insertResult(ResultVO resultVO);
 
     public void insertResultProcess(ResultProcessVO resultProcessVO);
+
+    public void insertEmptyResultBySchedule(ClientVO clientVO);
+
+    public void updateResultClient(ResultVO resultVO);
 }
