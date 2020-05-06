@@ -90,7 +90,6 @@
         WHERE idx = #{value}
     </update>
 
-
     <delete id="processDelete" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
         DELETE
         FROM process

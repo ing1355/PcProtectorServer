@@ -31,6 +31,4 @@ public class DatabaseConfig {
         sqlSessionTemplate.getConfiguration().setMapUnderscoreToCamelCase(true);
         return sqlSessionTemplate;
     }
-
-
 }

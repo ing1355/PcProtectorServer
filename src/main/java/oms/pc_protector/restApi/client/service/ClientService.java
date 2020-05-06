@@ -20,8 +20,8 @@ public class ClientService {
 
 
     @Transactional
-    public List<ClientVO> getClientList(String id) {
-        return clientMapper.getClientList(id);
+    public List<ClientVO> findClientById(String id) {
+        return clientMapper.selectClientById(id);
     }
 
 
@@ -39,7 +39,7 @@ public class ClientService {
 
 
     @Transactional
-    public List<String> findById(String id) {
+    public List<ClientVO> findById(String id) {
         return clientMapper.selectClientById(id);
     }
 
@@ -47,7 +47,6 @@ public class ClientService {
     @Transactional
     public void register(ClientVO clientVO){
         int test = clientMapper.insertClientInfo(clientVO);
-        System.out.println("test :" + test);
     }
 
 

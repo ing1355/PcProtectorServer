@@ -135,7 +135,7 @@
         user_result.score,
         user_result.check_time,
         (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
-        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
+        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pcName,
         (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
         (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS wrongMd5,
         item1_result, item2_result,
@@ -165,6 +165,7 @@
                 user_id,
                 ip_address,
                 check_time,
+                score,
 
                 item1_result, item2_result,
                 item3_result, item4_result,
@@ -187,6 +188,7 @@
                 #{userId},
                 #{ipAddress},
                 #{checkTime},
+                #{score},
 
                 #{item1Result}, #{item2Result},
                 #{item3Result}, #{item4Result},
@@ -223,7 +225,6 @@
             #{checkTime}
             )
     </insert>
-
 
 </mapper>
 
