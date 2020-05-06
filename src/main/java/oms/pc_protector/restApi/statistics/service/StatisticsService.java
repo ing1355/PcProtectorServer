@@ -99,6 +99,8 @@ public class StatisticsService {
             }
 
             objectMap.put("departmentName", department.getName());       // 부서 이름
+            objectMap.put("totalPc", totalPc);
+            objectMap.put("runPc", runPc);
             objectMap.put("avgScore", avgScore);                         // 평균 점수
             objectMap.put("safePc", safePc);                             // 안전 PC
             objectMap.put("safePcAll", safePcDivideAllPc);               // 안전 PC / 전체 PC
