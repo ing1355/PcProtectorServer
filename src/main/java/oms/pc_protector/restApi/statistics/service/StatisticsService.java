@@ -83,12 +83,6 @@ public class StatisticsService {
 
             if(runPc > 0) avgScore = avgScore / runPc;
 
-            log.info("-----------------------------");
-            log.info("부서 이름 : " + department.getName());
-            log.info("평균 점수 : " + avgScore);
-            log.info("전체 PC 수 : " + totalPc);
-            log.info("실행 PC 수 : " + runPc);
-            log.info("-----------------------------");
 
             for (int i = 0; i < safePc.length; i++) {
                 safePcDivideAllPc[i] = (int) Math.round(
