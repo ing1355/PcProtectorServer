@@ -2,9 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oms.pc_protector.restApi.statistics.mapper.StatisticsMapper">
 
+
+    <select id="selectStatisticsByDepartment" resultType="java.util.LinkedHashMap"
+            parameterType="String">
+        SELECT
+               t1.score,
+        t1.item1_result,
+        t1.item2_result,
+        t1.item3_result,
+        t1.item4_result,
+        t1.item5_result,
+        t1.item6_result,
+        t1.item7_result,
+        t1.item8_result,
+        t1.item9_result,
+        t1.item10_result,
+        t1.item11_result,
+        t1.item12_result,
+        t1.item13_result,
+        t1.item14_result,
+        t1.item15_result,
+        t1.item16_result
+        FROM user AS t0, user_result as t1
+        left outer join user_result as t2
+        on t1.ip_address = t2.ip_address
+        AND (t1.check_time <![CDATA[<]]> t2.check_time
+                 OR (t1.check_time = t2.check_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
+
+        where t2.ip_address is NULL
+        AND t0.user_id = t1.user_id
+        AND t0.department = #{department}
+        <if test="yearMonth != null">
+        AND DATE_FORMAT(t1.check_time,'%Y-%m') = #{yearMonth}
+        </if>
+    </select>
+
+    <!--
     <select id="selectStatisticsByDepartment" resultType="java.util.LinkedHashMap"
     parameterType="String">
         SELECT
+            user_result.score,
             user_result.item1_result,
             user_result.item2_result,
             user_result.item3_result,
@@ -24,8 +61,10 @@
         FROM user_result, user
         WHERE user_result.user_id = user.user_id
         AND user.department = #{value}
+        GROUP BY user_result.ip_address
+        HAVING MAX(check_time)
     </select>
-
+    -->
     <select id="countPcAll" resultType="Int" parameterType="String">
         SELECT COUNT(*) FROM user_result, user
         WHERE user_result.user_id = user.user_id

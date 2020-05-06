@@ -29,11 +29,13 @@ public class ResultService {
                 .orElse(new ArrayList<>());
     }
 
+
     /* 모든 사용자의 점검결과를 반환한다. */
     public List<?> findAllCheckedResult() {
         return Optional.ofNullable(resultMapper.selectCheckedResult())
                 .orElse(new ArrayList<>());
     }
+
 
     public List<?> findAllUnCheckedResult() {
         return Optional.ofNullable(resultMapper.selectUnCheckedResult())
@@ -233,29 +235,23 @@ public class ResultService {
         HashMap<String, Object> parsedResult = resultParseFromClient(inspectionResults);
         ClientVO clientVO = (ClientVO) parsedResult.get("clientInfo");
         ResultVO resultVO = (ResultVO) parsedResult.get("resultInfo");
-
-        log.info("사용자 아이디 : " + clientVO.getUserId());
-        log.info("사용자 IP : " + clientVO.getIpAddress());
-        log.info("사용자 PC 이름 : " + clientVO.getPcName());
-        log.info("사용자 OS : " + clientVO.getOs());
-        log.info("사용자 PC지킴이 버전 : " + clientVO.getPcProtectorVersion());
-        log.info("사용자 백신 버전 : " + clientVO.getVaccineVersion());
-        log.info("사용자 점검일자 : " + clientVO.getCheckTime());
-        //log.info("사용자 전체 점수 : " + clientVO.getScore());
-
+        log.info("-------------------------");
+        log.info("--------점검결과등록-------");
+        log.info("ID : " + clientVO.getUserId());
+        log.info("IP_ADDRESS : " + clientVO.getIpAddress());
+        log.info("PC_NAME : " + clientVO.getPcName());
+        log.info("OS : " + clientVO.getOs());
+        log.info("AGENT_VERSION : " + clientVO.getPcProtectorVersion());
+        log.info("VACCINE_VERSION : " + clientVO.getVaccineVersion());
+        log.info("CHECK_TIME : " + resultVO.getCheckTime());
+        log.info("-------------------------");
+        log.info("사용자 전체 점수 : " + resultVO.getScore());
         Optional.ofNullable(resultVO).ifPresent(this::resultSet);
 
-        /**
-         * Optional 다중 파라미터 넣는 방법 알아보기.
-         Optional.ofNullable(parsedResult.get("processList"))
-         .ofNullable(userVO.getUserId())
-         .ofNullable(userVO.getCheckTime())
-         .ifPresent(this::resultProcessSet);
-         **/
-
         resultProcessSet((HashMap<String, Object>) parsedResult.get("processList"),
-                clientVO.getUserId(), clientVO.getIpAddress(), resultVO.getCheckTime());
-
+                clientVO.getUserId(),
+                clientVO.getIpAddress(),
+                resultVO.getCheckTime());
     }
 
     /* 아이템별 결과값을 등록한다. */
@@ -298,7 +294,7 @@ public class ResultService {
         InspectionResultsVO inspectionResultsVO = inspectionResults;
 
         ClientVO clientVO = new ClientVO();
-
+        int score = inspectionResults.getScore();
         Item1 item1 = new Item1();
         Item2 item2 = new Item2();
         Item3 item3 = new Item3();
@@ -338,6 +334,7 @@ public class ResultService {
                 .userId(clientVO.getUserId())
                 .ipAddress(clientVO.getIpAddress())
                 .checkTime(clientVO.getCheckTime())
+                .score(score)
 
                 .item1Result(Optional.of(item1.getResult())
                         .orElse(0))

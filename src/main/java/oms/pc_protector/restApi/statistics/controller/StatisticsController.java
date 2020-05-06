@@ -6,8 +6,10 @@ import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.statistics.service.StatisticsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,8 +26,8 @@ public class StatisticsController {
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> findAll() {
-        List<Object> result = statisticsService.findAll();
+    public SingleResult<?> findAll(@RequestParam(required = false) String yearMonth) {
+        List<Object> result = statisticsService.findAll(yearMonth);
         return responseService.getSingleResult(result);
     }
 }

@@ -57,8 +57,8 @@ public class ResultController {
     // 해당 점검결과의 세부사항을 가져온다.
     @GetMapping(value = "/details")
     public SingleResult<?> findResultsDetailsByUserName(
-            @RequestParam (value = "ip") String ipAddress,
-            @RequestParam (value = "checkTime") String checkTime) {
+            @RequestParam(value = "ip") String ipAddress,
+            @RequestParam(value = "checkTime") String checkTime) {
         HashMap<String, Object> map = new HashMap<>();
         HashMap itemMap = Optional
                 .ofNullable(resultService.findDetailsWithProcessListByUserId(ipAddress, checkTime))
@@ -69,28 +69,31 @@ public class ResultController {
 
 
     // 조건 검색하여 점검결과를 가져온다.
-     @GetMapping(value = "/search")
-     public SingleResult<?> findByUserIdWithIpAddress(
-     @RequestParam(value = "id", required = true) String id,
-     @RequestParam(value = "ip", required = false) String ipAddress,
-     @RequestParam(value = "name", required = false) String name,
-     @RequestParam(value = "startDay", required = false) String startDay,
-     @RequestParam(value = "endDay", required = false) String endDay) {
-     log.info("id : " + id);
-     log.info("name : " + name);
-     log.info("ipAddress : " + ipAddress);
-     log.info("startDay : " + startDay);
-     log.info("endDay : " + endDay);
-     HashMap<String, Object> map = new HashMap<>();
-     UserRequestVO userRequestVO = new UserRequestVO();
-     Optional.ofNullable(id).ifPresent(userRequestVO::setUserId);
-     Optional.ofNullable(ipAddress).ifPresent(userRequestVO::setIpAddress);
-     Optional.ofNullable(startDay).ifPresent(userRequestVO::setStartDay);
-     Optional.ofNullable(endDay).ifPresent(userRequestVO::setEndDay);
-     List<?> list = resultService.findByUserIdWithIpAddress(userRequestVO);
-     map.put("results", list);
-     return responseService.getSingleResult(map);
-     }
+    @GetMapping(value = "/search")
+    public SingleResult<?> findByUserIdWithIpAddress(
+            @RequestParam(value = "id", required = true) String id,
+            @RequestParam(value = "ip", required = false) String ipAddress,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "startDay", required = false) String startDay,
+            @RequestParam(value = "endDay", required = false) String endDay) {
+        log.info("-------------------------");
+        log.info("------사용자 검색 API------");
+        log.info("id : " + id);
+        log.info("name : " + name);
+        log.info("ipAddress : " + ipAddress);
+        log.info("startDay : " + startDay);
+        log.info("endDay : " + endDay);
+        log.info("-------------------------");
+        HashMap<String, Object> map = new HashMap<>();
+        UserRequestVO userRequestVO = new UserRequestVO();
+        Optional.ofNullable(id).ifPresent(userRequestVO::setUserId);
+        Optional.ofNullable(ipAddress).ifPresent(userRequestVO::setIpAddress);
+        Optional.ofNullable(startDay).ifPresent(userRequestVO::setStartDay);
+        Optional.ofNullable(endDay).ifPresent(userRequestVO::setEndDay);
+        List<?> list = resultService.findByUserIdWithIpAddress(userRequestVO);
+        map.put("results", list);
+        return responseService.getSingleResult(map);
+    }
 
 
 }

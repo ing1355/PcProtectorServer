@@ -21,6 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.*;
 
+
+/* 해당 클래스는 AGENT와의 통신을 위한 API만 존재. */
+
+
 @Log
 @CrossOrigin
 @RestController
@@ -50,11 +54,10 @@ public class ClientController {
 
 
     @GetMapping(value = "")
-    public SingleResult<?> getClientList(@RequestParam @Valid String id) {
-        List<ClientVO> clientVOList = clientService.getClientList(id);
+    public SingleResult<?> findClientList(@RequestParam @Valid String id) {
+        List<ClientVO> clientVOList = clientService.findClientById(id);
         return responseService.getSingleResult(clientVOList);
     }
-
 
 
     @PostMapping(value = "/first-request")
@@ -80,6 +83,7 @@ public class ClientController {
         map.put("md5", md5);
         return responseService.getSingleResult(map);
     }
+
 
     @PostMapping(value = "/process")
     public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) {

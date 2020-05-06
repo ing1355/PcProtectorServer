@@ -9,6 +9,7 @@ import lombok.Setter;
 public class InspectionResultsVO {
 
     private ClientVO clientVO;
+    private int score;
     private Item1 item1;
     private Item2 item2;
     private Item3 item3;

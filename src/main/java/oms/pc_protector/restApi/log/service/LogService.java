@@ -15,8 +15,8 @@ import java.util.Optional;
 @Log4j2
 @Service
 public class LogService {
-    private final LogMapper logMapper;
 
+    private final LogMapper logMapper;
 
     public LogService(LogMapper logMapper) {
         this.logMapper = logMapper;
