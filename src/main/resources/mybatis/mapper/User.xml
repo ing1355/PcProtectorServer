@@ -78,6 +78,24 @@
         WHERE u.user_id = #{value}
     </select>
 
+    <update id="departmentModified" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
+        UPDATE user
+        SET department = REPLACE(department, #{old_name}, #{new_name})
+        WHERE department LIKE CONCAT('%', #{old_name}, '%')
+    </update>
+
+    <update id="departmentDeletedChild" parameterType="String">
+        UPDATE user
+        SET department = RTRIM(REPLACE(department,#{value}, ''))
+        WHERE department LIKE CONCAT('%',#{value},'%')
+    </update>
+
+    <update id="departmentDeletedFirst" parameterType="String">
+        UPDATE user
+        SET department = '-'
+        WHERE department LIKE CONCAT('%',#{value},'%')
+    </update>
+
     <insert id="insertUserInfo" parameterType="String">
         INSERT INTO user (
             user_id
@@ -129,11 +147,11 @@
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
         UPDATE user
-        SET user.user_id = #{userId},
-            user.name = #{name},
-            user.department = #{department},
-            user.email = #{email},
-            user.phone = #{phone},
+        SET user.user_id     = #{userId},
+            user.name        = #{name},
+            user.department  = #{department},
+            user.email       = #{email},
+            user.phone       = #{phone},
             user.update_time = now()
         WHERE user.user_id = #{old_id};
         UPDATE client
@@ -142,9 +160,11 @@
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
-        DELETE FROM user
+        DELETE
+        FROM user
         WHERE user.user_id = #{value};
-        DELETE FROM client
+        DELETE
+        FROM client
         WHERE user_id = #{value};
     </delete>
 

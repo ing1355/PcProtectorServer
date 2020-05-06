@@ -50,4 +50,10 @@ public class DepartmentController {
         departmentService.updateDepartment(updateDepartmentVO);
         return responseService.getSingleResult(true);
     }
+
+    @DeleteMapping(value = "")
+    public SingleResult<?> deleteDepartment(@RequestParam @Valid String name) {
+        departmentService.delete(name);
+        return responseService.getSingleResult(true);
+    }
 }

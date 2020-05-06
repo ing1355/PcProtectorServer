@@ -19,12 +19,17 @@
 
     <update id="updateDepartment" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE department
-        SET name = #{new_name}
+        SET name = #{new_name},
+            update_time = now()
         WHERE name = #{old_name}
     </update>
 
     <delete id="deleteDepartmentAll">
         DELETE FROM department
+    </delete>
+
+    <delete id="deleteDepartment" parameterType="String">
+        DELETE FROM department WHERE name = #{value}
     </delete>
 
 

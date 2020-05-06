@@ -1,5 +1,7 @@
 package oms.pc_protector.restApi.user.mapper;
 
+import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserResponseVO;
@@ -22,6 +24,7 @@ public interface UserMapper {
                                @Param(value = "department") String department,
                                @Param(value = "phone") String phone);
 
+
     public List<UserVO> selectByDepartment(String departmentName);
 
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
@@ -37,6 +40,11 @@ public interface UserMapper {
     public boolean updateUserInfo(UserVO userVO);
 
     public boolean updateUserInfo_Front(RequestUserVO requestUserVO);
+
+    public void departmentModified(UpdateDepartmentVO updateDepartmentVO);
+
+    public boolean departmentDeletedChild(String departmentName);
+    public boolean departmentDeletedFirst(String departmentName);
 
     public boolean deleteUserInfo(String id);
 

@@ -18,6 +18,6 @@ public interface DepartmentMapper {
 
     public void updateDepartment(UpdateDepartmentVO updateDepartmentVO);
 
-    public void deleteDepartment(int departmentIdx);
+    public void deleteDepartment(String name);
 
 }

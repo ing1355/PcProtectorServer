@@ -125,6 +125,16 @@ public class UserService {
     }
 
     @Transactional
+    public boolean departmentDeletedChild(String departmentName) {
+        return userMapper.departmentDeletedChild(departmentName);
+    }
+
+    @Transactional
+    public boolean departmentDeletedFirst(String departmentName) {
+        return userMapper.departmentDeletedFirst(departmentName);
+    }
+
+    @Transactional
     public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {
         UserVO userVO = findById(id);
         userVO.setName(userRequestVO.getName());
