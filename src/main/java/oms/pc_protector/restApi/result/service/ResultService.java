@@ -244,8 +244,8 @@ public class ResultService {
         log.info("AGENT_VERSION : " + clientVO.getPcProtectorVersion());
         log.info("VACCINE_VERSION : " + clientVO.getVaccineVersion());
         log.info("CHECK_TIME : " + resultVO.getCheckTime());
-        log.info("-------------------------");
         log.info("사용자 전체 점수 : " + resultVO.getScore());
+        log.info("-------------------------");
         Optional.ofNullable(resultVO).ifPresent(this::resultSet);
 
         resultProcessSet((HashMap<String, Object>) parsedResult.get("processList"),
