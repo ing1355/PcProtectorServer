@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oms.pc_protector.restApi.result.mapper.ResultMapper">
 
-    <select id="selectResultAll" resultType="hashMap">
+    <select id="selectAllResult" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO">
         SELECT
             user.user_Id,
             user.department,
@@ -81,7 +81,7 @@
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
         SELECT  user_result.user_id,
         user_result.ip_address,
-        user_result.score,
+        client.score,
         user_result.check_time,
         (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
         (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
@@ -97,8 +97,11 @@
         item15_result, item16_result
         FROM user_result , user, client
         WHERE 1=1
+        <if test='department != null and department != ""'>
+            AND user.department = #{department}
+        </if>
         <if test='name != null and name != ""'>
-            AND user.name = #{name}
+            AND client.pc_name = #{name}
         </if>
         <if test='ipAddress != null and ipAddress != ""'>
             AND client.ip_address = #{ipAddress}

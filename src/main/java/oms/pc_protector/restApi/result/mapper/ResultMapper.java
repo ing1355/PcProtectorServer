@@ -15,7 +15,7 @@ public interface ResultMapper {
     public List<?> selectCheckedResult();
     public List<?> selectUnCheckedResult();
 
-    public List<?> selectByUserIdWithIpAddress(UserRequestVO userRequestVO);
+    public List<?> selectByUserInput(UserRequestVO userRequestVO);
 
     public List<ResultVO> selectById(String id);
 

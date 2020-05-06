@@ -31,3 +31,4 @@ build/
 ### 설정파일 ###
 application.yml
 
+.yml
