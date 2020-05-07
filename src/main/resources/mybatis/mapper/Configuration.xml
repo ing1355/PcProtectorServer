@@ -4,24 +4,20 @@
 
 
     <select id="selectConfiguration" resultType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
-        SELECT *
-        FROM configuration
+        SELECT * FROM configuration
     </select>
 
     <select id="selectSecurityUsbDetails"
             resultType="oms.pc_protector.restApi.policy.model.SecurityUsbDetailsVO">
-        SELECT *
-        FROM security_usb_details
+        SELECT * FROM security_usb_details
     </select>
 
     <select id="selectScheduleAll" resultType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
-        SELECT *
-        FROM period_date_configuration
+        SELECT * FROM period_date_configuration
     </select>
 
     <select id="selectAppliedSchedule" resultType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
-        SELECT *
-        FROM period_date_configuration
+        SELECT * FROM period_date_configuration
         WHERE apply = true
     </select>
 

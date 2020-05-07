@@ -19,6 +19,8 @@ public interface UserMapper {
 
     public UserVO selectById(String id);
 
+    public int selectSameId(String id);
+
     public List<UserVO> search(@Param(value = "userId") String userId,
                                @Param(value = "name") String name,
                                @Param(value = "department") String department,

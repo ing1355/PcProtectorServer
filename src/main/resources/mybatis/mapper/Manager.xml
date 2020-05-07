@@ -4,8 +4,7 @@
 
 
     <select id="findAll" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT *
-        FROM manager
+        SELECT * FROM manager
     </select>
 
     <select id="searchManager" parameterType="oms.pc_protector.restApi.manager.model.SearchManagerVO"

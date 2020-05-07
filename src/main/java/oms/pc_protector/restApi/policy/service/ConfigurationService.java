@@ -41,28 +41,25 @@ public class ConfigurationService {
         ConfigurationVO configurationVO = configurationMapper.selectConfiguration();
         SecurityUsbDetailsVO securityUsbMap = findSecurityUsbDetails();
         EditProgramVO editProgramVO = findEditProgramFlag();
-        if(configurationVO == null) {
+        if (configurationVO == null) {
             ConfigurationVO empty_config = new ConfigurationVO();
             configurationMapper.insertConfiguration(empty_config);
-        }
-        else {
+        } else {
             configMap.put("config", configurationVO);
         }
-        if(editProgramVO == null) {
+        if (editProgramVO == null) {
             EditProgramVO empty_edit = new EditProgramVO();
             configurationMapper.insertEditProgramFlag(empty_edit);
-        }
-        else {
+        } else {
             configMap.put("editProgram_set", editProgramVO);
         }
-        if(securityUsbMap == null) {
+        if (securityUsbMap == null) {
             SecurityUsbDetailsVO empty_security = new SecurityUsbDetailsVO();
             configurationMapper.insertSecurityUsbDetails(empty_security);
-        }
-        else {
+        } else {
             configMap.put("securityUsb_input", securityUsbMap);
         }
-        configMap.put("force_run",configurationMapper.selectForceRun());
+        configMap.put("force_run", configurationMapper.selectForceRun());
         return configMap;
     }
 
@@ -75,10 +72,12 @@ public class ConfigurationService {
     public void updateSecurityUsbDetails_service(SecurityUsbDetailsVO securityUsbDetailsVO) {
         configurationMapper.updateSecurityUsbDetails(securityUsbDetailsVO);
     }
+
     @Transactional
     public void updateEditProgramFlag_service(EditProgramVO editProgramVO) {
         configurationMapper.updateEditProgramFlag(editProgramVO);
     }
+
     @Transactional
     public void updateForceRun(boolean param) {
         configurationMapper.updateForceRun(param);
@@ -102,7 +101,6 @@ public class ConfigurationService {
     public int registerSchedule(PeriodDateVO periodDateVO) {
         return configurationMapper.insertSchedule(periodDateVO);
     }
-
 
 
     @Transactional

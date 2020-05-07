@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.clientController;
 
+import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
@@ -25,7 +26,7 @@ import java.util.*;
 /* 해당 클래스는 AGENT와의 통신을 위한 API만 존재. */
 
 
-@Log
+@Log4j2
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/client")
@@ -63,20 +64,24 @@ public class ClientController {
     @PostMapping(value = "/first-request")
     public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
         log.info("요청 URL : /v1/client/first-request");
-        HashMap<String, Object> map = new HashMap<>();
-        boolean forceRun = configurationService.findForceRun().isForceRun();
+        boolean isLogin = userService.agentLogin(clientVO);
+        if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
+
+        String department = userService
+                .findById(clientVO.getUserId())
+                .getDepartment();
+
+        String md5 = Optional.ofNullable(clientFileService.findRecentMd5()).orElse("");
+
+        boolean forceRun = configurationService
+                .findForceRun()
+                .isForceRun();
 
         HashMap configuration = Optional
                 .ofNullable(configurationService.findConfigurationToClient())
                 .orElseGet(HashMap::new);
 
-        String department = Optional.ofNullable(userService.clientLogin(clientVO))
-                .map(UserResponseVO::getDepartment)
-                .orElse("");
-
-        String md5 = Optional.ofNullable(clientFileService.findRecentMd5())
-                .orElse("");
-
+        HashMap<String, Object> map = new HashMap<>();
         map.put("configuration", configuration);
         map.put("forceRun", forceRun);
         map.put("department", department);
@@ -111,72 +116,5 @@ public class ClientController {
         resultService.registrationResult(inspectionResultVO);
         return responseService.getSingleResult(map);
     }
-
-    /**
-    @GetMapping(value = "/process/approved-process")
-    public SingleResult<?> getApprovedProcessList() {
-        log.info("요청 URL : /v1/client/process/approved-process");
-        HashMap<String, Object> map = new HashMap<>();
-        Optional.ofNullable(processService.findRegistryItem("process"))
-                .ifPresent(processList -> map.put("registryItem", processList));
-        return responseService.getSingleResult(map);
-    }
-
-
-    @GetMapping(value = "/cycle-days-notice")
-    public SingleResult<?> cycleDaysNotice() {
-        log.info("요청 URL : /v1/client/cycle-days-notice");
-        HashMap<String, Object> map = new HashMap<>();
-        String cycleCheckDays = Optional.ofNullable(policyService.findCycleCheckDays()).orElse("");
-        map.put("notice", cycleCheckDays);
-        return responseService.getSingleResult(map);
-    }
-
-
-    @GetMapping(value = "/install/md5")
-    public SingleResult<?> getMd5() {
-        log.info("요청 URL : /v1/client/install/md5");
-        HashMap<String, Object> map = new HashMap<>();
-        String md5 = Optional.ofNullable(clientFileService.findRecentMd5()).orElse("");
-        map.put("md5", md5);
-        return responseService.getSingleResult(map);
-    }
-
-    @GetMapping(value = "/process/required-process")
-    public SingleResult<?> getRequiredProcessList() {
-        log.info("요청 URL : /v1/client/process/required-process");
-        HashMap<String, Object> map = new HashMap<>();
-        Optional.ofNullable(processService.findRegistryItem("required"))
-                .ifPresent(processList -> map.put("registryItem", processList));
-        return responseService.getSingleResult(map);
-    }
-
-    @GetMapping(value = "/configuration")
-    public SingleResult<?> getConfiguration() {
-        log.info("요청 URL : /v1/client/configuration");
-        HashMap map = Optional.ofNullable(configurationService.findConfiguration())
-                .orElseGet(HashMap::new);
-        return responseService.getSingleResult(map);
-    }
-
-
-    @GetMapping(value = "/qna/{qnaIdx}")
-    public SingleResult<?> getQna(@PathVariable int qnaIdx) {
-        log.info("요청 URL : /v1/client/qna/" + qnaIdx);
-        HashMap<String, Object> map = new HashMap<>();
-        String url = null;
-        QnaVO qnaVO = new QnaVO();
-        if (qnaService.findQna(qnaIdx) != null) {
-            qnaVO = qnaService.findQna(qnaIdx);
-            url = qnaVO.getUrl();
-        }
-        map.put("url", url);
-        return responseService.getSingleResult(map);
-    }
-    **/
-
-
-
-
 
 }

@@ -30,5 +30,6 @@ build/
 
 ### 설정파일 ###
 application.yml
+keystore.p12
 
 .yml

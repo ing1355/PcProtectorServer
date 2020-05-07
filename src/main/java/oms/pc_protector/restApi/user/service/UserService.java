@@ -12,6 +12,7 @@ import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<UserVO> findAll() {
         return Optional.ofNullable(userMapper.selectUserInfoAll())
-                .orElseGet(() -> Collections.EMPTY_LIST);
+                .orElseGet(ArrayList::new);
+    }
+
+    @Transactional
+    public boolean findSameId(String id) {
+        int result =  userMapper.selectSameId(id);
+        return result > 0;
     }
 
     @Transactional(readOnly = true)
@@ -74,11 +81,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public boolean duplicateCheckIpAddress(String ipAddress) {
-        List<ClientVO> clientList = clientService.findAll();
-        for (ClientVO client : clientList) {
-            if (client.getIpAddress().equals(ipAddress)) return true;
-        }
-        return false;
+        int result = clientService.findSameIpAddress(ipAddress);
+        return result > 0;
     }
 
 
@@ -154,23 +158,22 @@ public class UserService {
 
 
     @Transactional
-    public UserResponseVO clientLogin(ClientVO clientVO) {
-        UserResponseVO result = new UserResponseVO();
-        boolean duplicateIpAddressCheck = duplicateCheckIpAddress(clientVO.getIpAddress());
+    public boolean agentLogin(ClientVO clientVO) {
+        boolean duplicateIpAddress = duplicateCheckIpAddress(clientVO.getIpAddress());
         boolean duplicateId = duplicateCheckId(clientVO.getUserId());
-        if (!duplicateIpAddressCheck) {
-            if (!duplicateId) {
-                log.info("새로운 아이디 등록 : " + clientVO.getUserId());
-                userMapper.insertUserInfo(clientVO.getUserId());
+        if(duplicateId) {
+            if(duplicateIpAddress) {
+                log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
+                clientService.update(clientVO);
             }
             log.info("새로운 클라이언트 등록 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
             clientService.register(clientVO);
-        } else {
-            log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
-            clientService.update(clientVO);
         }
-        result = findUserWithClientByIpAddress(clientVO.getIpAddress());
-        return result;
+        else {
+            log.info("등록되지 않은 사용자입니다.");
+            return false;
+        }
+        return true;
     }
 
 
