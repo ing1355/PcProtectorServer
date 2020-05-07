@@ -4,6 +4,10 @@
 
     <select id="selectResultAll" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO">
         SELECT
+            A.user_id,
+            A.os,
+            A.wrong_md5,
+            A.pc_protector_version,
             A.department,
             B.check_time,
             A.ip_address,
@@ -26,7 +30,7 @@
             B.item15_result,
             B.item16_result
         FROM (
-                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
+                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, t2.os, t2.wrong_md5, t2.pc_protector_version ,CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
                 FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
         ) AS A
         LEFT OUTER JOIN (
@@ -80,6 +84,10 @@
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
         SELECT
+            A.user_id,
+            A.os,
+            A.wrong_md5,
+            A.pc_protector_version,
             A.department,
             B.check_time,
             A.ip_address,
@@ -102,7 +110,7 @@
             B.item15_result,
             B.item16_result
         FROM (
-                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
+                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, t2.os, t2.wrong_md5, t2.pc_protector_version, CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
                 FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
         ) AS A
         LEFT OUTER JOIN (
