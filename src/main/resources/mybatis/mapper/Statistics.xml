@@ -23,12 +23,10 @@
         t1.item14_result,
         t1.item15_result,
         t1.item16_result
-        FROM user AS t0, user_result as t1
-        left outer join user_result as t2
+        FROM user AS t0, user_result as t1 left outer join user_result as t2
         on t1.ip_address = t2.ip_address
         AND (t1.create_time <![CDATA[<]]> t2.create_time
                  OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
-
         where t2.ip_address is NULL
         AND t0.user_id = t1.user_id
         AND t0.department = #{department}
@@ -62,7 +60,7 @@
         WHERE user_result.user_id = user.user_id
         AND user.department = #{value}
         GROUP BY user_result.ip_address
-        HAVING MAX(check_time)
+        HAVING MAX(create_time)
     </select>
     -->
     <select id="countPcAll" resultType="Int" parameterType="String">

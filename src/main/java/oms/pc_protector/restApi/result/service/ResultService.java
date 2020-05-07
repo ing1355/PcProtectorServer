@@ -18,14 +18,14 @@ public class ResultService {
 
     private final ResultMapper resultMapper;
 
-    @Autowired
+
     public ResultService(ResultMapper resultMapper) {
         this.resultMapper = resultMapper;
     }
 
 
-    public List<?> findAllResult() {
-        return Optional.ofNullable(resultMapper.selectAllResult())
+    public List<ResponseResultVO> findAllResult() {
+        return Optional.ofNullable(resultMapper.selectResultAll())
                 .orElse(new ArrayList<>());
     }
 
@@ -37,15 +37,9 @@ public class ResultService {
     }
 
 
-    public List<?> findAllUnCheckedResult() {
-        return Optional.ofNullable(resultMapper.selectUnCheckedResult())
-                .orElse(new ArrayList<>());
-    }
-
-
     /* 사용자의 이름과 IP주소에 해당하는 점검결과를 반환한다. */
-    public List<?> findByUserIdWithIpAddress(UserRequestVO userRequestVO) {
-        return Optional.ofNullable(resultMapper.selectByUserInput(userRequestVO))
+    public List<?> findByUserIdWithIpAddress(SearchInputVO searchInputVO) {
+        return Optional.ofNullable(resultMapper.selectBySearchInput(searchInputVO))
                 .orElse(new ArrayList<>());
     }
 

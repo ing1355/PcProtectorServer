@@ -1,21 +1,27 @@
 package oms.pc_protector.restApi.result.mapper;
 
+import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.ResultProcessVO;
 import oms.pc_protector.restApi.result.model.ResultVO;
+import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
 public interface ResultMapper {
 
-    public List<?> selectAllResult();
-    public List<?> selectCheckedResult();
-    public List<?> selectUnCheckedResult();
 
-    public List<?> selectByUserInput(UserRequestVO userRequestVO);
+
+    public List<?> selectCheckedResult();
+
+    public List<ResponseResultVO> selectResultAll();
+
+    public List<ResponseResultVO> selectBySearchInput(SearchInputVO searchInputVO);
 
     public List<ResultVO> selectById(String id);
 

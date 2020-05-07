@@ -2,29 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oms.pc_protector.restApi.result.mapper.ResultMapper">
 
-    <select id="selectAllResult" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO">
+    <select id="selectResultAll" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO">
         SELECT
-            user.user_Id,
-            user.department,
-            user.name,
-            client.pc_name,
-            client.os,
-            client.score,
-            client.ip_address,
-            pc_protector_version,
-            vaccine_version,
-            client.check_time,
-            item1_result, item2_result,
-            item3_result, item4_result,
-            item5_result, item6_result,
-            item7_result, item8_result,
-            item9_result, item10_result,
-            item11_result, item12_result,
-            item13_result, item14_result,
-            item15_result, item16_result
-        FROM user_result, client, user
-        WHERE user_result.ip_address = client.ip_address
-          AND client.user_id = user.user_id;
+            A.department,
+            B.check_time,
+            A.ip_address,
+            A.name,
+            B.score,
+            B.item1_result,
+            B.item2_result,
+            B.item3_result,
+            B.item4_result,
+            B.item5_result,
+            B.item6_result,
+            B.item7_result,
+            B.item8_result,
+            B.item9_result,
+            B.item10_result,
+            B.item11_result,
+            B.item12_result,
+            B.item13_result,
+            B.item14_result,
+            B.item15_result,
+            B.item16_result
+        FROM (
+                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
+                FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
+        ) AS A
+        LEFT OUTER JOIN (
+                SELECT t1.* FROM USER AS t0,user_result AS t1 LEFT OUTER JOIN user_result AS t2
+                ON t1.ip_address = t2.ip_address AND (t1.create_time <![CDATA[<]]> t2.create_time OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
+                WHERE t2.ip_address IS NULL AND t0.user_id = t1.user_id
+        ) AS B
+        ON A.ip_address = B.ip_address
     </select>
 
     <select id="selectCheckedResult" resultType="hashMap">
@@ -34,7 +44,6 @@
             user.name,
             client.pc_name,
             client.os,
-            client.score,
             client.ip_address,
             pc_protector_version,
             vaccine_version,
@@ -50,66 +59,6 @@
         FROM user_result, client, user
         WHERE user_result.ip_address = client.ip_address
           AND client.user_id = user.user_id;
-    </select>
-
-    <select id="selectUnCheckedResult" resultType="hashMap">
-        SELECT
-            user.user_Id,
-            user.department,
-            user.name,
-            client.pc_name,
-            client.os,
-            client.score,
-            client.ip_address,
-            pc_protector_version,
-            vaccine_version,
-            client.check_time,
-            item1_result, item2_result,
-            item3_result, item4_result,
-            item5_result, item6_result,
-            item7_result, item8_result,
-            item9_result, item10_result,
-            item11_result, item12_result,
-            item13_result, item14_result,
-            item15_result, item16_result
-        FROM user_result, client, user
-        WHERE user_result.ip_address = client.ip_address
-          AND client.user_id = user.user_id;
-    </select>
-
-    <select id="selectByUserInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
-            parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
-        SELECT  user_result.user_id,
-        user_result.ip_address,
-        client.score,
-        user_result.check_time,
-        (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
-        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pc_name,
-        (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
-        (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS os,
-        item1_result, item2_result,
-        item3_result, item4_result,
-        item5_result, item6_result,
-        item7_result, item8_result,
-        item9_result, item10_result,
-        item11_result, item12_result,
-        item13_result, item14_result,
-        item15_result, item16_result
-        FROM user_result , user, client
-        WHERE 1=1
-        <if test='department != null and department != ""'>
-            AND user.department = #{department}
-        </if>
-        <if test='name != null and name != ""'>
-            AND client.pc_name = #{name}
-        </if>
-        <if test='ipAddress != null and ipAddress != ""'>
-            AND client.ip_address = #{ipAddress}
-        </if>
-        <if test="endDay != null">
-            And client.check_time BETWEEN #{startDay} AND #{endDay}
-        </if>
-        GROUP BY user_result.ip_address
     </select>
 
     <select id="selectById" resultType="oms.pc_protector.restApi.result.model.ResultVO">
@@ -128,36 +77,50 @@
         WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
 
-    <select id="selectByUserIdWithIpAddress" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
-            parameterType="oms.pc_protector.restApi.user.model.UserRequestVO">
-        SELECT user_result.user_id,
-        user_result.ip_address,
-        user_result.score,
-        user_result.check_time,
-        (SELECT department FROM user WHERE user_id = user_result.user_id) AS department,
-        (SELECT pc_name FROM client WHERE ip_address = user_result.ip_address) AS pcName,
-        (SELECT os FROM client WHERE ip_address = user_result.ip_address) AS os,
-        (SELECT wrong_md5 FROM client WHERE ip_address = user_result.ip_address) AS wrongMd5,
-        item1_result, item2_result,
-        item3_result, item4_result,
-        item5_result, item6_result,
-        item7_result, item8_result,
-        item9_result, item10_result,
-        item11_result, item12_result,
-        item13_result, item14_result,
-        item15_result, item16_result
-        FROM user_result , user, client
-        where user_result.user_id = #{userId}
+    <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
+            parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
+        SELECT
+            A.department,
+            B.check_time,
+            A.ip_address,
+            A.name,
+            B.score,
+            B.item1_result,
+            B.item2_result,
+            B.item3_result,
+            B.item4_result,
+            B.item5_result,
+            B.item6_result,
+            B.item7_result,
+            B.item8_result,
+            B.item9_result,
+            B.item10_result,
+            B.item11_result,
+            B.item12_result,
+            B.item13_result,
+            B.item14_result,
+            B.item15_result,
+            B.item16_result
+        FROM (
+                SELECT DISTINCT t1.department, t1.user_id, t2.ip_address, CONCAT(t1.name, ' ', '(', t2.pc_name, ')') AS name
+                FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
+        ) AS A
+        LEFT OUTER JOIN (
+                SELECT t1.* FROM USER AS t0,user_result AS t1 LEFT OUTER JOIN user_result AS t2
+                ON t1.ip_address = t2.ip_address AND (t1.create_time <![CDATA[<]]> t2.create_time OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
+                WHERE t2.ip_address IS NULL AND t0.user_id = t1.user_id
+        ) AS B
+        ON A.ip_address = B.ip_address
+        where 1 = 1
         <if test="name != null">
-            AND user.name = #{name}
+            AND A.name LIKE concat('%', #{name}, '%')
         </if>
         <if test="ipAddress != null">
-            AND client.ip_address = #{ipAddress}
+            AND A.ip_address = #{ipAddress}
         </if>
-        <if test="endDay != null">
-            And client.check_time BETWEEN #{startDay} AND #{endDay}
+        <if test="startDate != null and endDate != null">
+            And B.check_time BETWEEN #{startDate} AND #{endDate}
         </if>
-        GROUP BY user_result.ip_address
     </select>
 
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
