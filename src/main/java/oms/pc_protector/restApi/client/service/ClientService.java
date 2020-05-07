@@ -5,7 +5,7 @@ import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,21 +20,21 @@ public class ClientService {
 
 
     @Transactional
-    public List<ClientVO> findClientById(String id) {
-        return clientMapper.selectClientById(id);
-    }
-
-
-    @Transactional
-    public void registerWrongMd5(ClientVO clientVO) {
-        clientMapper.updateWrongMd5(clientVO);
-    }
-
-
-    @Transactional
     public List<ClientVO> findAll() {
         return Optional.ofNullable(clientMapper.selectClientAll())
-                .orElse(Collections.EMPTY_LIST);
+                .orElseGet(ArrayList::new);
+    }
+
+
+    @Transactional
+    public int findSameIpAddress(String ipAddress) {
+        return clientMapper.selectSameIpAddress(ipAddress);
+    }
+
+
+    @Transactional
+    public List<ClientVO> findClientById(String id) {
+        return clientMapper.selectClientById(id);
     }
 
 
@@ -47,6 +47,12 @@ public class ClientService {
     @Transactional
     public void register(ClientVO clientVO){
         int test = clientMapper.insertClientInfo(clientVO);
+    }
+
+
+    @Transactional
+    public void registerWrongMd5(ClientVO clientVO) {
+        clientMapper.updateWrongMd5(clientVO);
     }
 
 

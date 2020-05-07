@@ -23,6 +23,10 @@
         WHERE user_id = #{value}
     </select>
 
+    <select id="selectSameId" resultType="int" parameterType="String">
+        SELECT * FROM user WHERE user_id = #{value}
+    </select>
+
     <select id="selectByDepartment" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="String">
         SELECT * FROM user WHERE department = #{value}

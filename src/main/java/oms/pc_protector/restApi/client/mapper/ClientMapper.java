@@ -10,6 +10,8 @@ public interface ClientMapper {
 
     public List<ClientVO> selectClientById(String id);
 
+    public int selectSameIpAddress(String ipAddress);
+
     public int insertClientInfo(ClientVO clientVO);
 
     public List<ClientVO> selectClientAll();
