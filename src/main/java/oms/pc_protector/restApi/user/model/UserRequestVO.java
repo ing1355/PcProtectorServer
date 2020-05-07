@@ -23,9 +23,9 @@ public class UserRequestVO {
     private int departmentIdx;
 
     @JsonIgnore
-    private String startDay;
+    private String startDate;
 
     @JsonIgnore
-    private String endDay;
+    private String endDate;
 
 }

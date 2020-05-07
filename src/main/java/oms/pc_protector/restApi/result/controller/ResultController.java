@@ -2,6 +2,7 @@ package oms.pc_protector.restApi.result.controller;
 
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import lombok.extern.log4j.Log4j2;
@@ -36,24 +37,6 @@ public class ResultController {
     }
 
 
-    @GetMapping(value = "/checked")
-    public SingleResult<?> findAllChecked() {
-        HashMap<String, Object> map = new HashMap<>();
-        List<?> list = resultService.findAllCheckedResult();
-        map.put("results", list);
-        return responseService.getSingleResult(map);
-    }
-
-
-    @GetMapping(value = "/unchecked")
-    public SingleResult<?> findAllUnChecked() {
-        HashMap<String, Object> map = new HashMap<>();
-        List<?> list = resultService.findAllUnCheckedResult();
-        map.put("results", list);
-        return responseService.getSingleResult(map);
-    }
-
-
     // 해당 점검결과의 세부사항을 가져온다.
     @GetMapping(value = "/details")
     public SingleResult<?> findResultsDetailsByUserName(
@@ -71,28 +54,24 @@ public class ResultController {
     // 조건 검색하여 점검결과를 가져온다.
     @GetMapping(value = "/search")
     public SingleResult<?> findByUserIdWithIpAddress(
-            @RequestParam(value = "id", required = true) String id,
             @RequestParam(value = "ip", required = false) String ipAddress,
             @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "startDay", required = false) String startDay,
-            @RequestParam(value = "endDay", required = false) String endDay) {
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
         log.info("-------------------------");
         log.info("------사용자 검색 API------");
-        log.info("id : " + id);
         log.info("name : " + name);
         log.info("ipAddress : " + ipAddress);
-        log.info("startDay : " + startDay);
-        log.info("endDay : " + endDay);
+        log.info("startDate : " + startDate);
+        log.info("endDate : " + endDate);
         log.info("-------------------------");
-        HashMap<String, Object> map = new HashMap<>();
-        UserRequestVO userRequestVO = new UserRequestVO();
-        Optional.ofNullable(id).ifPresent(userRequestVO::setUserId);
-        Optional.ofNullable(ipAddress).ifPresent(userRequestVO::setIpAddress);
-        Optional.ofNullable(startDay).ifPresent(userRequestVO::setStartDay);
-        Optional.ofNullable(endDay).ifPresent(userRequestVO::setEndDay);
-        List<?> list = resultService.findByUserIdWithIpAddress(userRequestVO);
-        map.put("results", list);
-        return responseService.getSingleResult(map);
+        SearchInputVO searchInputVO = new SearchInputVO();
+        searchInputVO.setName(name);
+        searchInputVO.setIpAddress(ipAddress);
+        searchInputVO.setStartDate(startDate);
+        searchInputVO.setEndDate(endDate);
+        List<?> list = resultService.findByUserIdWithIpAddress(searchInputVO);
+        return responseService.getSingleResult(list);
     }
 
 

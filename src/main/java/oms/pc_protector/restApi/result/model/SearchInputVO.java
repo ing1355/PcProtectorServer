@@ -8,6 +8,6 @@ import lombok.Setter;
 public class SearchInputVO {
     private String name;
     private String ipAddress;
-    private String fromDay;
-    private String toDay;
+    private String startDate;
+    private String endDate;
 }

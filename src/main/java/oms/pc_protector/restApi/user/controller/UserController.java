@@ -58,7 +58,7 @@ public class UserController {
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
         log.info("-------------------------");
         log.info("------사용자 등록 API------");
-        log.info("ID : " + userRequestVO.getUserId());
+        //log.info("ID : " + userRequestVO.getUserId());
         log.info("NAME : " + userRequestVO.getName());
         log.info("DEPARTMENT : " + userRequestVO.getDepartment());
         log.info("PHONE : " + userRequestVO.getPhone());
