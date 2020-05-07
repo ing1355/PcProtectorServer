@@ -6,11 +6,13 @@ import lombok.*;
 @Setter
 public class ResponseResultVO {
 
-
+        private String userId;
         private String ipAddress;
         private String department;
-        private String name;
+        private String os;
         private String checkTime;
+        private boolean wrongMd5;
+
         private int score;
 
         private int item1Result;
