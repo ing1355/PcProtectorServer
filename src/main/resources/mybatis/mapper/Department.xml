@@ -8,8 +8,8 @@
     </select>
 
     <insert id="registerDepartmentByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
-        INSERT INTO department (name, code)
-        VALUES (#{name}, #{code})
+        INSERT INTO department (name, code, All_name)
+        VALUES (#{name}, #{code}, #{All_name})
     </insert>
 
     <insert id="insertDepartment" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">

@@ -124,7 +124,10 @@
             AND A.name LIKE concat('%', #{name}, '%')
         </if>
         <if test="ipAddress != null">
-            AND A.ip_address = #{ipAddress}
+            AND A.ip_address LIKE concat('%', #{ipAddress}, '%')
+        </if>
+        <if test="department != null">
+            AND A.department = #{department}
         </if>
         <if test="startDate != null and endDate != null">
             And B.check_time BETWEEN #{startDate} AND #{endDate}

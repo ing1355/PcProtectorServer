@@ -32,8 +32,7 @@ public class ResultController {
     public SingleResult<?> findAllResult() {
         HashMap<String, Object> map = new HashMap<>();
         List<?> list = resultService.findAllResult();
-        map.put("results", list);
-        return responseService.getSingleResult(map);
+        return responseService.getSingleResult(list);
     }
 
 
@@ -57,19 +56,22 @@ public class ResultController {
             @RequestParam(value = "ip", required = false) String ipAddress,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) {
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "department", required = false) String department) {
         log.info("-------------------------");
         log.info("------사용자 검색 API------");
         log.info("name : " + name);
         log.info("ipAddress : " + ipAddress);
         log.info("startDate : " + startDate);
         log.info("endDate : " + endDate);
+        log.info("department : " + department);
         log.info("-------------------------");
         SearchInputVO searchInputVO = new SearchInputVO();
         searchInputVO.setName(name);
         searchInputVO.setIpAddress(ipAddress);
         searchInputVO.setStartDate(startDate);
         searchInputVO.setEndDate(endDate);
+        searchInputVO.setDepartment(department);
         List<?> list = resultService.findByUserIdWithIpAddress(searchInputVO);
         return responseService.getSingleResult(list);
     }

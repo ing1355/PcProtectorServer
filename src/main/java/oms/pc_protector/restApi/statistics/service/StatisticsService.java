@@ -92,10 +92,10 @@ public class StatisticsService {
 
             for (int i = 0; i < safePc.length; i++) {
                 safePcDivideAllPc[i] = (int) Math.round(
-                        ((int) safePc[i] / (double) totalPc));
+                        ((int) safePc[i] / (double) totalPc) * 100);
 
                 safePcDivideRunPc[i] = runPc == 0 ? 0 : (int) Math.round(
-                        ((int) safePc[i] / (double) runPc));
+                        ((int) safePc[i] / (double) runPc) * 100);
             }
 
             objectMap.put("departmentName", department.getName());       // 부서 이름

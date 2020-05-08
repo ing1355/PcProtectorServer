@@ -13,6 +13,7 @@ public class ResponseResultVO {
         private String checkTime;
         private String pcProtectorVersion;
         private boolean wrongMd5;
+        private String name;
 
         private int score;
 
