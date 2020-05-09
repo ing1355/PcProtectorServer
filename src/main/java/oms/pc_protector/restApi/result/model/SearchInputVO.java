@@ -10,7 +10,8 @@ public class SearchInputVO {
     private String userId;
     private String name;
     private String ipAddress;
+    private String department;
     private String startDate;
     private String endDate;
-    private String department;
+
 }

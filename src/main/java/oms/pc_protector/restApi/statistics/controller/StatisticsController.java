@@ -11,7 +11,6 @@ import java.util.List;
 
 @CrossOrigin
 @RestController
-@CrossOrigin
 @RequestMapping(value = "v1/statistics")
 public class StatisticsController {
 
