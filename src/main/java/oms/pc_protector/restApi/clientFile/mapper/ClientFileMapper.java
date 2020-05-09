@@ -12,7 +12,11 @@ public interface ClientFileMapper {
 
     public ClientFileVO selectRecentClientFile();
 
+    public int selectExistFile();
+
     public void insertClientFile(ClientFileVO clientFileVO);
+
+    public void update(ClientFileVO clientFileVO);
 
     public void deleteClientFile(ClientFileVO clientFileVO);
 }

@@ -56,18 +56,17 @@ public class ProcessController {
         return responseService.getSingleResult(true);
     }
 
-
     @DeleteMapping(value = "")
     public SingleResult<?> removeProcess(@RequestBody @Valid ProcessVO processVO) {
         processService.removeProcessList(processVO);
         return responseService.getSingleResult(true);
     }
 
-
     @PutMapping(value = "modify-unapproved-process")
     public void modifyToUnApprovedProcess(@RequestBody @Valid Long idx) {
         processService.modifyToUnApprovedProcess(idx);
     }
+
     @PutMapping(value = "modify-required-process")
     public void modifyToRequiredProcess(@RequestBody @Valid Long idx) {
         processService.modifyToRequiredProcess(idx);
@@ -98,8 +97,6 @@ public class ProcessController {
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);
     }
-
-
 
     @GetMapping(value = "/required-process")
     public SingleResult<?> findRequiredProcess() {

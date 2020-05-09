@@ -12,14 +12,25 @@
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
-        INSERT INTO client_file (version, file_name, file_size, md5)
-        VALUES (#{version}, #{fileName}, #{fileSize}, #{md5})
+        INSERT INTO client_file (file_name, file_size, md5)
+        VALUES (#{fileName}, #{fileSize}, #{md5})
     </insert>
 
     <delete id="deleteClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         DELETE FROM client_file WHERE idx = #{idx}
     </delete>
 
+    <select id="selectExistFile" resultType="int">
+        SELECT COUNT(*) FROM client_file
+    </select>
+
+    <update id="update" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
+        UPDATE client_file SET
+                    file_name = #{fileName},
+                    file_size = #{fileSize},
+                    md5 = #{md5},
+                    update_time = now()
+    </update>
 
 </mapper>
 

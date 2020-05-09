@@ -42,7 +42,7 @@ public class UserService {
 
     @Transactional
     public boolean findSameId(String id) {
-        int result =  userMapper.selectSameId(id);
+        int result = userMapper.selectSameId(id);
         return result > 0;
     }
 
@@ -161,10 +161,12 @@ public class UserService {
     public boolean agentLogin(ClientVO clientVO) {
         boolean duplicateIpAddress = duplicateCheckIpAddress(clientVO.getIpAddress());
         boolean duplicateId = duplicateCheckId(clientVO.getUserId());
-        if(duplicateId) {
-            if(duplicateIpAddress) {
+
+        if (duplicateId) {
+            if (duplicateIpAddress) {
                 log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
                 clientService.update(clientVO);
+                return true;
             }
             log.info("새로운 클라이언트 등록 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
             clientService.register(clientVO);

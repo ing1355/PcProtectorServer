@@ -8,7 +8,7 @@ import java.util.List;
 @Repository
 public interface ClientMapper {
 
-    public List<ClientVO> selectClientById(String id);
+    public List<ClientVO> selectById(String id);
 
     public int selectSameIpAddress(String ipAddress);
 

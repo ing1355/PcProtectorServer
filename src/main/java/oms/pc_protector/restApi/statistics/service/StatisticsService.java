@@ -46,7 +46,7 @@ public class StatisticsService {
     public List<Object> findAll(String yearMonth) {
         List<Object> departmentResultMap = new ArrayList<>();
         List<DepartmentVO> departmentList = departmentService.findAll();
-        log.info("---------점검결과통계----------");
+        log.debug("---------점검결과통계----------");
 
         for (DepartmentVO department : departmentList) {
             LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
@@ -83,12 +83,12 @@ public class StatisticsService {
 
             if(runPc > 0) avgScore = avgScore / runPc;
 
-            log.info("-----------------------------");
-            log.info("부서 이름 : " + department.getName());
-            log.info("평균 점수 : " + avgScore);
-            log.info("전체 PC 수 : " + totalPc);
-            log.info("실행 PC 수 : " + runPc);
-            log.info("-----------------------------");
+            log.debug("-----------------------------");
+            log.debug("부서 이름 : " + department.getName());
+            log.debug("평균 점수 : " + avgScore);
+            log.debug("전체 PC 수 : " + totalPc);
+            log.debug("실행 PC 수 : " + runPc);
+            log.debug("-----------------------------");
 
             for (int i = 0; i < safePc.length; i++) {
                 safePcDivideAllPc[i] = (int) Math.round(

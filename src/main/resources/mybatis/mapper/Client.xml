@@ -6,7 +6,7 @@
         SELECT * FROM client
     </select>
 
-    <select id="selectClientById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
+    <select id="selectById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT * FROM client
         WHERE user_id = #{userId}
     </select>

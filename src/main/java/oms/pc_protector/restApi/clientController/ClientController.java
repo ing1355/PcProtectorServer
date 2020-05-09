@@ -56,7 +56,7 @@ public class ClientController {
 
     @GetMapping(value = "")
     public SingleResult<?> findClientList(@RequestParam @Valid String id) {
-        List<ClientVO> clientVOList = clientService.findClientById(id);
+        List<ClientVO> clientVOList = clientService.findById(id);
         return responseService.getSingleResult(clientVOList);
     }
 

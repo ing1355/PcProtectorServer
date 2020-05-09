@@ -120,6 +120,9 @@
         ) AS B
         ON A.ip_address = B.ip_address
         where 1 = 1
+        <if test="userId != null">
+            AND A.user_id LIKE concat('%', #{userId}, '%')
+        </if>
         <if test="name != null">
             AND A.name LIKE concat('%', #{name}, '%')
         </if>

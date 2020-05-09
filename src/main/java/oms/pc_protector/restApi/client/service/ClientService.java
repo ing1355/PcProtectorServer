@@ -33,14 +33,8 @@ public class ClientService {
 
 
     @Transactional
-    public List<ClientVO> findClientById(String id) {
-        return clientMapper.selectClientById(id);
-    }
-
-
-    @Transactional
     public List<ClientVO> findById(String id) {
-        return clientMapper.selectClientById(id);
+        return clientMapper.selectById(id);
     }
 
 
