@@ -95,7 +95,7 @@
 
     <update id="departmentDeletedChild" parameterType="String">
         UPDATE user
-        SET department = RTRIM(REPLACE(department,#{value}, ''))
+        SET department = '-'
         WHERE department LIKE CONCAT('%',#{value},'%')
     </update>
 

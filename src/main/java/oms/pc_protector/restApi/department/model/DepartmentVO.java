@@ -9,4 +9,5 @@ public class DepartmentVO {
 
     private String name;
     private String code;
+    private String parentCode;
 }

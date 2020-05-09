@@ -26,39 +26,16 @@ public class ResultController {
         this.resultService = resultService;
     }
 
+
     // 모든 점검결과를 가져온다.
     @GetMapping(value = "")
     public SingleResult<?> findAllResult() {
         HashMap<String, Object> map = new HashMap<>();
         List<?> list = resultService.findAllResult();
-        return responseService.getSingleResult(list);
+        map.put("results", list);
+        return responseService.getSingleResult(map);
     }
 
-    // 조건 검색하여 점검결과를 가져온다.
-    @GetMapping(value = "/search")
-    public SingleResult<?> findByUserIdWithIpAddress(
-            @RequestParam(value = "id", required = false) String userId,
-            @RequestParam(value = "ip", required = false) String ipAddress,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "startDate", required = false) String startDate,
-            @RequestParam(value = "endDate", required = false) String endDate) {
-        log.info("-------------------------");
-        log.info("------사용자 검색 API------");
-        log.info("userId : " + userId);
-        log.info("name : " + name);
-        log.info("ipAddress : " + ipAddress);
-        log.info("startDate : " + startDate);
-        log.info("endDate : " + endDate);
-        log.info("-------------------------");
-        SearchInputVO searchInputVO = new SearchInputVO();
-        searchInputVO.setUserId(userId);
-        searchInputVO.setName(name);
-        searchInputVO.setIpAddress(ipAddress);
-        searchInputVO.setStartDate(startDate);
-        searchInputVO.setEndDate(endDate);
-        List<?> list = resultService.findByUserIdWithIpAddress(searchInputVO);
-        return responseService.getSingleResult(list);
-    }
 
     // 해당 점검결과의 세부사항을 가져온다.
     @GetMapping(value = "/details")
@@ -72,4 +49,30 @@ public class ResultController {
         map.put("itemDetails", itemMap);
         return responseService.getSingleResult(map);
     }
+
+
+    // 조건 검색하여 점검결과를 가져온다.
+    @GetMapping(value = "/search")
+    public SingleResult<?> findByUserIdWithIpAddress(
+            @RequestParam(value = "ip", required = false) String ipAddress,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate) {
+        log.info("-------------------------");
+        log.info("------사용자 검색 API------");
+        log.info("name : " + name);
+        log.info("ipAddress : " + ipAddress);
+        log.info("startDate : " + startDate);
+        log.info("endDate : " + endDate);
+        log.info("-------------------------");
+        SearchInputVO searchInputVO = new SearchInputVO();
+        searchInputVO.setName(name);
+        searchInputVO.setIpAddress(ipAddress);
+        searchInputVO.setStartDate(startDate);
+        searchInputVO.setEndDate(endDate);
+        List<?> list = resultService.findByUserIdWithIpAddress(searchInputVO);
+        return responseService.getSingleResult(list);
+    }
+
+
 }

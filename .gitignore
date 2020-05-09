@@ -32,3 +32,4 @@ build/
 application.yml
 keystore.p12
 
+.yml
