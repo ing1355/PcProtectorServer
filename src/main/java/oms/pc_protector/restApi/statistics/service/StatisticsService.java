@@ -31,7 +31,6 @@ public class StatisticsService {
 
     private final ClientService clientService;
 
-
     public StatisticsService(DepartmentService departmentService,
                              StatisticsMapper statisticsMapper,
                              UserService userService,

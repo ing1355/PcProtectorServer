@@ -29,6 +29,11 @@ public interface ResultMapper {
 
     public ResultVO selectResultDetailsById(String ipAddress, String checkTime);
 
+    public int selectCountAllByMonth(String month);
+
+    public List<Integer> selectScoreByDepartmentWithMonth(@Param("department") String department,
+                                                 @Param("month") String month);
+
     public void insertResult(ResultVO resultVO);
 
     public void insertResultProcess(ResultProcessVO resultProcessVO);

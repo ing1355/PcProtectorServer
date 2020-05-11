@@ -15,6 +15,4 @@ public interface StatisticsMapper {
 
     public List<LinkedHashMap> selectStatisticsByDepartment(@Param("department") String department,
                                                             @Param("yearMonth") String yearMonth);
-
-    public int countPcAll(String department);
 }

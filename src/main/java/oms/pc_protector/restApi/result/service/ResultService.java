@@ -9,6 +9,7 @@ import oms.pc_protector.restApi.user.model.UserRequestVO;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class ResultService {
         this.resultMapper = resultMapper;
     }
 
-
+    @Transactional
     public List<ResponseResultVO> findAllResult() {
         return Optional.ofNullable(resultMapper.selectResultAll())
                 .orElse(new ArrayList<>());
@@ -31,6 +32,7 @@ public class ResultService {
 
 
     /* 모든 사용자의 점검결과를 반환한다. */
+    @Transactional
     public List<?> findAllCheckedResult() {
         return Optional.ofNullable(resultMapper.selectCheckedResult())
                 .orElse(new ArrayList<>());
@@ -38,6 +40,7 @@ public class ResultService {
 
 
     /* 사용자의 이름과 IP주소에 해당하는 점검결과를 반환한다. */
+    @Transactional
     public List<?> findByUserIdWithIpAddress(SearchInputVO searchInputVO) {
         return Optional.ofNullable(resultMapper.selectBySearchInput(searchInputVO))
                 .orElse(new ArrayList<>());
@@ -45,6 +48,7 @@ public class ResultService {
 
 
     /* 사용자의 아이디에 해당하는 점검결과를 반환한다. */
+    @Transactional
     public List<ResultVO> findById(String id) {
         return Optional.ofNullable(resultMapper.selectById(id))
                 .orElse(new ArrayList<>());
@@ -52,13 +56,27 @@ public class ResultService {
 
 
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
+    @Transactional
     public ResultVO findDetailsByUserId(String ipAddress, String checkTime) {
         return Optional.ofNullable(resultMapper.selectResultDetailsById(ipAddress, checkTime))
                 .orElse(ResultVO.builder().build());
     }
 
 
+    /* 월별 점검결과 수를 반환한다. */
+    @Transactional
+    public int countByMonth(String month) {
+       return resultMapper.selectCountAllByMonth(month);
+    }
+
+    @Transactional
+    public List<Integer> findScoreByDepartmentWithMonth(String department, String month) {
+        return resultMapper.selectScoreByDepartmentWithMonth(department, month);
+    }
+
+
     /* 해당 아이디의 점검결과의 취약 프로세스 목록을 반환한다. */
+    @Transactional
     public HashMap<String, Object> findResultProcessByUserId(String ipAddress, String checkTime) {
         List<ResultProcessVO> resultProcess = Optional
                 .ofNullable(resultMapper.selectResultProcessById(ipAddress, checkTime))
@@ -123,6 +141,7 @@ public class ResultService {
 
 
     /* 사용자 아이디에 해당하는 모든 아이템별 세부 점검사항을 반환한다. */
+    @Transactional
     public HashMap findDetailsWithProcessListByUserId(String ipAddress, String checkTime) {
         ResultVO resultVO = Optional.ofNullable(findDetailsByUserId(ipAddress, checkTime))
                 .orElse(ResultVO.builder().build());
@@ -225,6 +244,7 @@ public class ResultService {
 
 
     /* 점검결과를 등록한다. */
+    @Transactional
     public void registrationResult(InspectionResultsVO inspectionResults) {
         HashMap<String, Object> parsedResult = resultParseFromClient(inspectionResults);
         ClientVO clientVO = (ClientVO) parsedResult.get("clientInfo");
@@ -249,6 +269,7 @@ public class ResultService {
     }
 
     /* 아이템별 결과값을 등록한다. */
+    @Transactional
     public void resultSet(ResultVO resultVO) {
         Optional.ofNullable(resultVO)
                 .ifPresent(resultMapper::insertResult);
@@ -256,6 +277,7 @@ public class ResultService {
 
 
     /* 아이템별 취약 프로세스를 등록한다.*/
+    @Transactional
     public void resultProcessSet(
             @NotNull HashMap<String, Object> processMap, String userId,
             String ipAddress, String checkTime) {
@@ -283,6 +305,7 @@ public class ResultService {
 
 
     /* Client에서 받아온 결과를 파싱하여 분류한다. */
+    @Transactional
     public HashMap<String, Object> resultParseFromClient(InspectionResultsVO inspectionResults) {
         HashMap<String, Object> map = new HashMap<>();
         InspectionResultsVO inspectionResultsVO = inspectionResults;

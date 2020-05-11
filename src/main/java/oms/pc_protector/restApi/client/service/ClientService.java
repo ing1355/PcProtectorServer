@@ -25,6 +25,10 @@ public class ClientService {
                 .orElseGet(ArrayList::new);
     }
 
+    public int count() {
+       return clientMapper.selectCountAll();
+    }
+
 
     @Transactional
     public int findSameIpAddress(String ipAddress) {

@@ -35,40 +35,6 @@
         </if>
     </select>
 
-    <!--
-    <select id="selectStatisticsByDepartment" resultType="java.util.LinkedHashMap"
-    parameterType="String">
-        SELECT
-            user_result.score,
-            user_result.item1_result,
-            user_result.item2_result,
-            user_result.item3_result,
-            user_result.item4_result,
-            user_result.item5_result,
-            user_result.item6_result,
-            user_result.item7_result,
-            user_result.item8_result,
-            user_result.item9_result,
-            user_result.item10_result,
-            user_result.item11_result,
-            user_result.item12_result,
-            user_result.item13_result,
-            user_result.item14_result,
-            user_result.item15_result,
-            user_result.item16_result
-        FROM user_result, user
-        WHERE user_result.user_id = user.user_id
-        AND user.department = #{value}
-        GROUP BY user_result.ip_address
-        HAVING MAX(create_time)
-    </select>
-    -->
-    <select id="countPcAll" resultType="Int" parameterType="String">
-        SELECT COUNT(*) FROM user_result, user
-        WHERE user_result.user_id = user.user_id
-        AND user.department = #{value}
-    </select>
-
 </mapper>
 
 

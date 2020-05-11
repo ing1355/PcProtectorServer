@@ -81,6 +81,25 @@
         WHERE ip_address = #{ipAddress} AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
 
+    <select id="selectCountAllByMonth" resultType="int" parameterType="String">
+        SELECT COUNT(DISTINCT ip_address) AS count FROM user_result
+        WHERE DATE_FORMAT(check_time,'%Y-%m') = #{value}
+    </select>
+
+    <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
+        SELECT
+            t1.score
+        FROM user AS t0, user_result as t1 left outer join user_result as t2
+        on t1.ip_address = t2.ip_address
+        AND (t1.create_time <![CDATA[<]]> t2.create_time
+                              OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
+        where t2.ip_address is NULL
+        AND t0.user_id = t1.user_id
+        AND t0.department = #{department}
+
+        AND DATE_FORMAT(t1.check_time,'%Y-%m') = #{month}
+    </select>
+
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
         SELECT
