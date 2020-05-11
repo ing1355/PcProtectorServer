@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.dashboard.service;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.ChartVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.result.service.ResultService;
@@ -77,24 +78,21 @@ public class DashboardService {
     public List<HashMap<String, Object>> findScoreListByDepartment() {
         List<DepartmentVO> departmentList = departmentService.findAll();
         List<HashMap<String, Object>> departmentScore = new ArrayList<>();
-
+        HashMap<String, Object> scoreMap = new HashMap<>();
         for (DepartmentVO department : departmentList) {
-            List<Integer> scoreList
-                    = resultService.findScoreByDepartmentWithMonth(department.getName(), currentTime);
+            List<Integer> scoreList =
+                    resultService.findScoreByDepartmentWithMonth(department.getName(), currentTime);
             int scoreSum = 0;
             int totalPc = scoreList.size();
 
             if (totalPc == 0) continue;
-            for (int score : scoreList) {
-                scoreSum += score;
-            }
-
+            for (int score : scoreList) scoreSum += score;
             int avgScore = scoreSum / totalPc;
 
-            HashMap<String, Object> scoreMap = new HashMap<>();
             scoreMap.put("department", department.getName());
             scoreMap.put("score", avgScore);
             departmentScore.add(scoreMap);
+            scoreMap.clear();
         }
         return departmentScore;
     }
@@ -159,33 +157,12 @@ public class DashboardService {
     }
 
     @Transactional
-    public List<HashMap<String, Object>> resultChart() {
+    public List<ChartVO> resultChart() {
         LinkedHashMap<String, Object> scoreMap = new LinkedHashMap<>();
         List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
-        Calendar cal = Calendar.getInstance();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy");
-        String currentYear = dateFormat.format(System.currentTimeMillis());
-        Date date = new Date();
-
-        try {
-             date = format.parse( currentYear + "-01");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        cal.setTime(date);
-
-        for (int i = 1; i <= 12; i++) {
-            String formatDate = format.format(cal.getTime());
-            //int avgScore = Optional.ofNullable(dashboardMapper.selectAvgScoreByMonth(formatDate)).orElse(0);
-            if(dashboardMapper.selectAvgScoreByMonth(formatDate) != null) {
-                int avgScore = dashboardMapper.selectAvgScoreByMonth(formatDate);
-                scoreMap.put(i + "월", avgScore);
-            }
-            if(i != 12) cal.add(Calendar.MONTH, 1);
-        }
-        avgScoreList.add(scoreMap);
-        return avgScoreList;
+        return Optional
+                .ofNullable(dashboardMapper.selectAvgScoreByRecent12Months())
+                .orElseGet(ArrayList::new);
     }
 
 }
