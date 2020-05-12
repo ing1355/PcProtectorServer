@@ -5,16 +5,12 @@ import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
-import oms.pc_protector.restApi.statistics.model.CountPcVO;
+import oms.pc_protector.restApi.statistics.model.ResultStatisticsVO;
 import oms.pc_protector.restApi.statistics.model.ResponseVO;
-import oms.pc_protector.restApi.statistics.model.StatisticsVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 
-import java.time.LocalDate;
 import java.util.*;
 
 /* 점검결과통계 서비스 클래스 */
@@ -57,14 +53,16 @@ public class StatisticsService {
         HashMap<Integer, Object> memoization = new HashMap<>();
 
         for (DepartmentVO departmentVO : departmentList) {
+            log.info("부서 이름 : {}", departmentVO.getName());
             List<Integer> childCodeList = new ArrayList<>();
             List<DepartmentVO> childCode = departmentService.findChildDescByParentCode(departmentVO.getCode());
-            List<CountPcVO> childResultTemp = new ArrayList<>();
+            List<ResultStatisticsVO> childResultTemp = new ArrayList<>();
             int parentCode = departmentVO.getCode();
 
             // 메모이제이션에 이미 등록되어 있다면 패스.
             if (memoization.containsKey(departmentVO.getCode())) {
-                childResultTemp.add((CountPcVO) memoization.get(departmentVO.getCode()));
+                log.info("메모이제이션, 이미 저장된 부서 코드 : {}", departmentVO.getCode());
+                childResultTemp.add((ResultStatisticsVO) memoization.get(departmentVO.getCode()));
                 continue;
             }
 
@@ -79,7 +77,11 @@ public class StatisticsService {
 
 
             for (int departmentCode : parentWithChild) {
+                log.info("부서이름 : {}", departmentService.findByDepartmentCode(departmentCode).getName());
+                log.info("부서코드 : {}", departmentCode);
+
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
+                int myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
                 List<LinkedHashMap> statisticsList = statisticsMapper
                         .selectStatisticsByDepartment(new ResponseVO(departmentCode, yearMonth));
 
@@ -91,6 +93,7 @@ public class StatisticsService {
                     totalPc += clientService.findById(user.getUserId()).size();
                 }
 
+                int sumScore = 0;
                 int avgScore = 0;
                 int[] safePc = new int[16];
                 int[] safePcDivideAllPc = new int[16];
@@ -98,56 +101,74 @@ public class StatisticsService {
 
                 for (LinkedHashMap statistics : statisticsList) {
                     Object[] array = statistics.values().toArray();
-                    avgScore += (Integer) array[0];
+                    sumScore += (Integer) array[0];
                     for (int i = 1; i < safePc.length; i++)
                         if (array[i].equals(1)) safePc[i]++;
                 }
 
-                if (runPc > 0) avgScore = avgScore / runPc;
+                // 임시공간에 자식코드가 있는지 확인한다.
+                boolean isExistChild = false;
+                for (ResultStatisticsVO countPcVO : childResultTemp) {
+                    if (countPcVO.getParentCode() == departmentCode) {
+                        isExistChild = true;
+                        break;
+                    }
+                }
 
-                // 부모 코드라면?
-                if (departmentCode == parentCode) {
-                    for (CountPcVO result : childResultTemp) {
-                        totalPc += result.getTotalPc();
-                        runPc += result.getRunPc();
-                        avgScore += result.getAvgScore();
-                        for (int i = 0; i < 16; i++) {
-                            int[] temp = result.getSafePc();
-                            safePc[i] += temp[i];
+                // 자식코드가 있다면?
+                if (isExistChild) {
+
+                    for (ResultStatisticsVO result : childResultTemp) {
+
+                        if (departmentCode == result.getParentCode()) {
+                            totalPc += result.getTotalPc();
+                            runPc += result.getRunPc();
+                            sumScore += result.getSumScore();
+
+                            for (int i = 0; i < 16; i++) {
+                                int[] temp = result.getSafePc();
+                                safePc[i] += temp[i];
+                            }
                         }
                     }
-                    avgScore = avgScore / (childResultTemp.size() + 1);
+
                     safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
                     safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
                 }
 
-                CountPcVO countPcVO = new CountPcVO();
-                countPcVO.setTotalPc(totalPc);
-                countPcVO.setRunPc(runPc);
-                countPcVO.setAvgScore(avgScore);
-                countPcVO.setSafePc(safePc);
-                countPcVO.setSafePcDivideRunPc(safePcDivideRunPc);
-                countPcVO.setSafePcDivideAllPc(safePcDivideRunPc);
+                if (runPc > 0) avgScore = sumScore / runPc;
 
-                // 자식 코드라면?
-                if (departmentCode != parentCode) {
+                ResultStatisticsVO resultStatisticsVO = new ResultStatisticsVO();
+                resultStatisticsVO.setParentCode(myParentCode);
+                resultStatisticsVO.setTotalPc(totalPc);
+                resultStatisticsVO.setRunPc(runPc);
+                resultStatisticsVO.setSumScore(sumScore);
+                resultStatisticsVO.setAvgScore(avgScore);
+                resultStatisticsVO.setSafePc(safePc);
+                resultStatisticsVO.setSafePcDivideRunPc(safePcDivideRunPc);
+                resultStatisticsVO.setSafePcDivideAllPc(safePcDivideRunPc);
+
+                // 자식코드가 없다면?
+                if (!isExistChild) {
                     safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
                     safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
-                    childResultTemp.add(countPcVO);
                 }
+
+                // 처리된 부서는 임시 공간에 저장.
+                childResultTemp.add(resultStatisticsVO);
 
                 LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
-                objectMap.put("departmentName", departmentName);             // 부서 이름
-                objectMap.put("departmentCode", departmentCode);             // 부서 코드
-                objectMap.put("totalPc", totalPc);                           // 전체 PC
-                objectMap.put("runPc", runPc);                               // 실행 PC
-                objectMap.put("avgScore", avgScore);                         // 평균 점수
-                objectMap.put("safePc", safePc);                             // 안전 PC
-                objectMap.put("safePcAll", safePcDivideAllPc);               // 안전 PC / 전체 PC
-                objectMap.put("safePcRun", safePcDivideRunPc);               // 안전 PC / 실행 PC
+                objectMap.put("departmentName", departmentName);                    // 부서 이름
+                objectMap.put("departmentCode", departmentCode);                    // 부서 코드
+                objectMap.put("totalPc", totalPc);                                  // 전체 PC
+                objectMap.put("runPc", runPc);                                      // 실행 PC
+                objectMap.put("avgScore", avgScore);                                // 평균 점수
+                objectMap.put("safePc", safePc);                                    // 안전 PC
+                objectMap.put("safePcAll", safePcDivideAllPc);                      // 안전 PC / 전체 PC
+                objectMap.put("safePcRun", safePcDivideRunPc);                      // 안전 PC / 실행 PC
 
                 // 메모이제이션 등록
-                memoization.put(departmentCode, countPcVO);
+                memoization.put(departmentCode, resultStatisticsVO);
                 departmentResultMap.add(objectMap);
             }
 
@@ -188,7 +209,6 @@ public class StatisticsService {
         });
         return list;
     }
-
 
 
 }

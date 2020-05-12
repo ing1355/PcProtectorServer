@@ -5,11 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CountPcVO {
+public class ResultStatisticsVO {
 
+    private int parentCode;
     private int totalPc;
     private int runPc;
     private int avgScore;
+    private int sumScore;
 
     private int[] safePc;
     private int[] safePcDivideAllPc;
