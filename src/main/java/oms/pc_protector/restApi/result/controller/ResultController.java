@@ -53,6 +53,7 @@ public class ResultController {
     // 조건 검색하여 점검결과를 가져온다.
     @GetMapping(value = "/search")
     public SingleResult<?> findByUserIdWithIpAddress(
+            @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "ip", required = false) String ipAddress,
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "startDate", required = false) String startDate,
@@ -60,6 +61,7 @@ public class ResultController {
             @RequestParam(value = "department", required = false) String department) {
         log.info("-------------------------");
         log.info("------사용자 검색 API------");
+        log.info("name : " + id);
         log.info("name : " + name);
         log.info("ipAddress : " + ipAddress);
         log.info("startDate : " + startDate);
@@ -67,6 +69,7 @@ public class ResultController {
         log.info("department : " + department);
         log.info("-------------------------");
         SearchInputVO searchInputVO = new SearchInputVO();
+        searchInputVO.setUserId(id);
         searchInputVO.setName(name);
         searchInputVO.setIpAddress(ipAddress);
         searchInputVO.setStartDate(startDate);

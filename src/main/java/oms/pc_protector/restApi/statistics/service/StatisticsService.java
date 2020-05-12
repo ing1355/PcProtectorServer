@@ -5,19 +5,19 @@ import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
+import oms.pc_protector.restApi.statistics.model.CountPcVO;
+import oms.pc_protector.restApi.statistics.model.ResponseVO;
 import oms.pc_protector.restApi.statistics.model.StatisticsVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
-    /* 점검결과통계 서비스 클래스 */
+/* 점검결과통계 서비스 클래스 */
 
 @Log4j2
 @Service
@@ -41,75 +41,152 @@ public class StatisticsService {
         this.clientService = clientService;
     }
 
-    @Transactional
-    public List<Object> findAll(String yearMonth) {
+    public List<Object> findAllByYearMonthOrDepartment(String yearMonth, String department) {
         List<Object> departmentResultMap = new ArrayList<>();
-        List<DepartmentVO> departmentList = departmentService.findAll();
-        log.debug("---------점검결과통계----------");
+        List<DepartmentVO> departmentList = new ArrayList<>();
 
-        for (DepartmentVO department : departmentList) {
-            LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
-
-            // 부서별 점검결과 목록을 가져온다.
-            List<LinkedHashMap> statisticsList = statisticsMapper
-                    .selectStatisticsByDepartment(department.getName(), yearMonth);
-
-            // 전체 PC 수
-            int totalPc = 0;
-
-            // 실행 PC 수
-            int runPc = statisticsList.size();
-
-            // 해당 부서에 해당하는 아이디 목록을 가져온다.
-            List<UserVO> userList = userService.findByDepartment(department.getName());
-
-            for (UserVO user : userList) {
-                // 해당 아이디의 모든 클라이언트를 가져온다.
-                totalPc += clientService.findById(user.getUserId()).size();
-            }
-
-            int avgScore = 0;
-            int[] safePc = new int[16];
-            int[] safePcDivideAllPc = new int[16];
-            int[] safePcDivideRunPc = new int[16];
-
-            for (LinkedHashMap statistics : statisticsList) {
-                Object[] array = statistics.values().toArray();
-                avgScore += (Integer) array[0];
-                for (int i = 1; i < safePc.length; i++)
-                    if (array[i].equals(1)) safePc[i]++;
-            }
-
-            if(runPc > 0) avgScore = avgScore / runPc;
-
-            log.debug("-----------------------------");
-            log.debug("부서 이름 : " + department.getName());
-            log.debug("평균 점수 : " + avgScore);
-            log.debug("전체 PC 수 : " + totalPc);
-            log.debug("실행 PC 수 : " + runPc);
-            log.debug("-----------------------------");
-
-            for (int i = 0; i < safePc.length; i++) {
-                safePcDivideAllPc[i] = (int) Math.round(
-                        ((int) safePc[i] / (double) totalPc) * 100);
-
-                safePcDivideRunPc[i] = runPc == 0 ? 0 : (int) Math.round(
-                        ((int) safePc[i] / (double) runPc) * 100);
-            }
-
-            objectMap.put("departmentName", department.getName());       // 부서 이름
-            objectMap.put("totalPc", totalPc);                           // 전체 PC
-            objectMap.put("runPc", runPc);                               // 실행 PC
-            objectMap.put("avgScore", avgScore);                         // 평균 점수
-            objectMap.put("safePc", safePc);                             // 안전 PC
-            objectMap.put("safePcAll", safePcDivideAllPc);               // 안전 PC / 전체 PC
-            objectMap.put("safePcRun", safePcDivideRunPc);               // 안전 PC / 실행 PC
-
-            departmentResultMap.add(objectMap);
-
+        if (department == null) {
+            departmentList = departmentService.findAll();
+        } else {
+            int parentCode = departmentService.findByDepartment(department).getCode();
+            departmentList.add(departmentService.findByDepartmentCode(parentCode));
+            departmentList.addAll(departmentService.findChildByParentCode(parentCode));
         }
 
+        HashMap<Integer, Object> memoization = new HashMap<>();
+
+        for (DepartmentVO departmentVO : departmentList) {
+            List<Integer> childCodeList = new ArrayList<>();
+            List<DepartmentVO> childCode = departmentService.findChildByParentCode(departmentVO.getCode());
+            List<CountPcVO> childResultTemp = new ArrayList<>();
+            int parentCode = departmentVO.getCode();
+
+            // 메모이제이션에 이미 등록되어 있다면 패스.
+            if (memoization.containsKey(departmentVO.getCode())) {
+                log.info("메모이제이션 : {}", departmentVO.getCode());
+                childResultTemp.add((CountPcVO) memoization.get(departmentVO.getCode()));
+                continue;
+            }
+
+            for (DepartmentVO departmentTemp : childCode) {
+                childCodeList.add(departmentTemp.getCode());
+            }
+
+            List<Integer> parentWithChild = new ArrayList<>(childCodeList);
+            parentWithChild.add(parentCode);
+
+            for (int departmentCode : parentWithChild) {
+                String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
+                List<LinkedHashMap> statisticsList = statisticsMapper
+                        .selectStatisticsByDepartment(new ResponseVO(departmentCode, yearMonth));
+
+                int totalPc = 0;
+                int runPc = statisticsList.size();
+                List<UserVO> userList = userService.findByDepartmentCode(departmentCode);
+
+                for (UserVO user : userList) {
+                    totalPc += clientService.findById(user.getUserId()).size();
+                }
+
+                int avgScore = 0;
+                int[] safePc = new int[16];
+                int[] safePcDivideAllPc = new int[16];
+                int[] safePcDivideRunPc = new int[16];
+
+                for (LinkedHashMap statistics : statisticsList) {
+                    Object[] array = statistics.values().toArray();
+                    avgScore += (Integer) array[0];
+                    for (int i = 1; i < safePc.length; i++)
+                        if (array[i].equals(1)) safePc[i]++;
+                }
+
+                if (runPc > 0) avgScore = avgScore / runPc;
+
+                log.debug("-----------------------------");
+                log.debug("부서 이름 : " + departmentName);
+                log.debug("평균 점수 : " + avgScore);
+                log.debug("전체 PC 수 : " + totalPc);
+                log.debug("실행 PC 수 : " + runPc);
+                log.debug("-----------------------------");
+
+                // 부모 코드라면?
+                if (departmentCode == parentCode) {
+                    for (CountPcVO result : childResultTemp) {
+                        totalPc += result.getTotalPc();
+                        runPc += result.getRunPc();
+                        avgScore += result.getAvgScore();
+                        for (int i = 0; i < 16; i++) {
+                            int[] temp = result.getSafePc();
+                            safePc[i] += temp[i];
+                        }
+                    }
+                    avgScore = avgScore / (childResultTemp.size() + 1);
+                    safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
+                    safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
+                }
+
+                CountPcVO countPcVO = new CountPcVO();
+                countPcVO.setTotalPc(totalPc);
+                countPcVO.setRunPc(runPc);
+                countPcVO.setAvgScore(avgScore);
+                countPcVO.setSafePc(safePc);
+                countPcVO.setSafePcDivideRunPc(safePcDivideRunPc);
+                countPcVO.setSafePcDivideAllPc(safePcDivideRunPc);
+
+                // 자식 코드라면?
+                if (departmentCode != parentCode) {
+                    safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
+                    safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
+                    childResultTemp.add(countPcVO);
+                }
+
+                LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
+                objectMap.put("departmentName", departmentName);             // 부서 이름
+                objectMap.put("code", departmentCode);                       // 부서 코드
+                objectMap.put("totalPc", totalPc);                           // 전체 PC
+                objectMap.put("runPc", runPc);                               // 실행 PC
+                objectMap.put("avgScore", avgScore);                         // 평균 점수
+                objectMap.put("safePc", safePc);                             // 안전 PC
+                objectMap.put("safePcAll", safePcDivideAllPc);               // 안전 PC / 전체 PC
+                objectMap.put("safePcRun", safePcDivideRunPc);               // 안전 PC / 실행 PC
+
+                // 메모이제이션 등록
+                memoization.put(departmentCode, countPcVO);
+                departmentResultMap.add(objectMap);
+            }
+
+        }
         return departmentResultMap;
+    }
+
+
+    public int[] allPcCalculator(int[] safePc, int[] safePcDivideAllPc, int totalPc) {
+        for (int i = 0; i < safePc.length; i++) {
+            safePcDivideAllPc[i] = (int) Math.round(
+                    ((int) safePc[i] / (double) totalPc) * 100);
+        }
+        return safePcDivideAllPc;
+    }
+
+
+    public int[] runPcCalculator(int[] safePc, int[] safePcDivideRunPc, int runPc) {
+        for (int i = 0; i < safePc.length; i++) {
+            safePcDivideRunPc[i] = runPc == 0 ? 0 : (int) Math.round(
+                    ((int) safePc[i] / (double) runPc) * 100);
+        }
+        return safePcDivideRunPc;
+    }
+
+    public void objectListSort(List<DepartmentVO> list) {
+        Collections.sort(list, new Comparator<DepartmentVO>() {
+            @Override
+            public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
+                Integer score1 = (int) o1.get("departmentCode");
+                Integer score2 = (int) o2.get("departmentCode");
+                return score2.compareTo(score1);
+            }
+        });
+
     }
 
 

@@ -9,15 +9,22 @@ import java.util.List;
 @Repository
 public interface DepartmentMapper {
 
-    public List<DepartmentVO> selectDepartmentAll();
+    public List<DepartmentVO> selectAll();
 
-    public void registerDepartmentByExcel(DepartmentVO departmentVO);
-    public void deleteDepartmentAll();
+    public DepartmentVO selectByDepartment(String department);
 
-    public void insertDepartment(DepartmentVO departmentVO);
+    public DepartmentVO selectBycode(int departmentCode);
 
-    public void updateDepartment(UpdateDepartmentVO updateDepartmentVO);
+    public List<DepartmentVO> selectChildCodeByParentCode(int parentCode);
 
-    public void deleteDepartment(String name);
+    public void registerByExcel(DepartmentVO departmentVO);
+
+    public void deleteAll();
+
+    public void insert(DepartmentVO departmentVO);
+
+    public void update(UpdateDepartmentVO updateDepartmentVO);
+
+    public void deleteByDepartment(String department);
 
 }

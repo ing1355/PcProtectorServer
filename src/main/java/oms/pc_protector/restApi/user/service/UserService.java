@@ -1,6 +1,8 @@
 package oms.pc_protector.restApi.user.service;
 
 import oms.pc_protector.restApi.client.service.ClientService;
+import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.model.ClientVO;
@@ -9,13 +11,11 @@ import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -24,13 +24,16 @@ public class UserService {
     private final UserMapper userMapper;
     private final ClientMapper clientMapper;
     private final ClientService clientService;
+    private final DepartmentService departmentService;
 
     public UserService(UserMapper userMapper,
                        ClientMapper clientMapper,
-                       ClientService clientService) {
+                       ClientService clientService,
+                       DepartmentService departmentService) {
         this.userMapper = userMapper;
         this.clientMapper = clientMapper;
         this.clientService = clientService;
+        this.departmentService = departmentService;
     }
 
 
@@ -40,16 +43,20 @@ public class UserService {
                 .orElseGet(ArrayList::new);
     }
 
+
     @Transactional
     public boolean findSameId(String id) {
         int result = userMapper.selectSameId(id);
         return result > 0;
     }
 
+
     @Transactional(readOnly = true)
     public List<UserVO> search(String userId, String name, String department, String phone) {
-        return userMapper.search(userId, name, department, phone);
+        return Optional.ofNullable(userMapper.search(userId, name, department, phone))
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 입력값입니다."));
     }
+
 
     @Transactional(readOnly = true)
     public UserResponseVO findUserWithClientById(String id) {
@@ -61,7 +68,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseVO findUserWithClientByIpAddress(String ipAddress) {
         return Optional.ofNullable(userMapper.selectUserWithClientByIpAddress(ipAddress))
-                .orElseGet(UserResponseVO::new);
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이피입니다."));
     }
 
 
@@ -73,9 +80,30 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> findByDepartment(String departmentName) {
-        return Optional.ofNullable(userMapper.selectByDepartment(departmentName))
+    public List<UserVO> findByDepartment(String department) {
+        return Optional.ofNullable(userMapper.selectByDepartment(department))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 부서입니다."));
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<UserVO> findByDepartmentCode(int departmentCode) {
+        return Optional.ofNullable(userMapper.selectByDepartmentCode(departmentCode))
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 부서코드입니다."));
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<UserVO> findByDepartmentHierarchy(String department) {
+        List<UserVO> userList = new ArrayList<>();
+        int parentCode = departmentService.findByDepartment(department).getCode();
+        userList = findByDepartmentCode(parentCode);
+        List<DepartmentVO> departmentList = departmentService.findChildByParentCode(parentCode);
+        for (DepartmentVO departmentVO : departmentList) {
+            List<UserVO> userTemp = findByDepartmentCode(departmentVO.getCode());
+            userList.addAll(userTemp);
+        }
+        return userList;
     }
 
 
@@ -128,15 +156,18 @@ public class UserService {
         return userMapper.updateUserInfo_Front(requestUserVO);
     }
 
+
     @Transactional
     public boolean departmentDeletedChild(String departmentName) {
         return userMapper.departmentDeletedChild(departmentName);
     }
 
+
     @Transactional
     public boolean departmentDeletedFirst(String departmentName) {
         return userMapper.departmentDeletedFirst(departmentName);
     }
+
 
     @Transactional
     public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {
@@ -170,8 +201,7 @@ public class UserService {
             }
             log.info("새로운 클라이언트 등록 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
             clientService.register(clientVO);
-        }
-        else {
+        } else {
             log.info("등록되지 않은 사용자입니다.");
             return false;
         }

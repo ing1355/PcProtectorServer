@@ -78,7 +78,7 @@ public class DashboardService {
     public List<HashMap<String, Object>> findScoreListByDepartment() {
         List<DepartmentVO> departmentList = departmentService.findAll();
         List<HashMap<String, Object>> departmentScore = new ArrayList<>();
-        HashMap<String, Object> scoreMap = new HashMap<>();
+
         for (DepartmentVO department : departmentList) {
             List<Integer> scoreList =
                     resultService.findScoreByDepartmentWithMonth(department.getName(), currentTime);
@@ -89,10 +89,10 @@ public class DashboardService {
             for (int score : scoreList) scoreSum += score;
             int avgScore = scoreSum / totalPc;
 
+            HashMap<String, Object> scoreMap = new HashMap<>();
             scoreMap.put("department", department.getName());
             scoreMap.put("score", avgScore);
             departmentScore.add(scoreMap);
-            scoreMap.clear();
         }
         return departmentScore;
     }
@@ -101,7 +101,7 @@ public class DashboardService {
     public List<HashMap<String, Object>> ResultTop5() {
         List<HashMap<String, Object>> departmentScore = findScoreListByDepartment();
 
-        Collections.sort(findScoreListByDepartment(), new Comparator<HashMap<String, Object>>() {
+        Collections.sort(departmentScore, new Comparator<HashMap<String, Object>>() {
             @Override
             public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
                 Integer score1 = (int) o1.get("score");

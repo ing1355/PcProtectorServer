@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.statistics.mapper;
 
+import oms.pc_protector.restApi.statistics.model.ResponseVO;
 import oms.pc_protector.restApi.statistics.model.StatisticsVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,5 @@ import java.util.List;
 @Repository
 public interface StatisticsMapper {
 
-    public List<LinkedHashMap> selectStatisticsByDepartment(@Param("department") String department,
-                                                            @Param("yearMonth") String yearMonth);
+    public List<LinkedHashMap> selectStatisticsByDepartment(ResponseVO responseVO);
 }

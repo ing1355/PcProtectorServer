@@ -7,7 +7,9 @@ import oms.pc_protector.restApi.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -20,43 +22,60 @@ public class DepartmentService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
-    public List<DepartmentVO> findAll() {
-        return departmentMapper.selectDepartmentAll();
-    }
 
     @Transactional
-    public void registerDepartmentByExcel(List<DepartmentVO> departmentVO) {
-        departmentMapper.deleteDepartmentAll();
+    public List<DepartmentVO> findAll() {
+        return Optional.ofNullable(departmentMapper.selectAll())
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+
+    @Transactional
+    public DepartmentVO findByDepartment(String department) {
+        return Optional.ofNullable(departmentMapper.selectByDepartment(department))
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+
+    @Transactional
+    public DepartmentVO findByDepartmentCode(int departmentCode) {
+       return Optional.ofNullable(departmentMapper.selectBycode(departmentCode))
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+
+    @Transactional
+    public List<DepartmentVO> findChildByParentCode(int parentCode) {
+        return Optional.ofNullable(departmentMapper.selectChildCodeByParentCode(parentCode))
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+
+    @Transactional
+    public void registerByExcel(List<DepartmentVO> departmentVO) {
+        departmentMapper.deleteAll();
         for (DepartmentVO dept : departmentVO) {
-            departmentMapper.registerDepartmentByExcel(dept);
+            departmentMapper.registerByExcel(dept);
         }
     }
 
-    @Transactional
-    public void insertDepartment(DepartmentVO departmentVO) {
-        departmentMapper.insertDepartment(departmentVO);
-    }
 
     @Transactional
-    public void updateDepartment(UpdateDepartmentVO updateDepartmentVO) {
-        departmentMapper.updateDepartment(updateDepartmentVO);
+    public void register(DepartmentVO departmentVO) {
+        departmentMapper.insert(departmentVO);
+    }
+
+
+    @Transactional
+    public void update(UpdateDepartmentVO updateDepartmentVO) {
+        departmentMapper.update(updateDepartmentVO);
         userMapper.departmentModified(updateDepartmentVO);
     }
 
-    @Transactional
-    public void register() {
-
-    }
-
-    @Transactional
-    public void update() {
-
-    }
 
     @Transactional
     public void delete(String name) {
-        departmentMapper.deleteDepartment(name);
+        departmentMapper.deleteByDepartment(name);
     }
 
 

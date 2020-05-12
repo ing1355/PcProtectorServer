@@ -35,19 +35,19 @@ public class DepartmentController {
 
     @PostMapping(value = "/excel")
     public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList) {
-        departmentService.registerDepartmentByExcel(departmentVOList);
+        departmentService.registerByExcel(departmentVOList);
         return responseService.getSingleResult(true);
     }
 
     @PostMapping(value = "")
     public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
-        departmentService.insertDepartment(departmentVO);
+        departmentService.register(departmentVO);
         return responseService.getSingleResult(true);
     }
 
     @PutMapping(value = "")
     public SingleResult<?> updateDepartment(@RequestBody @Valid UpdateDepartmentVO updateDepartmentVO) {
-        departmentService.updateDepartment(updateDepartmentVO);
+        departmentService.update(updateDepartmentVO);
         return responseService.getSingleResult(true);
     }
 

@@ -32,6 +32,11 @@
         SELECT * FROM user WHERE department = #{value}
     </select>
 
+    <select id="selectByDepartmentCode" resultType="oms.pc_protector.restApi.user.model.UserVO"
+            parameterType="int">
+        SELECT * FROM user WHERE department_idx = #{value}
+    </select>
+
     <select id="search" parameterType="String"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
         SELECT * FROM user

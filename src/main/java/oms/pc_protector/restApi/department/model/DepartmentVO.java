@@ -8,6 +8,6 @@ import lombok.Setter;
 public class DepartmentVO {
 
     private String name;
-    private String code;
-    private String parentCode;
+    private int code;
+    private int parentCode;
 }

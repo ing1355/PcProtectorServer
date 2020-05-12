@@ -26,8 +26,9 @@ public interface UserMapper {
                                @Param(value = "department") String department,
                                @Param(value = "phone") String phone);
 
-
     public List<UserVO> selectByDepartment(String departmentName);
+
+    public List<UserVO> selectByDepartmentCode(int departmentCode);
 
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 
@@ -46,6 +47,7 @@ public interface UserMapper {
     public void departmentModified(UpdateDepartmentVO updateDepartmentVO);
 
     public boolean departmentDeletedChild(String departmentName);
+
     public boolean departmentDeletedFirst(String departmentName);
 
     public boolean deleteUserInfo(String id);

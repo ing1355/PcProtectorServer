@@ -2,33 +2,62 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oms.pc_protector.restApi.department.mapper.DepartmentMapper">
 
-    <select id="selectDepartmentAll"
+    <select id="selectAll"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" >
         SELECT * FROM department
     </select>
 
-    <insert id="registerDepartmentByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+    <select id="selectByDepartment"
+            resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="String">
+        SELECT * FROM department WHERE name = #{value}
+    </select>
+
+    <select id="selectBycode"
+            resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="int">
+        SELECT * FROM department WHERE code = #{value}
+    </select>
+    
+    <select id="selectChildCodeByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
+    parameterType="int">
+        SELECT code, name, parent_code
+        FROM
+            (
+                SELECT *
+                FROM department
+                ORDER BY parent_code, code) products_sorted,
+            (
+                SELECT @pv := #{departmentCode}) initialisation
+        WHERE FIND_IN_SET(parent_code, @pv) > 0 AND @pv := CONCAT(@pv, ',', code)
+
+    </select>
+
+    <select id="selectByParentCode"
+            resultType="Integer" parameterType="int">
+        SELECT code FROM department WHERE parent_code = #{value}
+    </select>
+
+    <insert id="registerByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
         INSERT INTO department (name, code, parent_code)
         VALUES (#{name}, #{code}, #{parentCode})
     </insert>
 
-    <insert id="insertDepartment" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+    <insert id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
         INSERT INTO department (name, code, parent_code)
         VALUES (#{name}, #{code}, #{parentCode})
     </insert>
 
-    <update id="updateDepartment" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
+    <update id="update" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE department
         SET name = #{new_name},
             update_time = now()
         WHERE name = #{old_name}
     </update>
 
-    <delete id="deleteDepartmentAll">
+    <delete id="deleteAll">
         DELETE FROM department
     </delete>
 
-    <delete id="deleteDepartment" parameterType="String">
+    <delete id="deleteByDepartment" parameterType="String">
         DELETE FROM department WHERE name = #{value}
     </delete>
 

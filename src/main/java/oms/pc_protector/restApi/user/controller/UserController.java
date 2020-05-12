@@ -10,10 +10,7 @@ import oms.pc_protector.restApi.user.model.UserRequestVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @CrossOrigin
@@ -34,7 +31,7 @@ public class UserController {
     @GetMapping(value = "")
     public SingleResult<?> findAll() {
         List<UserVO> list = Optional.ofNullable(userService.findAll())
-                .orElseGet(() -> Collections.EMPTY_LIST);
+                .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
 
@@ -44,8 +41,14 @@ public class UserController {
                                   @RequestParam(value = "department", required = false) String department,
                                   @RequestParam(value = "phone", required = false) String phone){
         List<UserVO> list = Optional.ofNullable(userService.search(userId, name, department, phone))
-                .orElseGet(() -> Collections.EMPTY_LIST);
+                .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
+    }
+
+    @GetMapping(value = "/search/department/{department}")
+    public SingleResult<?> findByDepartmentHierarchy(@PathVariable String department){
+        List<UserVO> userList = userService.findByDepartmentHierarchy(department);
+        return responseService.getSingleResult(userList);
     }
 
     @PostMapping(value = "/registerList")
@@ -58,7 +61,7 @@ public class UserController {
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
         log.info("-------------------------");
         log.info("------사용자 등록 API------");
-        //log.info("ID : " + userRequestVO.getUserId());
+        log.info("ID : " + userRequestVO.getUserId());
         log.info("NAME : " + userRequestVO.getName());
         log.info("DEPARTMENT : " + userRequestVO.getDepartment());
         log.info("PHONE : " + userRequestVO.getPhone());
