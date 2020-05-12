@@ -15,10 +15,6 @@ import java.util.List;
 @Repository
 public interface ResultMapper {
 
-
-
-    public List<?> selectCheckedResult();
-
     public List<ResponseResultVO> selectResultAll();
 
     public List<ResponseResultVO> selectBySearchInput(SearchInputVO searchInputVO);
@@ -31,8 +27,9 @@ public interface ResultMapper {
 
     public int selectCountAllByMonth(String month);
 
-    public List<Integer> selectScoreByDepartmentWithMonth(@Param("department") String department,
-                                                 @Param("month") String month);
+    public List<Integer> selectScoreByDepartmentWithMonth(
+            @Param("department") String department,
+            @Param("month") String month);
 
     public void insertResult(ResultVO resultVO);
 

@@ -2,10 +2,12 @@ package oms.pc_protector.restApi.result.controller;
 
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -47,6 +49,13 @@ public class ResultController {
                 .orElseThrow(() -> new RuntimeException("파라미터를 확인해주세요."));
         map.put("itemDetails", itemMap);
         return responseService.getSingleResult(map);
+    }
+
+
+    @GetMapping(value = "/search/department/{department}")
+    public SingleResult<?> findByDepartmentHierarchy(@PathVariable String department){
+        List<ResponseResultVO> userList = resultService.findByDepartmentHierarchy(department);
+        return responseService.getSingleResult(userList);
     }
 
 

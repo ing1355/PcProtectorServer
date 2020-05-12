@@ -41,8 +41,9 @@ public class StatisticsService {
         this.clientService = clientService;
     }
 
-    public List<Object> findAllByYearMonthOrDepartment(String yearMonth, String department) {
-        List<Object> departmentResultMap = new ArrayList<>();
+    public List<HashMap<String, Object>> findAllByYearMonthOrDepartment(String yearMonth, String department) {
+        double beforeTime = System.currentTimeMillis();
+        List<HashMap<String, Object>> departmentResultMap = new ArrayList<>();
         List<DepartmentVO> departmentList = new ArrayList<>();
 
         if (department == null) {
@@ -50,20 +51,19 @@ public class StatisticsService {
         } else {
             int parentCode = departmentService.findByDepartment(department).getCode();
             departmentList.add(departmentService.findByDepartmentCode(parentCode));
-            departmentList.addAll(departmentService.findChildByParentCode(parentCode));
+            departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
         }
 
         HashMap<Integer, Object> memoization = new HashMap<>();
 
         for (DepartmentVO departmentVO : departmentList) {
             List<Integer> childCodeList = new ArrayList<>();
-            List<DepartmentVO> childCode = departmentService.findChildByParentCode(departmentVO.getCode());
+            List<DepartmentVO> childCode = departmentService.findChildDescByParentCode(departmentVO.getCode());
             List<CountPcVO> childResultTemp = new ArrayList<>();
             int parentCode = departmentVO.getCode();
 
             // 메모이제이션에 이미 등록되어 있다면 패스.
             if (memoization.containsKey(departmentVO.getCode())) {
-                log.info("메모이제이션 : {}", departmentVO.getCode());
                 childResultTemp.add((CountPcVO) memoization.get(departmentVO.getCode()));
                 continue;
             }
@@ -72,8 +72,11 @@ public class StatisticsService {
                 childCodeList.add(departmentTemp.getCode());
             }
 
-            List<Integer> parentWithChild = new ArrayList<>(childCodeList);
+            List<Integer> parentWithChild = new ArrayList<>();
+
+            parentWithChild.addAll(childCodeList);
             parentWithChild.add(parentCode);
+
 
             for (int departmentCode : parentWithChild) {
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
@@ -101,13 +104,6 @@ public class StatisticsService {
                 }
 
                 if (runPc > 0) avgScore = avgScore / runPc;
-
-                log.debug("-----------------------------");
-                log.debug("부서 이름 : " + departmentName);
-                log.debug("평균 점수 : " + avgScore);
-                log.debug("전체 PC 수 : " + totalPc);
-                log.debug("실행 PC 수 : " + runPc);
-                log.debug("-----------------------------");
 
                 // 부모 코드라면?
                 if (departmentCode == parentCode) {
@@ -142,7 +138,7 @@ public class StatisticsService {
 
                 LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
                 objectMap.put("departmentName", departmentName);             // 부서 이름
-                objectMap.put("code", departmentCode);                       // 부서 코드
+                objectMap.put("departmentCode", departmentCode);             // 부서 코드
                 objectMap.put("totalPc", totalPc);                           // 전체 PC
                 objectMap.put("runPc", runPc);                               // 실행 PC
                 objectMap.put("avgScore", avgScore);                         // 평균 점수
@@ -156,7 +152,10 @@ public class StatisticsService {
             }
 
         }
-        return departmentResultMap;
+        double afterTime = System.currentTimeMillis();
+        double secDiffTime = (afterTime - beforeTime) / 1000;
+        log.info("걸린시간 : " + secDiffTime + "초");
+        return objectSort(departmentResultMap);
     }
 
 
@@ -177,17 +176,19 @@ public class StatisticsService {
         return safePcDivideRunPc;
     }
 
-    public void objectListSort(List<DepartmentVO> list) {
-        Collections.sort(list, new Comparator<DepartmentVO>() {
+
+    public List<HashMap<String, Object>> objectSort(List<HashMap<String, Object>> list) {
+        Collections.sort(list, new Comparator<HashMap<String, Object>>() {
             @Override
             public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
                 Integer score1 = (int) o1.get("departmentCode");
                 Integer score2 = (int) o2.get("departmentCode");
-                return score2.compareTo(score1);
+                return score1.compareTo(score2);
             }
         });
-
+        return list;
     }
+
 
 
 }

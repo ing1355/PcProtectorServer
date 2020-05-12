@@ -8,6 +8,7 @@ import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @CrossOrigin
@@ -27,7 +28,7 @@ public class StatisticsController {
     @GetMapping(value = "")
     public SingleResult<?> findAll(@RequestParam(required = false) String yearMonth,
                                    @RequestParam(required = false) String department) {
-        List<Object> result = statisticsService.findAllByYearMonthOrDepartment(yearMonth, department);
+        List<HashMap<String, Object>> result = statisticsService.findAllByYearMonthOrDepartment(yearMonth, department);
         return responseService.getSingleResult(result);
     }
 

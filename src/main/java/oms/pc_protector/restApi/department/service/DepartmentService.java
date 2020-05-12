@@ -45,8 +45,15 @@ public class DepartmentService {
 
 
     @Transactional
-    public List<DepartmentVO> findChildByParentCode(int parentCode) {
-        return Optional.ofNullable(departmentMapper.selectChildCodeByParentCode(parentCode))
+    public List<DepartmentVO> findChildAscByParentCode(int parentCode) {
+        return Optional.ofNullable(departmentMapper.selectChildCodeAscByParentCode(parentCode))
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+
+    @Transactional
+    public List<DepartmentVO> findChildDescByParentCode(int parentCode) {
+        return Optional.ofNullable(departmentMapper.selectChildCodeDescByParentCode(parentCode))
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
     }
 

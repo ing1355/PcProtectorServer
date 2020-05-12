@@ -15,7 +15,9 @@ public interface DepartmentMapper {
 
     public DepartmentVO selectBycode(int departmentCode);
 
-    public List<DepartmentVO> selectChildCodeByParentCode(int parentCode);
+    public List<DepartmentVO> selectChildCodeDescByParentCode(int parentCode);
+
+    public List<DepartmentVO> selectChildCodeAscByParentCode(int parentCode);
 
     public void registerByExcel(DepartmentVO departmentVO);
 

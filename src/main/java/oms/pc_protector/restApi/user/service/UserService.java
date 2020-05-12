@@ -98,7 +98,10 @@ public class UserService {
         List<UserVO> userList = new ArrayList<>();
         int parentCode = departmentService.findByDepartment(department).getCode();
         userList = findByDepartmentCode(parentCode);
-        List<DepartmentVO> departmentList = departmentService.findChildByParentCode(parentCode);
+
+        List<DepartmentVO> departmentList
+                = departmentService.findChildDescByParentCode(parentCode);
+
         for (DepartmentVO departmentVO : departmentList) {
             List<UserVO> userTemp = findByDepartmentCode(departmentVO.getCode());
             userList.addAll(userTemp);

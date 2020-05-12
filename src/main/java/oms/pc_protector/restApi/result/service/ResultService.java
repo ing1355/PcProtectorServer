@@ -1,11 +1,14 @@
 package oms.pc_protector.restApi.result.service;
 
 import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.result.model.*;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
+import oms.pc_protector.restApi.user.model.UserVO;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,12 @@ import java.util.*;
 public class ResultService {
 
     private final ResultMapper resultMapper;
+    private final DepartmentService departmentService;
 
 
-    public ResultService(ResultMapper resultMapper) {
+    public ResultService(ResultMapper resultMapper, DepartmentService departmentService) {
         this.resultMapper = resultMapper;
+        this.departmentService = departmentService;
     }
 
     @Transactional
@@ -31,35 +36,36 @@ public class ResultService {
     }
 
 
-    /* 모든 사용자의 점검결과를 반환한다. */
-    @Transactional
-    public List<?> findAllCheckedResult() {
-        return Optional.ofNullable(resultMapper.selectCheckedResult())
-                .orElse(new ArrayList<>());
-    }
-
-
     /* 사용자의 이름과 IP주소에 해당하는 점검결과를 반환한다. */
     @Transactional
-    public List<?> findByUserIdWithIpAddress(SearchInputVO searchInputVO) {
+    public List<ResponseResultVO> findByUserIdWithIpAddress(SearchInputVO searchInputVO) {
         return Optional.ofNullable(resultMapper.selectBySearchInput(searchInputVO))
                 .orElse(new ArrayList<>());
     }
-
-
-    /* 사용자의 아이디에 해당하는 점검결과를 반환한다. */
-    @Transactional
-    public List<ResultVO> findById(String id) {
-        return Optional.ofNullable(resultMapper.selectById(id))
-                .orElse(new ArrayList<>());
-    }
-
 
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
     @Transactional
     public ResultVO findDetailsByUserId(String ipAddress, String checkTime) {
         return Optional.ofNullable(resultMapper.selectResultDetailsById(ipAddress, checkTime))
                 .orElse(ResultVO.builder().build());
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<ResponseResultVO> findByDepartmentHierarchy(String department) {
+        int parentCode = departmentService.findByDepartment(department).getCode();
+        List<ResponseResultVO> result = new ArrayList<>();
+        List<DepartmentVO> departmentList = departmentService.findChildAscByParentCode(parentCode);
+        SearchInputVO searchInputVO = new SearchInputVO();
+        searchInputVO.setDepartment(department);
+        // 선택된 부서 결과 먼저 리스트에 넣는다.
+        result = findByUserIdWithIpAddress(searchInputVO);
+        // 하위 부서 결과를 리스트에 넣는다.
+        for (DepartmentVO departmentVO : departmentList) {
+            searchInputVO.setDepartment(departmentVO.getName());
+            result.addAll(findByUserIdWithIpAddress(searchInputVO));
+        }
+        return result;
     }
 
 
