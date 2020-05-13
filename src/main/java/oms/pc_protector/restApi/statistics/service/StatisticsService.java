@@ -107,8 +107,8 @@ public class StatisticsService {
                 for (LinkedHashMap statistics : statisticsList) {
                     Object[] array = statistics.values().toArray();
                     sumScore += (Integer) array[0];
-                    for (int i = 1; i <= safePc.length; i++)
-                        if (array[i].equals(1)) safePc[i]++;
+                    for (int i = 0; i < safePc.length; i++)
+                        if (array[i+1].equals(1)) safePc[i]++;
                 }
 
                 // 임시저장한 하위부서 중 직속 하위부서가 있는지 확인한다.
