@@ -25,20 +25,14 @@ public class ClientFileService {
     }
 
     @Transactional
-    public List<ClientFileVO> findClientFileAll() {
+    public ClientFileVO findClientFile() {
         return Optional.ofNullable(clientFileMapper.selectClientFileAll())
                 .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
     }
 
     @Transactional
-    public ClientFileVO findRecentClientFile() {
-        return Optional.ofNullable(clientFileMapper.selectRecentClientFile())
-                .orElseGet(ClientFileVO::new);
-    }
-
-    @Transactional
     public String findRecentMd5() {
-        return Optional.ofNullable(findRecentClientFile())
+        return Optional.ofNullable(findClientFile())
                 .map(ClientFileVO::getMd5).orElse("");
     }
 

@@ -69,13 +69,15 @@ public class ClientFileController {
             log.info("FILE 등록");
             clientFileService.registerClientFile(clientFileVO);
         }
+
+        clientFileVO = clientFileService.findClientFile();
         return responseService.getSingleResult(clientFileVO);
     }
 
 
     @GetMapping(value = "")
     public SingleResult<?> findClientFileAll() {
-        List<ClientFileVO> clientFile = clientFileService.findClientFileAll();
+        ClientFileVO clientFile = clientFileService.findClientFile();
         return responseService.getSingleResult(clientFile);
     }
 

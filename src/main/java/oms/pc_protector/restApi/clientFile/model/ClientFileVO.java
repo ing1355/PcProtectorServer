@@ -14,5 +14,6 @@ public class ClientFileVO {
     private String fileName;
     private Long fileSize;
     private String md5;
+    private String updateTime;
 
 }

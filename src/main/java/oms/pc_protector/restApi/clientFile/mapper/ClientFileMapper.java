@@ -8,9 +8,7 @@ import java.util.List;
 @Repository
 public interface ClientFileMapper {
 
-    public List<ClientFileVO> selectClientFileAll();
-
-    public ClientFileVO selectRecentClientFile();
+    public ClientFileVO selectClientFileAll();
 
     public int selectExistFile();
 
