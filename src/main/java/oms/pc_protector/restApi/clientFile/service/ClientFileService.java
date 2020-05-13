@@ -26,7 +26,7 @@ public class ClientFileService {
 
     @Transactional
     public ClientFileVO findClientFile() {
-        return Optional.ofNullable(clientFileMapper.selectClientFileAll())
+        return Optional.ofNullable(clientFileMapper.selectClientFile())
                 .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
     }
 
