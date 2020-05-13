@@ -30,21 +30,25 @@ public class ClientFileService {
                 .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
     }
 
+
     @Transactional
     public String findRecentMd5() {
         return Optional.ofNullable(findClientFile())
                 .map(ClientFileVO::getMd5).orElse("");
     }
 
+
     @Transactional
     public void registerClientFile(ClientFileVO clientFileVO) {
         clientFileMapper.insertClientFile(clientFileVO);
     }
 
+
     @Transactional
     public void removeClientFile(ClientFileVO clientFileVO) {
         clientFileMapper.deleteClientFile(clientFileVO);
     }
+
 
     @Transactional
     public boolean findExistFile() {
@@ -52,14 +56,16 @@ public class ClientFileService {
         return result > 0;
     }
 
+
     @Transactional
     public void update(ClientFileVO clientFileVO) {
         clientFileMapper.update(clientFileVO);
     }
 
+
+    @Transactional
     public String makeMd5(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
-       // FileInputStream fileInputStream = new FileInputStream(file);
         BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
         DigestInputStream digestInputStream = new DigestInputStream(bufferedInputStream, md5);
 

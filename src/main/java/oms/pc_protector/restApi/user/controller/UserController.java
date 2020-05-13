@@ -74,6 +74,7 @@ public class UserController {
         return responseService.getSingleResult(map);
     }
 
+
     @PutMapping(value = "/{id}")
     public SingleResult<?> update(@PathVariable(value = "id") String id,
                                   @RequestBody UserVO userVO) {

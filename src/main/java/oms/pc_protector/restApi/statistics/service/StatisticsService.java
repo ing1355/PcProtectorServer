@@ -45,7 +45,6 @@ public class StatisticsService {
         List<HashMap<String, Object>> departmentResultMap = new ArrayList<>();
         List<DepartmentVO> departmentList = new ArrayList<>();
 
-
         if (department == null) {
             departmentList = departmentService.findAll();
         }
@@ -108,7 +107,7 @@ public class StatisticsService {
                 for (LinkedHashMap statistics : statisticsList) {
                     Object[] array = statistics.values().toArray();
                     sumScore += (Integer) array[0];
-                    for (int i = 1; i < safePc.length; i++)
+                    for (int i = 1; i <= safePc.length; i++)
                         if (array[i].equals(1)) safePc[i]++;
                 }
 
