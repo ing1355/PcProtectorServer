@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.user.controller;
 
+import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserSearchInputVO;
 import oms.pc_protector.restApi.user.model.UserVO;
@@ -23,9 +24,13 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(ResponseService responseService, UserService userService) {
+    private final DepartmentService departmentService;
+
+    public UserController(ResponseService responseService, UserService userService,
+                          DepartmentService departmentService) {
         this.responseService = responseService;
         this.userService = userService;
+        this.departmentService = departmentService;
     }
 
 
@@ -79,9 +84,9 @@ public class UserController {
     public SingleResult<?> update(@PathVariable(value = "id") String id,
                                   @RequestBody UserVO userVO) {
         RequestUserVO requestUserVO = new RequestUserVO();
-        requestUserVO.setOld_id(id);
-        requestUserVO.setUserId(userVO.getUserId());
+        requestUserVO.setUserId(id);
         requestUserVO.setName(userVO.getName());
+        requestUserVO.setDepartment(userVO.getDepartment());
         requestUserVO.setDepartmentCode(userVO.getDepartmentCode());
         requestUserVO.setPhone(userVO.getPhone());
         requestUserVO.setEmail(userVO.getEmail());

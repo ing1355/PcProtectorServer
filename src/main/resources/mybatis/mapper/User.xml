@@ -170,10 +170,7 @@
             user.email       = #{email},
             user.phone       = #{phone},
             user.update_time = now()
-        WHERE user.user_id = #{old_id};
-        UPDATE client
-        SET user_id = #{userId}
-        WHERE user_id = #{old_id};
+        WHERE user.user_id = #{userId};
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
