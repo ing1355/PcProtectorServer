@@ -42,7 +42,8 @@ public class ResultService {
         List<ResponseResultVO> resultList = new ArrayList<>();
         if(searchInputVO.getDepartmentCode() != null) {
             int code = searchInputVO.getDepartmentCode();
-            List<DepartmentVO> childCodeList = new ArrayList<>(code);
+            List<DepartmentVO> childCodeList = new ArrayList<>();
+            childCodeList.add(departmentService.findByDepartmentCode(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));
             for (DepartmentVO childCode : childCodeList) {
                 searchInputVO.setDepartmentCode(childCode.getCode());
