@@ -51,7 +51,10 @@
 
     <insert id="registerByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
         INSERT INTO department (name, code, parent_code)
-        VALUES (#{name}, #{code}, #{parentCode})
+        VALUES (#{name}, #{code}, #{parentCode});
+        UPDATE user
+        SET department_idx = #{code}
+        WHERE department = #{name}
     </insert>
 
     <insert id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
