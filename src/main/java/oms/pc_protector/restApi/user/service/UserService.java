@@ -7,11 +7,7 @@ import oms.pc_protector.restApi.user.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
-import oms.pc_protector.restApi.user.model.RequestUserVO;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
-import oms.pc_protector.restApi.user.model.UserResponseVO;
-import oms.pc_protector.restApi.user.model.UserVO;
-import org.apache.catalina.User;
+import oms.pc_protector.restApi.user.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,9 +48,20 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> search(String userId, String name, String department, String phone) {
-        return Optional.ofNullable(userMapper.search(userId, name, department, phone))
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 입력값입니다."));
+    public List<UserVO> findBySearchInput(UserSearchInputVO userSearchVO) {
+        List<UserVO> userList = new ArrayList<>();
+        if(userSearchVO.getDepartmentCode() != null) {
+            int code = userSearchVO.getDepartmentCode();
+            List<DepartmentVO> childCodeList = new ArrayList<>(code);
+            childCodeList.addAll(departmentService.findChildAscByParentCode(code));
+            for (DepartmentVO childCode : childCodeList) {
+                userSearchVO.setDepartmentCode(childCode.getCode());
+                userList.addAll(userMapper.search(userSearchVO));
+            }
+            return userList;
+        }
+        userList.addAll(userMapper.search(userSearchVO));
+        return userList;
     }
 
 
@@ -94,23 +101,6 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> findByDepartmentHierarchy(String department) {
-        List<UserVO> userList = new ArrayList<>();
-        int parentCode = departmentService.findByDepartment(department).getCode();
-        userList = findByDepartmentCode(parentCode);
-
-        List<DepartmentVO> departmentList
-                = departmentService.findChildDescByParentCode(parentCode);
-
-        for (DepartmentVO departmentVO : departmentList) {
-            List<UserVO> userTemp = findByDepartmentCode(departmentVO.getCode());
-            userList.addAll(userTemp);
-        }
-        return userList;
-    }
-
-
-    @Transactional(readOnly = true)
     public boolean duplicateCheckIpAddress(String ipAddress) {
         int result = clientService.findSameIpAddress(ipAddress);
         return result > 0;
@@ -142,11 +132,12 @@ public class UserService {
         log.info("------사용자 등록 EXCEL----");
         for (UserVO user : userVOList) {
             log.info("-------------------------");
-            log.info("ID : " + user.getUserId());
-            log.info("NAME : " + user.getName());
-            log.info("DEPARTMENT : " + user.getDepartment());
-            log.info("PHONE : " + user.getPhone());
-            log.info("EMAIL : " + user.getEmail());
+            log.info("ID : {}", user.getUserId());
+            log.info("NAME {}: ", user.getName());
+            log.info("DEPARTMENT_IDX : {}", user.getDepartmentIdx());
+            log.info("DEPARTMENT : {}", user.getDepartment());
+            log.info("PHONE : {}", user.getPhone());
+            log.info("EMAIL : {}", user.getEmail());
             log.info("-------------------------");
             userMapper.RegisterUserInfo(user);
         }

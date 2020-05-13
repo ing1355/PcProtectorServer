@@ -80,6 +80,7 @@
             A.wrong_md5,
             A.pc_protector_version,
             A.department,
+            A.department_idx,
             A.name,
             B.check_time,
             A.ip_address,
@@ -101,7 +102,7 @@
             B.item15_result,
             B.item16_result
         FROM (
-                SELECT DISTINCT t1.department, t1.user_id, t1.name, t2.ip_address, t2.os, t2.wrong_md5, t2.pc_protector_version
+                SELECT DISTINCT t1.department, t1.department_idx, t1.user_id, t1.name, t2.ip_address, t2.os, t2.wrong_md5, t2.pc_protector_version
                 FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
         ) AS A
         LEFT OUTER JOIN (
@@ -120,8 +121,8 @@
         <if test="ipAddress != null">
             AND A.ip_address LIKE concat('%', #{ipAddress}, '%')
         </if>
-        <if test="department != null">
-            AND A.department LIKE concat('%', #{department}, '%')
+        <if test="departmentCode != null">
+            AND A.department_idx LIKE concat('%', #{departmentCode}, '%')
         </if>
         <if test="startDate != null and endDate != null">
             And B.check_time BETWEEN #{startDate} AND #{endDate}

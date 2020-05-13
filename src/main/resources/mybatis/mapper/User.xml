@@ -34,10 +34,10 @@
 
     <select id="selectByDepartmentCode" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="int">
-        SELECT * FROM user WHERE department_idx = #{value}
+        SELECT * FROM user WHERE department_idx = #{departmentCode}
     </select>
 
-    <select id="search" parameterType="String"
+    <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
         SELECT * FROM user
         WHERE 1 = 1
@@ -47,8 +47,8 @@
         <if test='name != null and name != ""'>
             AND name LIKE CONCAT('%',#{name},'%')
         </if>
-        <if test='department != null and department != ""'>
-            AND department LIKE CONCAT('%',#{department},'%')
+        <if test='departmentCode != null and departmentCode != ""'>
+            AND department_idx LIKE CONCAT('%',#{departmentCode},'%')
         </if>
         <if test='phone != null and phone != ""'>
             AND phone LIKE CONCAT('%',#{phone},'%')
@@ -139,12 +139,14 @@
                           name,
                           email,
                           phone,
-                          department)
+                          department,
+                          department_idx)
         VALUES (#{userId},
                 #{name},
                 #{email},
                 #{phone},
-                #{department})
+                #{department},
+                #{departmentIdx})
     </insert>
 
     <update id="updateUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">

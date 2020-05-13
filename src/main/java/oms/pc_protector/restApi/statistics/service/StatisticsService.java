@@ -10,6 +10,7 @@ import oms.pc_protector.restApi.statistics.model.ResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -37,14 +38,19 @@ public class StatisticsService {
         this.clientService = clientService;
     }
 
+
+    @Transactional(readOnly = true)
     public List<HashMap<String, Object>> findAllByYearMonthOrDepartment(String yearMonth, String department) {
         double beforeTime = System.currentTimeMillis();
         List<HashMap<String, Object>> departmentResultMap = new ArrayList<>();
         List<DepartmentVO> departmentList = new ArrayList<>();
 
+
         if (department == null) {
             departmentList = departmentService.findAll();
-        } else {
+        }
+
+        else {
             int parentCode = departmentService.findByDepartment(department).getCode();
             departmentList.add(departmentService.findByDepartmentCode(parentCode));
             departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
@@ -53,7 +59,7 @@ public class StatisticsService {
         HashMap<Integer, Object> memoization = new HashMap<>();
 
         for (DepartmentVO departmentVO : departmentList) {
-            log.info("부서 이름 : {}", departmentVO.getName());
+            log.info("부서 이름1 : {}", departmentVO.getName());
             List<Integer> childCodeList = new ArrayList<>();
             List<DepartmentVO> childCode = departmentService.findChildDescByParentCode(departmentVO.getCode());
             List<ResultStatisticsVO> childResultTemp = new ArrayList<>();
@@ -77,8 +83,8 @@ public class StatisticsService {
 
 
             for (int departmentCode : parentWithChild) {
-                log.info("부서이름 : {}", departmentService.findByDepartmentCode(departmentCode).getName());
-                log.info("부서코드 : {}", departmentCode);
+                log.info("부서이름2 : {}", departmentService.findByDepartmentCode(departmentCode).getName());
+                log.info("부서코드2 : {}", departmentCode);
 
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
                 int myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
@@ -106,7 +112,7 @@ public class StatisticsService {
                         if (array[i].equals(1)) safePc[i]++;
                 }
 
-                // 임시공간에 자식코드가 있는지 확인한다.
+                // 임시저장한 하위부서 중 직속 하위부서가 있는지 확인한다.
                 boolean isExistChild = false;
                 for (ResultStatisticsVO countPcVO : childResultTemp) {
                     if (countPcVO.getParentCode() == departmentCode) {
@@ -115,11 +121,9 @@ public class StatisticsService {
                     }
                 }
 
-                // 자식코드가 있다면?
+                // 하위부서가 있다면?
                 if (isExistChild) {
-
                     for (ResultStatisticsVO result : childResultTemp) {
-
                         if (departmentCode == result.getParentCode()) {
                             totalPc += result.getTotalPc();
                             runPc += result.getRunPc();
@@ -131,7 +135,6 @@ public class StatisticsService {
                             }
                         }
                     }
-
                     safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
                     safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
                 }
@@ -148,13 +151,13 @@ public class StatisticsService {
                 resultStatisticsVO.setSafePcDivideRunPc(safePcDivideRunPc);
                 resultStatisticsVO.setSafePcDivideAllPc(safePcDivideRunPc);
 
-                // 자식코드가 없다면?
+                // 하위부서가 없다면?
                 if (!isExistChild) {
                     safePcDivideAllPc = allPcCalculator(safePc, safePcDivideAllPc, totalPc);
                     safePcDivideRunPc = runPcCalculator(safePc, safePcDivideRunPc, runPc);
                 }
 
-                // 처리된 부서는 임시 공간에 저장.
+                // 처리된 부서는 임시 저장.
                 childResultTemp.add(resultStatisticsVO);
 
                 LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();

@@ -36,12 +36,24 @@ public class ResultService {
     }
 
 
-    /* 사용자의 이름과 IP주소에 해당하는 점검결과를 반환한다. */
+    /* 사용자의 검색 파라미터에 해당하는 점검결과를 반환한다. */
     @Transactional
-    public List<ResponseResultVO> findByUserIdWithIpAddress(SearchInputVO searchInputVO) {
-        return Optional.ofNullable(resultMapper.selectBySearchInput(searchInputVO))
-                .orElse(new ArrayList<>());
+    public List<ResponseResultVO> findBySearchInput(SearchInputVO searchInputVO) {
+        List<ResponseResultVO> resultList = new ArrayList<>();
+        if(searchInputVO.getDepartmentCode() != null) {
+            int code = searchInputVO.getDepartmentCode();
+            List<DepartmentVO> childCodeList = new ArrayList<>(code);
+            childCodeList.addAll(departmentService.findChildAscByParentCode(code));
+            for (DepartmentVO childCode : childCodeList) {
+                searchInputVO.setDepartmentCode(childCode.getCode());
+                resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
+            }
+            return resultList;
+        }
+        resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
+        return resultList;
     }
+
 
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
     @Transactional
@@ -51,7 +63,7 @@ public class ResultService {
     }
 
 
-    @Transactional(readOnly = true)
+    /*@Transactional(readOnly = true)
     public List<ResponseResultVO> findByDepartmentHierarchy(String department) {
         int parentCode = departmentService.findByDepartment(department).getCode();
         List<ResponseResultVO> result = new ArrayList<>();
@@ -66,7 +78,7 @@ public class ResultService {
             result.addAll(findByUserIdWithIpAddress(searchInputVO));
         }
         return result;
-    }
+    }*/
 
 
     /* 월별 점검결과 수를 반환한다. */

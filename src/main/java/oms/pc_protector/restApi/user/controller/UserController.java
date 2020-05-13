@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.user.controller;
 
 import oms.pc_protector.restApi.user.model.RequestUserVO;
+import oms.pc_protector.restApi.user.model.UserSearchInputVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import lombok.extern.log4j.Log4j2;
@@ -38,24 +39,25 @@ public class UserController {
     @GetMapping(value = "/search")
     public SingleResult<?> search(@RequestParam(value = "userId", required = false) String userId,
                                   @RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "department", required = false) String department,
+                                  @RequestParam(value = "departmentCode", required = false) Integer departmentCode,
                                   @RequestParam(value = "phone", required = false) String phone){
-        List<UserVO> list = Optional.ofNullable(userService.search(userId, name, department, phone))
-                .orElseGet(ArrayList::new);
-        return responseService.getSingleResult(list);
-    }
-
-    @GetMapping(value = "/search/department/{department}")
-    public SingleResult<?> findByDepartmentHierarchy(@PathVariable String department){
-        List<UserVO> userList = userService.findByDepartmentHierarchy(department);
+        UserSearchInputVO userSearchVO = new UserSearchInputVO();
+        userSearchVO.setUserId(userId);
+        userSearchVO.setName(name);
+        userSearchVO.setPhone(phone);
+        userSearchVO.setDepartmentCode(departmentCode);
+        List<UserVO> userList = Optional.ofNullable(userService.findBySearchInput(userSearchVO))
+                .orElseThrow(() -> new RuntimeException("값이 없습니다."));
         return responseService.getSingleResult(userList);
     }
+
 
     @PostMapping(value = "/registerList")
     public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList) {
         userService.registryFromAdminList(userVOList);
         return responseService.getSingleResult(true);
     }
+
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
@@ -86,17 +88,20 @@ public class UserController {
         return responseService.getSingleResult(update);
     }
 
+
     @PostMapping(value = "/departmentDeletedChild")
     public SingleResult<?> departmentDeletedChild(@RequestBody String departmentName) {
         boolean update = userService.departmentDeletedChild(departmentName);
         return responseService.getSingleResult(update);
     }
 
+
     @PostMapping(value = "/departmentDeletedFirst")
     public SingleResult<?> departmentDeletedFirst(@RequestBody String departmentName) {
         boolean update = userService.departmentDeletedFirst(departmentName);
         return responseService.getSingleResult(update);
     }
+
 
     @PutMapping(value = "/update/{id}")
     public SingleResult<?> modify(
