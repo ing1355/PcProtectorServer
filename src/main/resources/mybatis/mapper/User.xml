@@ -166,6 +166,7 @@
         SET user.user_id     = #{userId},
             user.name        = #{name},
             user.department  = #{department},
+            user.department_idx = #{departmentCode},
             user.email       = #{email},
             user.phone       = #{phone},
             user.update_time = now()

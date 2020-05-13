@@ -52,7 +52,8 @@ public class UserService {
         List<UserVO> userList = new ArrayList<>();
         if(userSearchVO.getDepartmentCode() != null) {
             int code = userSearchVO.getDepartmentCode();
-            List<DepartmentVO> childCodeList = new ArrayList<>(code);
+            List<DepartmentVO> childCodeList = new ArrayList<>();
+            childCodeList.add(departmentService.findByDepartmentCode(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));
             for (DepartmentVO childCode : childCodeList) {
                 userSearchVO.setDepartmentCode(childCode.getCode());
@@ -134,7 +135,7 @@ public class UserService {
             log.info("-------------------------");
             log.info("ID : {}", user.getUserId());
             log.info("NAME {}: ", user.getName());
-            log.info("DEPARTMENT_IDX : {}", user.getDepartmentIdx());
+            log.info("DEPARTMENT_IDX : {}", user.getDepartmentCode());
             log.info("DEPARTMENT : {}", user.getDepartment());
             log.info("PHONE : {}", user.getPhone());
             log.info("EMAIL : {}", user.getEmail());
@@ -167,7 +168,7 @@ public class UserService {
     public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {
         UserVO userVO = findById(id);
         userVO.setName(userRequestVO.getName());
-        userVO.setDepartmentIdx(userRequestVO.getDepartmentIdx());
+        userVO.setDepartmentCode(userRequestVO.getDepartmentIdx());
         userVO.setDepartment(userRequestVO.getDepartment());
         userVO.setEmail(userRequestVO.getEmail());
         userVO.setPhone(userRequestVO.getPhone());

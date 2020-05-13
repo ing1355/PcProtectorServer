@@ -82,7 +82,7 @@ public class UserController {
         requestUserVO.setOld_id(id);
         requestUserVO.setUserId(userVO.getUserId());
         requestUserVO.setName(userVO.getName());
-        requestUserVO.setDepartment(userVO.getDepartment());
+        requestUserVO.setDepartmentCode(userVO.getDepartmentCode());
         requestUserVO.setPhone(userVO.getPhone());
         requestUserVO.setEmail(userVO.getEmail());
         boolean update = userService.updateUserInfo(requestUserVO);
