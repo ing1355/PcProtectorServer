@@ -14,7 +14,7 @@
 
     <select id="selectBycode"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="int">
-        SELECT * FROM department WHERE code = #{value}
+        SELECT * FROM department WHERE code = #{departmentCode}
     </select>
 
     <select id="selectChildCodeAscByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
