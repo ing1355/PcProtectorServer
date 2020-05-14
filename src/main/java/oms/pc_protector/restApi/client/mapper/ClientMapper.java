@@ -12,6 +12,8 @@ public interface ClientMapper {
 
     public int selectSameIpAddress(String ipAddress);
 
+    public void loginUpdateTime(String id);
+
     public int selectCountAll();
 
     public int insertClientInfo(ClientVO clientVO);

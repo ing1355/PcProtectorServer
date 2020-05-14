@@ -36,6 +36,12 @@
                 #{checkTime})
     </insert>
 
+    <update id="loginUpdateTime" parameterType="String">
+        UPDATE client
+        SET check_time  = now()
+        WHERE user_id = #{value}
+    </update>
+
     <update id="updateClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
         UPDATE client
         SET user_id              = #{userId},

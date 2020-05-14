@@ -29,6 +29,10 @@ public class ClientService {
        return clientMapper.selectCountAll();
     }
 
+    public void loginUpdateTime(String id) {
+        clientMapper.loginUpdateTime(id);
+    }
+
 
     @Transactional
     public int findSameIpAddress(String ipAddress) {
