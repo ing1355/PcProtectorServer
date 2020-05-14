@@ -11,6 +11,10 @@ import java.util.List;
 
 @Repository
 public interface LogMapper {
+
     public List<?> getAllLog();
+
     public List<?> search(LogRequestVO logRequestVO);
+
+    public void insert(LogVO logVO);
 }

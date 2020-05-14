@@ -52,13 +52,6 @@ public class ResultController {
     }
 
 
-    /*@GetMapping(value = "/search/department/{department}")
-    public SingleResult<?> findByDepartmentHierarchy(@PathVariable String department){
-        List<ResponseResultVO> userList = resultService.findByDepartmentHierarchy(department);
-        return responseService.getSingleResult(userList);
-    }*/
-
-
     // 조건 검색하여 점검결과를 가져온다.
     @GetMapping(value = "/search")
     public SingleResult<?> findByUserIdWithIpAddress(
@@ -68,15 +61,6 @@ public class ResultController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "departmentCode", required = false) Integer departmentCode) {
-        log.info("-------------------------");
-        log.info("------사용자 검색 API------");
-        log.info("id : " + id);
-        log.info("name : " + name);
-        log.info("ipAddress : " + ipAddress);
-        log.info("startDate : " + startDate);
-        log.info("endDate : " + endDate);
-        log.info("departmentCode : " + departmentCode);
-        log.info("-------------------------");
         SearchInputVO searchInputVO = new SearchInputVO();
         searchInputVO.setUserId(id);
         searchInputVO.setName(name);

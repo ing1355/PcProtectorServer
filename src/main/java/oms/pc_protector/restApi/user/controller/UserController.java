@@ -66,14 +66,6 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
-        log.info("-------------------------");
-        log.info("------사용자 등록 API------");
-        log.info("ID : " + userRequestVO.getUserId());
-        log.info("NAME : " + userRequestVO.getName());
-        log.info("DEPARTMENT : " + userRequestVO.getDepartment());
-        log.info("PHONE : " + userRequestVO.getPhone());
-        log.info("EMAIL : " + userRequestVO.getEmail());
-        log.info("-------------------------");
         HashMap<String, Object> map = new HashMap<>();
         userService.registryFromAdmin(userRequestVO);
         return responseService.getSingleResult(map);
@@ -113,7 +105,6 @@ public class UserController {
     public SingleResult<?> modify(
             @PathVariable(value = "id") String id,
             @RequestBody UserRequestVO userRequestVO) {
-        log.info("사용자 정보 수정 : " + id);
         HashMap<String, Object> map = new HashMap<>();
         boolean modify = userService.modifyUserInfo(id, userRequestVO);
         return responseService.getSingleResult(modify);
@@ -122,8 +113,6 @@ public class UserController {
 
     @DeleteMapping(value = "/delete")
     public SingleResult<?> delete(@RequestBody @Valid List<String> id) {
-        log.info("사용자 정보 삭제 : " + id);
-//        HashMap<String, Object> map = new HashMap<>();
         for (String ID : id) {
             userService.removeUserInfo(ID);
         }

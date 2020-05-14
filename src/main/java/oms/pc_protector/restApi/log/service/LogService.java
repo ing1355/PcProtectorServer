@@ -31,4 +31,9 @@ public class LogService {
     public List<?> search(LogRequestVO logRequestVO) {
         return logMapper.search(logRequestVO);
     }
+
+    @Transactional
+    public void register(LogVO logVO) {
+        logMapper.insert(logVO);
+    }
 }

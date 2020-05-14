@@ -39,15 +39,11 @@ public class LogController {
             @RequestParam(value = "id", required = false) String id,
             @RequestParam(value = "ip", required = false) String ipAddress,
             @RequestParam(value = "startDay", required = false) String startDay,
-            @RequestParam(value = "endDay", required = false) String endDay,
-            @RequestParam(value = "device", required = false) String device,
-            @RequestParam(value = "method", required = false) String method) {
+            @RequestParam(value = "endDay", required = false) String endDay) {
         HashMap<String, Object> map = new HashMap<>();
         LogRequestVO logRequestVO = new LogRequestVO();
-        Optional.ofNullable(id).ifPresent(logRequestVO::setUserId);
+        Optional.ofNullable(id).ifPresent(logRequestVO::setManagerId);
         Optional.ofNullable(ipAddress).ifPresent(logRequestVO::setIpAddress);
-        Optional.ofNullable(device).ifPresent(logRequestVO::setDevice);
-        Optional.ofNullable(method).ifPresent(logRequestVO::setMethod);
         Optional.ofNullable(startDay).ifPresent(logRequestVO::setStartDay);
         Optional.ofNullable(endDay).ifPresent(logRequestVO::setEndDay);
         List<?> list = logService.search(logRequestVO);

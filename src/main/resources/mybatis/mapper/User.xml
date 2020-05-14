@@ -48,7 +48,7 @@
             AND name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test='departmentCode != null and departmentCode != ""'>
-            AND department_idx LIKE CONCAT('%',#{departmentCode},'%')
+            AND department_idx = #{departmentCode}
         </if>
         <if test='phone != null and phone != ""'>
             AND phone LIKE CONCAT('%',#{phone},'%')

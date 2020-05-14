@@ -10,10 +10,8 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class LogRequestVO {
 
-    private String userId;
+    private String managerId;
     private String ipAddress;
-    private String device;
-    private String method;
 
     @JsonIgnore
     private String startDay;

@@ -13,23 +13,27 @@
             resultType="oms.pc_protector.restApi.log.model.LogVO">
         SELECT * FROM audit_log
         WHERE 1 = 1
-            <if test='userId != null and userId != ""'>
-                AND userId LIKE CONCAT('%',${userId},'%')
-            </if>
-            <if test='device != null and device != ""'>
-                AND device LIKE CONCAT('%',${device},'%')
-            </if>
-            <if test='method != null and method != ""'>
-                AND method LIKE CONCAT('%',${method},'%')
+            <if test='managerId != null and managerId != ""'>
+                AND manager_id LIKE CONCAT('%',${managerId},'%')
             </if>
             <if test='ipAddress != null and ipAddress != ""'>
                 AND ip_address LIKE CONCAT('%',${ipAddress},'%')
             </if>
             <if test="startDay != null and endDay != null">
-                AND check_time BETWEEN ${startDay} AND ${endDay}
+                AND create_time BETWEEN ${startDay} AND ${endDay}
             </if>
         ORDER BY idx DESC
     </select>
+
+    <insert id="insert" parameterType="oms.pc_protector.restApi.log.model.LogVO">
+        INSERT INTO audit_log (manager_id, uri, method, ip_address)
+        VALUES (
+                '추가예정',
+                #{uri},
+                #{method},
+                #{ipAddress}
+               )
+    </insert>
 
 </mapper>
 

@@ -56,7 +56,6 @@ public class ClientFileController {
                 .md5(fileMd5)
                 .build();
 
-        log.info("--------------File Upload---------------");
         log.info("FILE 이름 : " + fileName);
         log.info("FILE 크기 : " + fileSize);
         log.info("MD5 : " + fileMd5);
