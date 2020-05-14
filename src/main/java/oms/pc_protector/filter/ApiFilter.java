@@ -47,15 +47,15 @@ public class ApiFilter implements Filter {
 
         boolean hasClientURI = excludeURI(request);
 
-        if(hasClientURI) {
+        if (hasClientURI) {
             log.info("=============CLIENT API=============");
-        }
-        else {
+        } else {
             log.info("============FRONTEND API============");
             logService.register(logVO);
         }
         log.info("Request Uri: {}", request.getRequestURI());
-        Set<String> ketSet =  parameterMap.keySet();
+
+        Set<String> ketSet = parameterMap.keySet();
 
         for (String parameterKey : ketSet) {
             String[] parameterValueArray = parameterMap.get(parameterKey);

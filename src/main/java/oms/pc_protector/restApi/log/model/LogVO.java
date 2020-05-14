@@ -13,5 +13,5 @@ public class LogVO {
     private String uri;
     private String method;
     private String ipAddress;
-
+    private String createTime;
 }
