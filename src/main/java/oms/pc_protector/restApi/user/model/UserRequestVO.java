@@ -20,7 +20,7 @@ public class UserRequestVO {
     private String email;
     private String phone;
     private String department;
-    private int departmentIdx;
+    private int departmentCode;
 
     @JsonIgnore
     private String startDate;

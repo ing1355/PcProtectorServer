@@ -135,7 +135,7 @@ public class UserService {
             log.info("-------------------------");
             log.info("ID : {}", user.getUserId());
             log.info("NAME {}: ", user.getName());
-            log.info("DEPARTMENT_IDX : {}", user.getDepartmentCode());
+            log.info("DEPARTMENTCODE : {}", user.getDepartmentCode());
             log.info("DEPARTMENT : {}", user.getDepartment());
             log.info("PHONE : {}", user.getPhone());
             log.info("EMAIL : {}", user.getEmail());
@@ -151,24 +151,11 @@ public class UserService {
         return userMapper.updateUserInfo_Front(requestUserVO);
     }
 
-
-    @Transactional
-    public boolean departmentDeletedChild(String departmentName) {
-        return userMapper.departmentDeletedChild(departmentName);
-    }
-
-
-    @Transactional
-    public boolean departmentDeletedFirst(String departmentName) {
-        return userMapper.departmentDeletedFirst(departmentName);
-    }
-
-
     @Transactional
     public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {
         UserVO userVO = findById(id);
         userVO.setName(userRequestVO.getName());
-        userVO.setDepartmentCode(userRequestVO.getDepartmentIdx());
+        userVO.setDepartmentCode(userRequestVO.getDepartmentCode());
         userVO.setDepartment(userRequestVO.getDepartment());
         userVO.setEmail(userRequestVO.getEmail());
         userVO.setPhone(userRequestVO.getPhone());

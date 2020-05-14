@@ -86,21 +86,6 @@ public class UserController {
         return responseService.getSingleResult(update);
     }
 
-
-    @PostMapping(value = "/departmentDeletedChild")
-    public SingleResult<?> departmentDeletedChild(@RequestBody String departmentName) {
-        boolean update = userService.departmentDeletedChild(departmentName);
-        return responseService.getSingleResult(update);
-    }
-
-
-    @PostMapping(value = "/departmentDeletedFirst")
-    public SingleResult<?> departmentDeletedFirst(@RequestBody String departmentName) {
-        boolean update = userService.departmentDeletedFirst(departmentName);
-        return responseService.getSingleResult(update);
-    }
-
-
     @PutMapping(value = "/update/{id}")
     public SingleResult<?> modify(
             @PathVariable(value = "id") String id,

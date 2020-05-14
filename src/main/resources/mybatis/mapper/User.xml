@@ -98,18 +98,6 @@
         WHERE department LIKE CONCAT('%', #{old_name}, '%')
     </update>
 
-    <update id="departmentDeletedChild" parameterType="String">
-        UPDATE user
-        SET department = '-'
-        WHERE department LIKE CONCAT('%',#{value},'%')
-    </update>
-
-    <update id="departmentDeletedFirst" parameterType="String">
-        UPDATE user
-        SET department = '-'
-        WHERE department LIKE CONCAT('%',#{value},'%')
-    </update>
-
     <insert id="insertUserInfo" parameterType="String">
         INSERT INTO user (
             user_id
@@ -131,7 +119,7 @@
                 #{email},
                 #{phone},
                 #{department},
-                #{departmentIdx})
+                #{departmentCode})
     </insert>
 
     <insert id="RegisterUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
@@ -146,7 +134,7 @@
                 #{email},
                 #{phone},
                 #{department},
-                #{departmentIdx})
+                #{departmentCode})
     </insert>
 
     <update id="updateUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
@@ -154,7 +142,7 @@
         SET user.user_id        =#{userId},
             client.user_id=#{userId},
             user.name           = #{name},
-            user.department_idx = #{departmentIdx},
+            user.department_idx = #{departmentCode},
             user.department     = #{department},
             user.email          = #{email},
             user.phone          = #{phone}

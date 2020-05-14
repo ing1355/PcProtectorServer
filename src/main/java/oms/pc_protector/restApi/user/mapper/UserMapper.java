@@ -37,10 +37,6 @@ public interface UserMapper {
 
     public void departmentModified(UpdateDepartmentVO updateDepartmentVO);
 
-    public boolean departmentDeletedChild(String departmentName);
-
-    public boolean departmentDeletedFirst(String departmentName);
-
     public boolean deleteUserInfo(String id);
 
     public void deleteAllUserInfo();
