@@ -63,7 +63,6 @@ public class ClientController {
 
     @PostMapping(value = "/first-request")
     public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
-        log.info("요청 URL : /v1/client/first-request");
         boolean isLogin = userService.agentLogin(clientVO);
         if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
 
@@ -92,7 +91,6 @@ public class ClientController {
 
     @PostMapping(value = "/process")
     public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) {
-        log.info("요청 URL : /v1/client/process");
         HashMap<String, Object> map = new HashMap<>();
         Optional.ofNullable(processVO.getProcessVOList())
                 .ifPresent(processService::insertProcess);
@@ -102,7 +100,6 @@ public class ClientController {
 
     @PostMapping(value = "/install/wrong-md5")
     public SingleResult<?> modulation(@NotNull @RequestBody ClientVO clientVO) {
-        log.info("요청 URL : /v1/client/install/wrong-md5");
         HashMap<String, Object> map = new HashMap<>();
         Optional.of(clientVO).ifPresent(clientService::registerWrongMd5);
         return responseService.getSingleResult("");
@@ -111,7 +108,6 @@ public class ClientController {
 
     @PostMapping(value = "/result")
     public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO) {
-        log.info("요청 URL : /v1/client/result");
         HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
         return responseService.getSingleResult(map);

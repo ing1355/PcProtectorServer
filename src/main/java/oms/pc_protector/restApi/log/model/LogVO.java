@@ -8,11 +8,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class LogVO {
-    private Long idx;
-    private String userId;
-    private String device;
-    private String url;
+
+    private String managerId;
+    private String uri;
     private String method;
     private String ipAddress;
-    private LocalDate checkTime;
+
 }
