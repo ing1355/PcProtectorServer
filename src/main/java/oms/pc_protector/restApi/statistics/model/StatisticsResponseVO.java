@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ResponseVO {
+public class StatisticsResponseVO {
 
     private Long departmentCode;
     private String yearMonth;

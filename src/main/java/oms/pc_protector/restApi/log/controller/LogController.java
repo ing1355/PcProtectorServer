@@ -18,6 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "v1/log")
 public class LogController {
+
     private final ResponseService responseService;
 
     private final LogService logService;

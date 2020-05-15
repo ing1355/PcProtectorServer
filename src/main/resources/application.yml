@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: local # 기본 환경 선택
+
+# local 환경
+---
+spring:profiles: local
+spring.profiles.include: real-db
+
+server:
+  port: 8080
+
+
+# 운영 환경
+---
+spring.profiles: set1
+spring.profiles.include: real-db
+
+server:
+
+  port: 8081
+
+
+# MARIA DB
+---
+spring:
+  profiles: real-db
+  datasource:
+    url: jdbc:mariadb://localhost:3306/pc_protector?allowMultiQueries=true
+    username: root
+    password: qlskfkdgh~1
+    driver-class-name: org.mariadb.jdbc.Driver
+
+# MYBATIS
+---
+mybatis:
+  type-aliases-package: oms.pc_protector.restApi.result.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+
+

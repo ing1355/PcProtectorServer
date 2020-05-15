@@ -6,7 +6,7 @@ import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
 import oms.pc_protector.restApi.statistics.model.ResultStatisticsVO;
-import oms.pc_protector.restApi.statistics.model.ResponseVO;
+import oms.pc_protector.restApi.statistics.model.StatisticsResponseVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
@@ -88,7 +88,7 @@ public class StatisticsService {
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
                 Long myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
                 List<LinkedHashMap> statisticsList = statisticsMapper
-                        .selectStatisticsByDepartment(new ResponseVO(departmentCode, yearMonth));
+                        .selectStatisticsByDepartment(new StatisticsResponseVO(departmentCode, yearMonth));
 
                 int totalPc = 0;
                 int runPc = statisticsList.size();

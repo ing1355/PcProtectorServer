@@ -87,24 +87,24 @@
 
     <update id="updateConfiguration" parameterType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
         UPDATE configuration
-        SET vaccine_installation_execution = ${vaccineInstallationExecution},
-            vaccine_patch                  = ${vaccinePatch},
-            os_with_ms_office_patch        = ${osWithMsOfficePatch},
-            hwp_patch                      = ${hwpPatch},
-            password_change                = ${passwordChange},
+        SET vaccine_installation_execution = #{vaccineInstallationExecution},
+            vaccine_patch                  = #{vaccinePatch},
+            os_with_ms_office_patch        = #{osWithMsOfficePatch},
+            hwp_patch                      = #{hwpPatch},
+            password_change                = #{passwordChange},
             password_stability             = #{passwordStability},
-            screen_saver                   = ${screenSaver},
-            shared_folder                  = ${sharedFolder},
-            usb_auto_run                   = ${usbAutoRun},
-            over_date_active_x             = ${overDateActiveX},
-            acrobat_security_patch         = ${acrobatSecurityPatch},
-            edit_program                   = ${editProgram},
-            wireless_lan_card              = ${wirelessLanCard},
-            security_usb                   = ${securityUsb},
-            un_approved_process            = ${unApprovedProcess},
-            required_process               = ${requiredProcess}
-
+            screen_saver                   = #{screenSaver},
+            shared_folder                  = #{sharedFolder},
+            usb_auto_run                   = #{usbAutoRun},
+            over_date_active_x             = #{overDateActiveX},
+            acrobat_security_patch         = #{acrobatSecurityPatch},
+            edit_program                   = #{editProgram},
+            wireless_lan_card              = #{wirelessLanCard},
+            security_usb                   = #{securityUsb},
+            un_approved_process            = #{unApprovedProcess},
+            required_process               = #{requiredProcess}
     </update>
+
     <update id="updateEditProgramFlag" parameterType="oms.pc_protector.restApi.policy.model.EditProgramVO">
         UPDATE edit_program_check
         SET ms_word        = #{msWord},
