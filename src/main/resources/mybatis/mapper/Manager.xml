@@ -33,18 +33,14 @@
     <insert id="insertManager" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
         INSERT INTO manager (id,
                              name,
+                             password,
                              mobile,
                              email)
         VALUES (#{id},
                 #{name},
+                #{password},
                 #{mobile},
                 #{email});
-
-        ALTER TABLE manager
-            AUTO_INCREMENT = 1;
-        SET @COUNT = 0;
-        UPDATE manager
-        SET manager.idx = @COUNT := @COUNT + 1;
     </insert>
 
     <delete id="deleteManager" parameterType="String">

@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+@Log4j2
 @Component
 @WebFilter(urlPatterns = {"/v1/*"}, description = "API LOG FILTER")
-@Log4j2
 public class ApiFilter implements Filter {
 
     private LogService logService;
@@ -38,6 +38,7 @@ public class ApiFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         LogVO logVO = new LogVO();
@@ -49,7 +50,9 @@ public class ApiFilter implements Filter {
 
         if (hasClientURI) {
             log.info("=============CLIENT API=============");
-        } else {
+        }
+
+        else {
             log.info("============FRONTEND API============");
             logService.register(logVO);
         }

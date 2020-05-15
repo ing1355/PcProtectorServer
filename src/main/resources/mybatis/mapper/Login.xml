@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="oms.pc_protector.restApi.login.mapper.LoginMapper">
+
+    <select id="isExistId" resultType="int" parameterType="String">
+        SELECT COUNT(*) FROM manager WHERE id = #{value}
+    </select>
+
+    <select id="findPasswordById" resultType="String" parameterType="String">
+        SELECT password FROM manager WHERE id = #{value}
+    </select>
+
+
+</mapper>
+
+

@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 public class ManagerVO {
 
-
-    private Long idx;
     private String id;
+    private String password;
     private String name;
     private String mobile;
     private String email;
