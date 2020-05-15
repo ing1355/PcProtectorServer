@@ -26,8 +26,8 @@ public class DashboardService {
     private DepartmentService departmentService;
     private DashboardMapper dashboardMapper;
 
-    private SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM");
-    private String currentTime = format.format (System.currentTimeMillis());
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
+    private String currentTime = format.format(System.currentTimeMillis());
 
     public DashboardService(ClientService clientService,
                             ResultService resultService,
@@ -67,10 +67,13 @@ public class DashboardService {
     }
 
     @Transactional
-    public HashMap<String, Object> dashboardBottom() {
+    public HashMap<String, Object> dashboardBottom(String startdate, String enddate, String term) {
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         dashboardResultMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
-        dashboardResultMap.put("resultChart", resultChart());
+        if (term.equals("3개월") || term.equals("6개월"))
+            dashboardResultMap.put("resultChart", resultChart());
+        else
+            dashboardResultMap.put("resultChart", resultChartDays(startdate,enddate));
         return dashboardResultMap;
     }
 
@@ -111,8 +114,8 @@ public class DashboardService {
         });
 
         ArrayList<HashMap<String, Object>> scoreArray = new ArrayList<>();
-        for (int i = 0; i < departmentScore.size(); i++){
-            if(i > 4) break;
+        for (int i = 0; i < departmentScore.size(); i++) {
+            if (i > 4) break;
             scoreArray.add(departmentScore.get(i));
         }
         return scoreArray;
@@ -132,8 +135,8 @@ public class DashboardService {
         });
 
         ArrayList<HashMap<String, Object>> scoreArray = new ArrayList<>();
-        for (int i = 0; i < departmentScore.size(); i++){
-            if(i > 4) break;
+        for (int i = 0; i < departmentScore.size(); i++) {
+            if (i > 4) break;
             scoreArray.add(departmentScore.get(i));
         }
         return scoreArray;
@@ -161,7 +164,16 @@ public class DashboardService {
         LinkedHashMap<String, Object> scoreMap = new LinkedHashMap<>();
         List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
         return Optional
-                .ofNullable(dashboardMapper.selectAvgScoreByRecent12Months())
+                .ofNullable(dashboardMapper.selectAvgScoreByRecent6Months())
+                .orElseGet(ArrayList::new);
+    }
+
+    @Transactional
+    public List<ChartVO> resultChartDays(String startdate, String enddate) {
+        LinkedHashMap<String, Object> scoreMap = new LinkedHashMap<>();
+        List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
+        return Optional
+                .ofNullable(dashboardMapper.selectAvgScoreByRecent1Months())
                 .orElseGet(ArrayList::new);
     }
 

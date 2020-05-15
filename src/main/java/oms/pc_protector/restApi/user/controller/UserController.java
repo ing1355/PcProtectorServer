@@ -41,6 +41,11 @@ public class UserController {
         return responseService.getSingleResult(list);
     }
 
+    @GetMapping(value = "/duplicated")
+    public SingleResult<?> duplicatedId(@RequestParam(value = "userId") String Id) {
+        return responseService.getSingleResult(userService.findSameId(Id));
+    }
+
     @GetMapping(value = "/search")
     public SingleResult<?> search(@RequestParam(value = "userId", required = false) String userId,
                                   @RequestParam(value = "name", required = false) String name,

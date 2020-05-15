@@ -11,7 +11,8 @@ public interface DashboardMapper {
 
     public Integer selectAvgScoreByMonth(String month);
 
-    public List<ChartVO> selectAvgScoreByRecent12Months();
+    public List<ChartVO> selectAvgScoreByRecent1Months();
+    public List<ChartVO> selectAvgScoreByRecent6Months();
 
     public Integer selectUserCountByScore(@Param("startScore") int startScore,
                                           @Param("endScore") int endScore);

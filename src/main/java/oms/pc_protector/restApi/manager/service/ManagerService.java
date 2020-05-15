@@ -29,6 +29,11 @@ public class ManagerService {
     }
 
     @Transactional(readOnly = true)
+    public boolean duplicatedManager(String id) {
+        return managerMapper.selectSameId(id) > 0;
+    }
+
+    @Transactional(readOnly = true)
     public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO) {
         return Optional.ofNullable(managerMapper.searchManager(searchManagerVO)).orElseGet(() -> Collections.EMPTY_LIST);
     }

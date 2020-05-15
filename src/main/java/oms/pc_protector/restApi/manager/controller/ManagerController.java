@@ -37,6 +37,12 @@ public class ManagerController {
         return responseService.getSingleResult(map);
     }
 
+    @GetMapping(value = "/duplicated")
+    public SingleResult<?> duplicatedManager(@RequestParam(value = "userId") String id) {
+        boolean result = managerService.duplicatedManager(id);
+        return responseService.getSingleResult(result);
+    }
+
     @GetMapping(value = "/search")
     public SingleResult<?> searchManager(@RequestParam(value = "id", required = false) String id,
                                          @RequestParam(value = "name", required = false) String name,
