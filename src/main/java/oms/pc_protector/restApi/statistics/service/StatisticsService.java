@@ -50,19 +50,19 @@ public class StatisticsService {
         }
 
         else {
-            int parentCode = departmentService.findByDepartment(department).getCode();
+            Long parentCode = departmentService.findByDepartment(department).getCode();
             departmentList.add(departmentService.findByDepartmentCode(parentCode));
             departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
         }
 
-        HashMap<Integer, Object> memoization = new HashMap<>();
+        HashMap<Long, Object> memoization = new HashMap<>();
 
         for (DepartmentVO departmentVO : departmentList) {
             log.info("부서 이름1 : {}", departmentVO.getName());
-            List<Integer> childCodeList = new ArrayList<>();
+            List<Long> childCodeList = new ArrayList<>();
             List<DepartmentVO> childCode = departmentService.findChildDescByParentCode(departmentVO.getCode());
             List<ResultStatisticsVO> childResultTemp = new ArrayList<>();
-            int parentCode = departmentVO.getCode();
+            Long parentCode = departmentVO.getCode();
 
             // 메모이제이션에 이미 등록되어 있다면 패스.
             if (memoization.containsKey(departmentVO.getCode())) {
@@ -75,18 +75,18 @@ public class StatisticsService {
                 childCodeList.add(departmentTemp.getCode());
             }
 
-            List<Integer> parentWithChild = new ArrayList<>();
+            List<Long> parentWithChild = new ArrayList<>();
 
             parentWithChild.addAll(childCodeList);
             parentWithChild.add(parentCode);
 
 
-            for (int departmentCode : parentWithChild) {
+            for (Long departmentCode : parentWithChild) {
                 log.info("부서이름2 : {}", departmentService.findByDepartmentCode(departmentCode).getName());
                 log.info("부서코드2 : {}", departmentCode);
 
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
-                int myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
+                Long myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
                 List<LinkedHashMap> statisticsList = statisticsMapper
                         .selectStatisticsByDepartment(new ResponseVO(departmentCode, yearMonth));
 

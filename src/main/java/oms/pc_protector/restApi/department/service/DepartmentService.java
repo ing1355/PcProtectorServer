@@ -38,21 +38,21 @@ public class DepartmentService {
 
 
     @Transactional
-    public DepartmentVO findByDepartmentCode(int departmentCode) {
+    public DepartmentVO findByDepartmentCode(Long departmentCode) {
        return Optional.ofNullable(departmentMapper.selectBycode(departmentCode))
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
     }
 
 
     @Transactional
-    public List<DepartmentVO> findChildAscByParentCode(int parentCode) {
+    public List<DepartmentVO> findChildAscByParentCode(Long parentCode) {
         return Optional.ofNullable(departmentMapper.selectChildCodeAscByParentCode(parentCode))
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
     }
 
 
     @Transactional
-    public List<DepartmentVO> findChildDescByParentCode(int parentCode) {
+    public List<DepartmentVO> findChildDescByParentCode(Long parentCode) {
         return Optional.ofNullable(departmentMapper.selectChildCodeDescByParentCode(parentCode))
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
     }

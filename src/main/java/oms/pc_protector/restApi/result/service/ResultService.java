@@ -41,7 +41,7 @@ public class ResultService {
     public List<ResponseResultVO> findBySearchInput(SearchInputVO searchInputVO) {
         List<ResponseResultVO> resultList = new ArrayList<>();
         if(searchInputVO.getDepartmentCode() != null) {
-            int code = searchInputVO.getDepartmentCode();
+            Long code = searchInputVO.getDepartmentCode();
             List<DepartmentVO> childCodeList = new ArrayList<>();
             childCodeList.add(departmentService.findByDepartmentCode(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));

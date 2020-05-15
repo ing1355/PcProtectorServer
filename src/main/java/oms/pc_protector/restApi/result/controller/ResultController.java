@@ -60,7 +60,7 @@ public class ResultController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "departmentCode", required = false) Integer departmentCode) {
+            @RequestParam(value = "departmentCode", required = false) Long departmentCode) {
         SearchInputVO searchInputVO = new SearchInputVO();
         searchInputVO.setUserId(id);
         searchInputVO.setName(name);

@@ -52,7 +52,7 @@ public class UserService {
     public List<UserVO> findBySearchInput(UserSearchInputVO userSearchVO) {
         List<UserVO> userList = new ArrayList<>();
         if(userSearchVO.getDepartmentCode() != null) {
-            int code = userSearchVO.getDepartmentCode();
+            Long code = userSearchVO.getDepartmentCode();
             List<DepartmentVO> childCodeList = new ArrayList<>();
             childCodeList.add(departmentService.findByDepartmentCode(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));
@@ -96,7 +96,7 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> findByDepartmentCode(int departmentCode) {
+    public List<UserVO> findByDepartmentCode(Long departmentCode) {
         return Optional.ofNullable(userMapper.selectByDepartmentCode(departmentCode))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 부서코드입니다."));
     }

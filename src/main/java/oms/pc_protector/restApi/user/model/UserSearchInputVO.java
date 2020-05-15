@@ -10,6 +10,6 @@ public class UserSearchInputVO {
     private String userId;
     private String name;
     private String phone;
-    private Integer departmentCode;
+    private Long departmentCode;
 
 }

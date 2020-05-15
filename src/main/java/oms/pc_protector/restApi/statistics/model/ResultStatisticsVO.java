@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ResultStatisticsVO {
 
-    private int parentCode;
+    private Long parentCode;
     private int totalPc;
     private int runPc;
     private int avgScore;

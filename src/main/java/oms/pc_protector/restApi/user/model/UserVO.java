@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Setter
 public class UserVO {
 
-    private Integer departmentCode;
+    private Long departmentCode;
     private int score;
     private String userId;
     private String name;

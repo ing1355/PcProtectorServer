@@ -12,5 +12,5 @@ public class RequestUserVO {
     private String email;
     private String phone;
     private String department;
-    private Integer departmentCode;
+    private Long departmentCode;
 }

@@ -13,11 +13,11 @@ public interface DepartmentMapper {
 
     public DepartmentVO selectByDepartment(String department);
 
-    public DepartmentVO selectBycode(int departmentCode);
+    public DepartmentVO selectBycode(Long departmentCode);
 
-    public List<DepartmentVO> selectChildCodeDescByParentCode(int parentCode);
+    public List<DepartmentVO> selectChildCodeDescByParentCode(Long parentCode);
 
-    public List<DepartmentVO> selectChildCodeAscByParentCode(int parentCode);
+    public List<DepartmentVO> selectChildCodeAscByParentCode(Long parentCode);
 
     public void registerByExcel(DepartmentVO departmentVO);
 

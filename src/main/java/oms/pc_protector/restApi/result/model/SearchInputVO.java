@@ -12,6 +12,6 @@ public class SearchInputVO {
     private String ipAddress;
     private String startDate;
     private String endDate;
-    private Integer departmentCode;
+    private Long departmentCode;
 
 }

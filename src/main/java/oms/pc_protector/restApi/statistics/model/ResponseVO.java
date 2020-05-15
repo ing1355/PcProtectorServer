@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseVO {
 
-    private int departmentCode;
+    private Long departmentCode;
     private String yearMonth;
 
 

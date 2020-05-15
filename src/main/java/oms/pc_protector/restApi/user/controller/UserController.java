@@ -49,7 +49,7 @@ public class UserController {
     @GetMapping(value = "/search")
     public SingleResult<?> search(@RequestParam(value = "userId", required = false) String userId,
                                   @RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "departmentCode", required = false) Integer departmentCode,
+                                  @RequestParam(value = "departmentCode", required = false) Long departmentCode,
                                   @RequestParam(value = "phone", required = false) String phone){
         UserSearchInputVO userSearchVO = new UserSearchInputVO();
         userSearchVO.setUserId(userId);

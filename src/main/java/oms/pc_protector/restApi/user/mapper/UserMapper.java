@@ -19,7 +19,7 @@ public interface UserMapper {
 
     public List<UserVO> selectByDepartment(String departmentName);
 
-    public List<UserVO> selectByDepartmentCode(int departmentCode);
+    public List<UserVO> selectByDepartmentCode(Long departmentCode);
 
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 

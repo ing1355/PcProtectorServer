@@ -13,12 +13,12 @@
     </select>
 
     <select id="selectBycode"
-            resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="int">
+            resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="Long">
         SELECT * FROM department WHERE code = #{departmentCode}
     </select>
 
     <select id="selectChildCodeAscByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
-            parameterType="int">
+            parameterType="Long">
         SELECT code, name, parent_code
         FROM
             (
@@ -31,7 +31,7 @@
     </select>
 
     <select id="selectChildCodeDescByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
-    parameterType="int">
+    parameterType="Long">
         SELECT code, name, parent_code
         FROM
             (
@@ -45,7 +45,7 @@
     </select>
 
     <select id="selectByParentCode"
-            resultType="Integer" parameterType="int">
+            resultType="Long" parameterType="Long">
         SELECT code FROM department WHERE parent_code = #{value}
     </select>
 
