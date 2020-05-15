@@ -26,6 +26,10 @@
         ORDER BY idx DESC
     </select>
 
+    <select id="findById" resultType="oms.pc_protector.restApi.manager.model.ResponseManagerVO">
+        SELECT * FROM manager WHERE id = #{id}
+    </select>
+
     <select id="selectSameId" resultType="int" parameterType="String">
         SELECT COUNT(*) FROM manager WHERE id = #{value}
     </select>

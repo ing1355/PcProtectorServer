@@ -4,10 +4,8 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.RequestManagerVO;
+import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,13 @@ public class ManagerService {
 
 
     @Transactional(readOnly = true)
+    public ResponseManagerVO findById(String id) {
+        return Optional.ofNullable(managerMapper.findById(id))
+                .orElseThrow(() -> new RuntimeException("값이 없습니다."));
+    }
+
+
+    @Transactional(readOnly = true)
     public boolean duplicatedManager(String id) {
         return managerMapper.selectSameId(id) > 0;
     }
@@ -47,17 +52,8 @@ public class ManagerService {
 
 
     @Transactional
-    public PasswordEncoder passwordEncoder() {
-        return this.passwordEncoder;
-    }
-
-
-    @Transactional
     public void insertManager(ManagerVO managerVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
-        log.info("암호화 전 비밀번호 : {}", managerVO.getPassword());
-        log.info("암호화 후 비밀번호 : {}", encodedPassword);
-        System.out.println(passwordEncoder.matches(managerVO.getPassword(), encodedPassword));
+        String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
         managerVO.setPassword(encodedPassword);
         managerMapper.insertManager(managerVO);
     }
@@ -65,6 +61,11 @@ public class ManagerService {
 
     @Transactional
     public void updateManager(RequestManagerVO requestManagerVO) {
+        String encodedPassword = new BCryptPasswordEncoder().encode(requestManagerVO.getNew_data().getPassword());
+        log.info("암호화 전 비밀번호 : {}", requestManagerVO.getNew_data().getPassword());
+        log.info("암호화 후 비밀번호 : {}", encodedPassword);
+        System.out.println(passwordEncoder.matches(requestManagerVO.getNew_data().getPassword(), encodedPassword));
+        requestManagerVO.getNew_data().setPassword(encodedPassword);
         managerMapper.updateManagerInfo(requestManagerVO);
     }
 

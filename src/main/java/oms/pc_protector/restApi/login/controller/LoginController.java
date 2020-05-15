@@ -4,6 +4,9 @@ import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.login.model.LoginVO;
 import oms.pc_protector.restApi.login.service.LoginService;
+import oms.pc_protector.restApi.manager.model.ManagerVO;
+import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
+import oms.pc_protector.restApi.manager.service.ManagerService;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,22 +24,22 @@ public class LoginController {
 
     private LoginService loginService;
 
-    private UserService userService;
+    private ManagerService managerService;
 
     public LoginController(ResponseService responseService,
                            LoginService loginService,
-                           UserService userService){
+                           ManagerService managerService){
         this.responseService = responseService;
         this.loginService = loginService;
-        this.userService = userService;
+        this.managerService = managerService;
     }
 
     @PostMapping(value = "")
     public SingleResult<?> login(@RequestBody @Valid LoginVO login){
+        ResponseManagerVO manager = new ResponseManagerVO();
         boolean isLogin = loginService.login(login);
-        UserVO user = new UserVO();
-        if(isLogin) user = userService.findById(login.getId());
-        return responseService.getSingleResult(user);
+        if(isLogin) manager =  managerService.findById(login.getId());
+        return responseService.getSingleResult(manager);
     }
 
 

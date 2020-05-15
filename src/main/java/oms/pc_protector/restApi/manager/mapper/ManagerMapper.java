@@ -2,8 +2,8 @@ package oms.pc_protector.restApi.manager.mapper;
 
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.RequestManagerVO;
+import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,6 +12,8 @@ import java.util.List;
 public interface ManagerMapper {
 
     public List<ManagerVO> findAll();
+
+    public ResponseManagerVO findById(String id);
 
     public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO);
 
