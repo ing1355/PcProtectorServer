@@ -1,7 +1,9 @@
 package oms.pc_protector.restApi.result.model;
 
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 
+@Alias("test123")
 @Getter
 @Setter
 public class ResponseResultVO {

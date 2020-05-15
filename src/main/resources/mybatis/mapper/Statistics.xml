@@ -4,7 +4,7 @@
 
 
     <select id="selectStatisticsByDepartment" resultType="java.util.LinkedHashMap"
-            parameterType="oms.pc_protector.restApi.statistics.model.ResponseVO" >
+            parameterType="oms.pc_protector.restApi.statistics.model.StatisticsResponseVO">
         SELECT
                t1.score,
         t1.item1_result,

@@ -31,9 +31,12 @@ spring:
     password: qlskfkdgh~1
     driver-class-name: org.mariadb.jdbc.Driver
 
+# MYBATIS
 ---
 mybatis:
+  type-aliases-package: oms.pc_protector.restApi.result.model
   configuration:
     map-underscore-to-camel-case: true
+
 
 
