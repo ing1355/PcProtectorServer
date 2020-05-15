@@ -54,10 +54,7 @@ public class ManagerService {
 
     @Transactional
     public void insertManager(ManagerVO managerVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
-        log.info("암호화 전 비밀번호 : {}", managerVO.getPassword());
-        log.info("암호화 후 비밀번호 : {}", encodedPassword);
-        System.out.println(passwordEncoder.matches(managerVO.getPassword(), encodedPassword));
+        String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
         managerVO.setPassword(encodedPassword);
         managerMapper.insertManager(managerVO);
     }
@@ -65,6 +62,12 @@ public class ManagerService {
 
     @Transactional
     public void updateManager(RequestManagerVO requestManagerVO) {
+        String encodedPassword = new BCryptPasswordEncoder().encode(requestManagerVO.getNew_data().getPassword());
+        log.info("암호화 전 비밀번호 : {}", requestManagerVO.getNew_data().getPassword());
+        log.info("암호화 후 비밀번호 : {}", encodedPassword);
+
+        System.out.println(passwordEncoder.matches(requestManagerVO.getNew_data().getPassword(), encodedPassword));
+        requestManagerVO.getNew_data().setPassword(encodedPassword);
         managerMapper.updateManagerInfo(requestManagerVO);
     }
 

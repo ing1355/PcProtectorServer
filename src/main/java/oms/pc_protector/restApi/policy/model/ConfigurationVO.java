@@ -19,10 +19,10 @@ public class ConfigurationVO {
     private boolean sharedFolder;
     private boolean usbAutoRun;
     private boolean overDateActiveX;
-    private boolean acrobatSecurityPatch;
     private boolean editProgram;
     private boolean wirelessLanCard;
     private boolean securityUsb;
+    private boolean acrobatSecurityPatch;
     private boolean unApprovedProcess;
     private boolean requiredProcess;
 }

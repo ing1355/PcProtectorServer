@@ -57,7 +57,8 @@
         SET id     = #{new_data.id},
             name   = #{new_data.name},
             mobile = #{new_data.mobile},
-            email  = #{new_data.email}
+            email  = #{new_data.email},
+            password = #{new_data.password}
         WHERE id = #{old_id};
     </update>
 
