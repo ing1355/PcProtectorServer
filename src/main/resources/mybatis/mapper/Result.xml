@@ -129,6 +129,48 @@
         </if>
     </select>
 
+    <select id="findUserDetailStaticInfo" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
+            parameterType="String">
+        SELECT
+        A.user_id,
+        A.os,
+        A.wrong_md5,
+        A.pc_protector_version,
+        A.department,
+        A.department_idx,
+        A.name,
+        B.check_time,
+        A.ip_address,
+        B.score,
+        B.item1_result,
+        B.item2_result,
+        B.item3_result,
+        B.item4_result,
+        B.item5_result,
+        B.item6_result,
+        B.item7_result,
+        B.item8_result,
+        B.item9_result,
+        B.item10_result,
+        B.item11_result,
+        B.item12_result,
+        B.item13_result,
+        B.item14_result,
+        B.item15_result,
+        B.item16_result
+        FROM (
+        SELECT DISTINCT t1.department, t1.department_idx, t1.user_id, t1.name, t2.ip_address, t2.os, t2.wrong_md5, t2.pc_protector_version
+        FROM USER AS t1 LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
+        ) AS A
+        LEFT OUTER JOIN (
+        SELECT t1.* FROM USER AS t0,user_result AS t1 LEFT OUTER JOIN user_result AS t2
+        ON t1.ip_address = t2.ip_address AND (t1.create_time <![CDATA[<]]> t2.create_time OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
+        WHERE t2.ip_address IS NULL AND t0.user_id = t1.user_id
+        ) AS B
+        ON A.ip_address = B.ip_address
+        where A.user_id = #{value}
+    </select>
+
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
         INSERT INTO user_result (
                 user_id,
