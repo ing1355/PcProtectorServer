@@ -56,6 +56,7 @@ public class ApiFilter implements Filter {
             log.info("============FRONTEND API============");
             logService.register(logVO);
         }
+
         log.info("Request Uri: {}", request.getRequestURI());
 
         Set<String> ketSet = parameterMap.keySet();
@@ -72,7 +73,6 @@ public class ApiFilter implements Filter {
 
         log.info("====================================");
         log.info("");
-
 
     }
 

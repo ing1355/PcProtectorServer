@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "v1/login")
+@RequestMapping(value = "")
 public class LoginController {
 
     private ResponseService responseService;
@@ -34,9 +34,9 @@ public class LoginController {
         this.managerService = managerService;
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "login")
     public SingleResult<?> login(@RequestBody @Valid LoginVO login){
-        ResponseManagerVO manager = new ResponseManagerVO();
+        ManagerVO manager = new ManagerVO();
         boolean isLogin = loginService.login(login);
         if(isLogin) manager =  managerService.findById(login.getId());
         return responseService.getSingleResult(manager);
