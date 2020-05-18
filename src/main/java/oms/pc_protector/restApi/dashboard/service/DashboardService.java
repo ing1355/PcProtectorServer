@@ -156,6 +156,7 @@ public class DashboardService {
 
     @Transactional
     public int resultAvgScoreByCurrentMonth() {
+        log.info(dashboardMapper.selectAvgScoreByMonth(currentTime));
         return dashboardMapper.selectAvgScoreByMonth(currentTime);
     }
 

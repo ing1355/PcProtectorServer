@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.result.controller;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.result.model.ResponseResultVO;
+import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
@@ -73,4 +74,11 @@ public class ResultController {
     }
 
 
+    //사용자 관리 - 상세 보기 전용
+    @GetMapping(value = "/userstaticbyid")
+    public SingleResult<?> findUserDetailStaticInfo(
+            @RequestParam(value = "id") String id) {
+        List<ResultVO> list = resultService.findUserDetailStaticInfo(id);
+        return responseService.getSingleResult(list);
+    }
 }

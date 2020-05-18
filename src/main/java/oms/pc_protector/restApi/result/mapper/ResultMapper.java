@@ -19,6 +19,8 @@ public interface ResultMapper {
 
     public List<ResponseResultVO> selectBySearchInput(SearchInputVO searchInputVO);
 
+    public List<ResultVO> findUserDetailStaticInfo(String id);
+
     public List<ResultVO> selectById(String id);
 
     public List<ResultProcessVO> selectResultProcessById(String ipAddress, String checkTime);

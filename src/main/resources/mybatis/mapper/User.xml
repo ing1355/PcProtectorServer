@@ -33,7 +33,7 @@
     </select>
 
     <select id="selectByDepartmentCode" resultType="oms.pc_protector.restApi.user.model.UserVO"
-            parameterType="int">
+            parameterType="Long">
         SELECT * FROM user WHERE department_idx = #{departmentCode}
     </select>
 

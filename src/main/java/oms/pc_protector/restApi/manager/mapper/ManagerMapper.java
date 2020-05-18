@@ -19,7 +19,7 @@ public interface ManagerMapper {
 
     public int selectSameId(String id);
 
-    public void updateManagerInfo(RequestManagerVO requestManagerVO);
+    public void updateManagerInfo(ManagerVO managerVO);
 
     public void insertManager(ManagerVO managerVO);
 

@@ -67,10 +67,9 @@ public class ManagerController {
     }
 
     @PutMapping(value = "/update")
-    public SingleResult<?> update(@RequestBody @Valid RequestManagerVO requestManagerVO) throws JSONException {
+    public SingleResult<?> update(@RequestBody @Valid ManagerVO managerVO) throws JSONException {
         boolean result = true;
-        log.info(requestManagerVO.getOld_id());
-        managerService.updateManager(requestManagerVO);
+        managerService.updateManager(managerVO);
         return responseService.getSingleResult(result);
     }
 

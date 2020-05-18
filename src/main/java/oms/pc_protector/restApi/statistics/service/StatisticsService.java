@@ -204,8 +204,8 @@ public class StatisticsService {
         Collections.sort(list, new Comparator<HashMap<String, Object>>() {
             @Override
             public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-                Integer score1 = (int) o1.get("departmentCode");
-                Integer score2 = (int) o2.get("departmentCode");
+                Long score1 = (Long)o1.get("departmentCode");
+                Long score2 = (Long)o2.get("departmentCode");
                 return score1.compareTo(score2);
             }
         });

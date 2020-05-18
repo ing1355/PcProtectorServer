@@ -57,6 +57,14 @@ public class ResultService {
 
 
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
+
+    @Transactional
+    public List<ResultVO> findUserDetailStaticInfo(String id) {
+        List <ResultVO> list = resultMapper.findUserDetailStaticInfo(id);
+
+        return list;
+    }
+
     @Transactional
     public ResultVO findDetailsByUserId(String ipAddress, String checkTime) {
         return Optional.ofNullable(resultMapper.selectResultDetailsById(ipAddress, checkTime))
