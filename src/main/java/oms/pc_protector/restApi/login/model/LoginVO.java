@@ -19,6 +19,5 @@ public class LoginVO {
 
     @NotNull(message = "비밀번호를 입력하세요.")
     @NotBlank(message = "비밀번호를 입력하세요.")
-    @Size(min = 4, max = 16, message = "패스워드는 최소 4자리 최대 16자리 이하입니다.")
     private String password;
 }

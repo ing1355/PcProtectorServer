@@ -56,14 +56,13 @@
         SET manager.idx = @COUNT := @COUNT + 1;
     </delete>
 
-    <update id="updateManagerInfo" parameterType="oms.pc_protector.restApi.manager.model.RequestManagerVO">
+    <update id="updateManagerInfo" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
         UPDATE manager
-        SET id     = #{new_data.id},
-            name   = #{new_data.name},
-            mobile = #{new_data.mobile},
-            email  = #{new_data.email},
-            password = #{new_data.password}
-        WHERE id = #{old_id};
+        SET name   = #{name},
+            mobile = #{mobile},
+            email  = #{email},
+            password = #{password}
+        WHERE id = #{id};
     </update>
 
 </mapper>
