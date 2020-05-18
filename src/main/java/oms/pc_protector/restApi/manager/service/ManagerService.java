@@ -2,9 +2,8 @@ package oms.pc_protector.restApi.manager.service;
 
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
+import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.RequestManagerVO;
-import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,8 +52,9 @@ public class ManagerService {
 
     @Transactional
     public void insertManager(ManagerVO managerVO) {
-        //String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
-        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
+        String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
+//        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
+        System.out.println(encodedPassword);
         managerVO.setPassword(encodedPassword);
         managerVO.setRoles("MANAGER");
         managerMapper.insertManager(managerVO);
@@ -69,6 +69,14 @@ public class ManagerService {
         System.out.println(passwordEncoder.matches(managerVO.getPassword(), encodedPassword));
         managerVO.setPassword(encodedPassword);
         managerMapper.updateManagerInfo(managerVO);
+    }
+
+    @Transactional
+    public void updateManagerFirstLogin(FirstLoginRequestManagerVO firstLoginRequestManagerVO) {
+        String encodedPassword = new BCryptPasswordEncoder().encode(firstLoginRequestManagerVO.getPassword());
+        log.info("암호화 후 비밀번호 : {}", encodedPassword);
+        firstLoginRequestManagerVO.setPassword(encodedPassword);
+        managerMapper.updateManagerInfoFirstLogin(firstLoginRequestManagerVO);
     }
 
 

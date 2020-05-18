@@ -3,8 +3,8 @@ package oms.pc_protector.restApi.manager.controller;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.RequestManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -66,10 +66,17 @@ public class ManagerController {
         return responseService.getSingleResult(true);
     }
 
-    @PutMapping(value = "/update")
+    @PutMapping(value = "update")
     public SingleResult<?> update(@RequestBody @Valid ManagerVO managerVO) throws JSONException {
         boolean result = true;
         managerService.updateManager(managerVO);
+        return responseService.getSingleResult(result);
+    }
+
+    @PutMapping(value = "update/firstlogin")
+    public SingleResult<?> updateFirstLogin(@RequestBody @Valid FirstLoginRequestManagerVO firstLoginRequestManagerVO) throws JSONException {
+        boolean result = true;
+        managerService.updateManagerFirstLogin(firstLoginRequestManagerVO);
         return responseService.getSingleResult(result);
     }
 

@@ -6,6 +6,7 @@ import oms.pc_protector.restApi.manager.model.ManagerVO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.nio.file.attribute.UserPrincipal;
 import java.util.ArrayList;

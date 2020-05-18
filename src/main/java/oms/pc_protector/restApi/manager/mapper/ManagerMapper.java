@@ -1,8 +1,7 @@
 package oms.pc_protector.restApi.manager.mapper;
 
+import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.RequestManagerVO;
-import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +19,8 @@ public interface ManagerMapper {
     public int selectSameId(String id);
 
     public void updateManagerInfo(ManagerVO managerVO);
+
+    public void updateManagerInfoFirstLogin(FirstLoginRequestManagerVO firstLoginRequestManagerVO);
 
     public void insertManager(ManagerVO managerVO);
 

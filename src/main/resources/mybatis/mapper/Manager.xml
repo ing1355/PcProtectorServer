@@ -71,6 +71,12 @@
         WHERE id = #{id};
     </update>
 
+    <update id="updateManagerInfoFirstLogin" parameterType="oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO">
+        UPDATE manager
+        SET password = #{password}
+        WHERE id = #{userId};
+    </update>
+
 </mapper>
 
 

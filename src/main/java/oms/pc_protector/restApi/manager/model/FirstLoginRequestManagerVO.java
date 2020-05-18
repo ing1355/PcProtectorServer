@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class RequestManagerVO {
-    private String old_id;
-    private ManagerVO new_data;
+public class FirstLoginRequestManagerVO {
+    private String userId;
+    private String password;
 }

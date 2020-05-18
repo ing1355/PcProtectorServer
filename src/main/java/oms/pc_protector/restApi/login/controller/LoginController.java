@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.login.controller;
 
+import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.login.model.LoginVO;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
+@Log4j2
 @RestController
 @RequestMapping(value = "")
 public class LoginController {
@@ -39,6 +42,10 @@ public class LoginController {
         ManagerVO manager = new ManagerVO();
         boolean isLogin = loginService.login(login);
         if(isLogin) manager =  managerService.findById(login.getId());
+        HashMap<String, Object> map = new HashMap<>();
+
+        map.put("info",manager);
+        map.put("FirstLogged",login.getPassword().equals("oms20190211"));
         return responseService.getSingleResult(manager);
     }
 
