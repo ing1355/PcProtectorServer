@@ -33,7 +33,7 @@ public class ManagerService {
 
 
     @Transactional(readOnly = true)
-    public ResponseManagerVO findById(String id) {
+    public ManagerVO findById(String id) {
         return Optional.ofNullable(managerMapper.findById(id))
                 .orElseThrow(() -> new RuntimeException("값이 없습니다."));
     }
@@ -53,8 +53,10 @@ public class ManagerService {
 
     @Transactional
     public void insertManager(ManagerVO managerVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
+        //String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
+        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
         managerVO.setPassword(encodedPassword);
+        managerVO.setRoles("MANAGER");
         managerMapper.insertManager(managerVO);
     }
 

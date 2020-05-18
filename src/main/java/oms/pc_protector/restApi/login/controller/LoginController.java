@@ -9,15 +9,13 @@ import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@CrossOrigin
 @RestController
-@RequestMapping(value = "v1/login")
+@RequestMapping(value = "")
 public class LoginController {
 
     private ResponseService responseService;
@@ -34,11 +32,11 @@ public class LoginController {
         this.managerService = managerService;
     }
 
-    @PostMapping(value = "")
+    @PostMapping(value = "/login")
     public SingleResult<?> login(@RequestBody @Valid LoginVO login){
-        ResponseManagerVO manager = new ResponseManagerVO();
+        ManagerVO manager = new ManagerVO();
         boolean isLogin = loginService.login(login);
-        if(isLogin) manager =  managerService.findById(login.getId());
+        if(isLogin) manager = managerService.findById(login.getId());
         return responseService.getSingleResult(manager);
     }
 

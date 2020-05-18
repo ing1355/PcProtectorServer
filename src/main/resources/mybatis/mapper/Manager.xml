@@ -26,7 +26,7 @@
         ORDER BY idx DESC
     </select>
 
-    <select id="findById" resultType="oms.pc_protector.restApi.manager.model.ResponseManagerVO">
+    <select id="findById" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
         SELECT * FROM manager WHERE id = #{id}
     </select>
 
@@ -38,11 +38,17 @@
         INSERT INTO manager (id,
                              name,
                              password,
+                             roles,
+                             permissions,
+                             active,
                              mobile,
                              email)
         VALUES (#{id},
                 #{name},
                 #{password},
+                #{roles},
+                #{permissions},
+                '1',
                 #{mobile},
                 #{email});
     </insert>

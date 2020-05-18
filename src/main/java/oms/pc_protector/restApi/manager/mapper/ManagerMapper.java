@@ -13,7 +13,7 @@ public interface ManagerMapper {
 
     public List<ManagerVO> findAll();
 
-    public ResponseManagerVO findById(String id);
+    public ManagerVO findById(String id);
 
     public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO);
 

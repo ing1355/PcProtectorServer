@@ -1,43 +1,72 @@
 package oms.pc_protector.securityConfig;
 
+import lombok.RequiredArgsConstructor;
+import oms.pc_protector.jwt.JwtAuthenticationFilter;
+import oms.pc_protector.jwt.JwtAuthorizationFilter;
+import oms.pc_protector.jwt.ManagerPrincipalDetailsService;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private ManagerService managerService;
+    private final ManagerPrincipalDetailsService managerPrincipalDetailsService;
+    private final ManagerService managerService;
 
-    public SecurityConfig(ManagerService managerService) {
+   /* public SecurityConfig(ManagerService managerService,
+                          ManagerPrincipalDetailsService managerPrincipalDetailsService) {
         this.managerService = managerService;
+        this.managerPrincipalDetailsService = managerPrincipalDetailsService;
+    }*/
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
     }
 
-    /*@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }*/
+    @Bean
+    DaoAuthenticationProvider authenticationProvider(){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(this.managerPrincipalDetailsService);
+
+        return daoAuthenticationProvider;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable();
-                /*.authorizeRequests()
-                .anyRequest().authenticated()
+                // remove csrf and state in session because in jwt we do not need them
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .formLogin().permitAll();*/
+                // add jwt filters (1. authentication, 2. authorization)
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService))
+                .authorizeRequests()
+                // configure access rules
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers("/v1/manager/*").hasRole("MANAGER")
+                //.antMatchers("/api/public/admin/*").hasRole("ADMIN")
+                .anyRequest().authenticated();
     }
 
-    /*@Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(managerService)
-                .passwordEncoder(managerService.passwordEncoder());
-    }*/
-
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }

@@ -32,7 +32,8 @@ public class LoginService {
         boolean isEqualsPw =
                 passwordEncoder.matches(login.getPassword(),
                         findPasswordById(login.getId()));
-
+        log.info("비밀번호 왼 : {}", login.getPassword());
+        log.info("비밀번호 우 : {}", findPasswordById(login.getId()));
         log.info("비밀번호 비교 : {}", isEqualsPw);
 
         if (!isExistId) {
@@ -49,6 +50,7 @@ public class LoginService {
     public String findPasswordById(String id) {
         return loginMapper.findPasswordById(id);
     }
+
 
     @Transactional(readOnly = true)
     public boolean isExistId(String id) {
