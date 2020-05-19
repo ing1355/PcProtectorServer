@@ -73,7 +73,7 @@ public class ManagerController {
         return responseService.getSingleResult(result);
     }
 
-    @PutMapping(value = "update/firstlogin")
+    @PutMapping(value = "firstlogin")
     public SingleResult<?> updateFirstLogin(@RequestBody @Valid FirstLoginRequestManagerVO firstLoginRequestManagerVO) throws JSONException {
         boolean result = true;
         managerService.updateManagerFirstLogin(firstLoginRequestManagerVO);

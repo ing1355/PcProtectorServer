@@ -68,6 +68,7 @@ public class ApiFilter implements Filter {
 
         log.info("Request Method: {}", request.getMethod());
         log.info("Request IpAddress : {}", request.getRemoteAddr());
+        log.info("Local IpAddress : {}", request.getLocalAddr());
 
         filterChain.doFilter(request, response);
 

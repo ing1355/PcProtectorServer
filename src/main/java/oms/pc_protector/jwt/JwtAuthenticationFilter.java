@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+@CrossOrigin
 @Log4j2
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -64,11 +66,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // Grab principal
         ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
         // Create JWT Token
+        String encodedPassword = new BCryptPasswordEncoder().encode("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE");
+        log.info("encode : "  + encodedPassword);
         String token = JWT.create()
                 .withSubject(principal.getUsername())
                 .withClaim("role", "MANAGER")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withAudience(String.valueOf(passwordEncoder.matches("oms20190211",principal.getPassword())))
+                .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE",principal.getPassword())))
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
         // Add token in response

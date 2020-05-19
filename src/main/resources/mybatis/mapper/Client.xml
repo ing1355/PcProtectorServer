@@ -26,14 +26,16 @@
                             os,
                             pc_protector_version,
                             pc_name,
-                            check_time)
+                            check_time,
+                            roles)
         VALUES (#{userId},
                 #{ipAddress},
                 #{macAddress},
                 #{os},
                 #{pcProtectorVersion},
                 #{pcName},
-                #{checkTime})
+                #{checkTime},
+                'CLIENT')
     </insert>
 
     <update id="loginUpdateTime" parameterType="String">

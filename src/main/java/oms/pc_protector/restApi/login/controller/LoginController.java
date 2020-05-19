@@ -10,17 +10,16 @@ import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
 
 @Log4j2
 @RestController
-@RequestMapping(value = "")
+@RequestMapping(value = "/v1/login")
 public class LoginController {
 
     private ResponseService responseService;
@@ -29,12 +28,23 @@ public class LoginController {
 
     private ManagerService managerService;
 
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public LoginController(ResponseService responseService,
                            LoginService loginService,
                            ManagerService managerService){
         this.responseService = responseService;
         this.loginService = loginService;
         this.managerService = managerService;
+    }
+
+    @GetMapping(value = "confirm")
+    public SingleResult<?> confirm(@RequestParam(value = "id") String id,
+                                   @RequestParam(value = "password") String password) {
+        String encodedPassword = new BCryptPasswordEncoder().encode(password);
+        String db_password = loginService.findPasswordById(id);
+        boolean result = passwordEncoder.matches(password,db_password);
+        return responseService.getSingleResult(result);
     }
 
     @PostMapping(value = "login")
@@ -48,6 +58,4 @@ public class LoginController {
         map.put("FirstLogged",login.getPassword().equals("oms20190211"));
         return responseService.getSingleResult(manager);
     }
-
-
 }

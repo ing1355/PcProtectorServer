@@ -52,8 +52,7 @@ public class ManagerService {
 
     @Transactional
     public void insertManager(ManagerVO managerVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode("oms20190211");
-//        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
+        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
         System.out.println(encodedPassword);
         managerVO.setPassword(encodedPassword);
         managerVO.setRoles("MANAGER");

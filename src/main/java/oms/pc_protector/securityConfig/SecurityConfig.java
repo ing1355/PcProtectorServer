@@ -17,7 +17,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
+@CrossOrigin
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -59,10 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService))
                 .authorizeRequests()
                 // configure access rules
-                .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers("/v1/manager/*").hasRole("MANAGER")
-                //.antMatchers("/api/public/admin/*").hasRole("ADMIN")
-                .anyRequest().authenticated();
+//                .antMatchers(HttpMethod.POST, "/login").permitAll()
+//                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")
+//                .antMatchers("/v1/client").hasRole("CLIENT")
+//                .antMatchers("/v1/**").hasRole("MANAGER")
+//                .antMatchers("/api/public/admin/*").hasRole("ADMIN")
+                .anyRequest().permitAll();
+//                .anyRequest().authenticated();
     }
 
     @Bean

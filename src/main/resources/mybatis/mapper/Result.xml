@@ -54,8 +54,8 @@
     </select>
 
     <select id="selectCountAllByMonth" resultType="int" parameterType="String">
-        SELECT COUNT(DISTINCT ip_address) AS count FROM user_result
-        WHERE DATE_FORMAT(check_time,'%Y-%m') = #{value}
+        SELECT COUNT(DISTINCT result.ip_address) AS count FROM client AS client, user_result AS result
+        WHERE DATE_FORMAT(result.check_time,'%Y-%m') = #{value} AND client.ip_address = result.ip_address
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">

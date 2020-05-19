@@ -10,7 +10,6 @@
         SELECT password FROM manager WHERE id = #{value}
     </select>
 
-
 </mapper>
 
 
