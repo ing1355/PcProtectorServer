@@ -7,6 +7,10 @@
         SELECT * FROM department
     </select>
 
+    <select id="findUserInDepartment" parameterType="String" resultType="Int">
+        SELECT COUNT(user_id) FROM user WHERE department = #{value}
+    </select>
+
     <select id="selectByDepartment"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="String">
         SELECT * FROM department WHERE name = #{value}

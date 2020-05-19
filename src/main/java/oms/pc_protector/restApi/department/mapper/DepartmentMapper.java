@@ -11,6 +11,8 @@ public interface DepartmentMapper {
 
     public List<DepartmentVO> selectAll();
 
+    public Integer findUserInDepartment(String department);
+
     public DepartmentVO selectByDepartment(String department);
 
     public DepartmentVO selectBycode(Long departmentCode);

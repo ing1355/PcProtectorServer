@@ -33,6 +33,12 @@ public class DepartmentController {
         return responseService.getSingleResult(departmentVOList);
     }
 
+    @GetMapping(value = "check")
+    public SingleResult<?> findUserInDepartment(@RequestParam(value = "department") String department) {
+        boolean result = departmentService.findUserInDepartment(department);
+        return responseService.getSingleResult(result);
+    }
+
     @PostMapping(value = "/excel")
     public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList) {
         departmentService.registerByExcel(departmentVOList);

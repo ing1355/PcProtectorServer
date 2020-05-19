@@ -22,6 +22,10 @@ public class DepartmentService {
         this.userMapper = userMapper;
     }
 
+    @Transactional
+    public boolean findUserInDepartment(String department) {
+        return departmentMapper.findUserInDepartment(department) > 0;
+    }
 
     @Transactional
     public List<DepartmentVO> findAll() {
