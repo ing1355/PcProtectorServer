@@ -38,7 +38,7 @@
                 ON t1.ip_address = t2.ip_address AND (t1.create_time <![CDATA[<]]> t2.create_time OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
                 WHERE t2.ip_address IS NULL AND t0.user_id = t1.user_id
         ) AS B
-        ON A.ip_address = B.ip_address
+        ON A.ip_address = B.ip_address AND A.user_id = B.user_id
     </select>
 
     <select id="selectResultDetailsById" resultType="oms.pc_protector.restApi.result.model.ResultVO"

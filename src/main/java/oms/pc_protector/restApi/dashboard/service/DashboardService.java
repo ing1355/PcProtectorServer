@@ -145,9 +145,9 @@ public class DashboardService {
     @Transactional
     public HashMap<String, Object> userCountByScore() {
         LinkedHashMap<String, Object> userCountMap = new LinkedHashMap<>();
-        int topScoreUserCount = dashboardMapper.selectUserCountByScore(80, 100);
-        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(40, 80);
-        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 40);
+        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100);
+        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89);
+        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69);
         userCountMap.put("topScoreUserCount", topScoreUserCount);
         userCountMap.put("middleScoreUserCount", middleScoreUserCount);
         userCountMap.put("lowScoreUserCount", lowScoreUserCount);
