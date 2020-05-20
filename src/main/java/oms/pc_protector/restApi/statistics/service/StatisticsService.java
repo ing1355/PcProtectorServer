@@ -114,7 +114,7 @@ public class StatisticsService {
                 // 임시저장한 하위부서 중 직속 하위부서가 있는지 확인한다.
                 boolean isExistChild = false;
                 for (ResultStatisticsVO countPcVO : childResultTemp) {
-                    if (countPcVO.getParentCode() == departmentCode) {
+                    if (countPcVO.getParentCode().equals(departmentCode)) {
                         isExistChild = true;
                         break;
                     }
@@ -123,7 +123,7 @@ public class StatisticsService {
                 // 하위부서가 있다면?
                 if (isExistChild) {
                     for (ResultStatisticsVO result : childResultTemp) {
-                        if (departmentCode == result.getParentCode()) {
+                        if (departmentCode.equals(result.getParentCode())) {
                             totalPc += result.getTotalPc();
                             runPc += result.getRunPc();
                             sumScore += result.getSumScore();
