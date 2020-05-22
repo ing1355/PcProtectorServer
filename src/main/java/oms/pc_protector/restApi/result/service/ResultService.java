@@ -308,7 +308,6 @@ public class ResultService {
     /* 아이템별 결과값을 등록한다. */
     @Transactional
     public void resultSet(ResultVO resultVO) {
-
         Optional.ofNullable(resultVO)
                 .ifPresent(resultMapper::insertResult);
     }
@@ -504,7 +503,7 @@ public class ResultService {
 
     //스케쥴을 검사하여 해당 기간 내에 없으면 빈 점검결과 등록
     @Transactional
-    public void insertEmptyResultBySchedule(ClientVO clientVO) {
+    public void insertEmptyResultBySchedule() {
         PeriodDateVO Schedule = configurationMapper.selectAppliedSchedule();
         java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
         Calendar c1 = Calendar.getInstance();
