@@ -308,8 +308,47 @@ public class ResultService {
     /* 아이템별 결과값을 등록한다. */
     @Transactional
     public void resultSet(ResultVO resultVO) {
-        Optional.ofNullable(resultVO)
-                .ifPresent(resultMapper::insertResult);
+        PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        if (Now_Schedule.getPeriod() == 1) { // 매달
+            start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+            end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            resultVO.setStartTime(df.format(start.getTime()));
+            resultVO.setEndTime(df.format(end.getTime()));
+            if (resultMapper.selectByScheduleIsExist(df.format(start.getTime()),
+                    df.format(end.getTime())) == 0) {
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::updateResultClient);
+            }
+            else {
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::insertResult);
+            }
+        } else if (Now_Schedule.getPeriod() == 2) { // 매주
+            start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            resultVO.setStartTime(df.format(start.getTime()));
+            resultVO.setEndTime(df.format(end.getTime()));
+            if (resultMapper.selectByScheduleIsExist(df.format(start.getTime()),
+                    df.format(end.getTime())) == 0) {
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::updateResultClient);
+            }
+            else {
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::insertResult);
+            }
+        } else if (Now_Schedule.getPeriod() == 3) { // 매일
+            resultVO.setStartTime(df.format(start.getTime()));
+            resultVO.setEndTime(df.format(end.getTime()));
+            Optional.ofNullable(resultVO)
+                    .ifPresent(resultMapper::updateResultClient);
+        }
     }
 
 
@@ -508,12 +547,12 @@ public class ResultService {
         java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd");
         Calendar c1 = Calendar.getInstance();
         Calendar c2 = Calendar.getInstance();
-        if(Schedule.getPeriod() == 1) { // 매달
-            c1.set(Calendar.WEEK_OF_MONTH,Schedule.getFromWeek());
-            c1.set(Calendar.DAY_OF_WEEK,Schedule.getFromDay());
-            c2.set(Calendar.WEEK_OF_MONTH,Schedule.getToWeek());
-            c2.set(Calendar.DAY_OF_WEEK,Schedule.getToDay());
-            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+        if (Schedule.getPeriod() == 1) { // 매달
+            c1.set(Calendar.WEEK_OF_MONTH, Schedule.getFromWeek());
+            c1.set(Calendar.DAY_OF_WEEK, Schedule.getFromDay());
+            c2.set(Calendar.WEEK_OF_MONTH, Schedule.getToWeek());
+            c2.set(Calendar.DAY_OF_WEEK, Schedule.getToDay());
+            if (resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
                     df.format(c2.getTime())) == 0) {
                 List<ClientVO> temp = clientMapper.selectClientAll();
                 for (ClientVO client : temp) {
@@ -521,11 +560,10 @@ public class ResultService {
                     resultMapper.insertEmptyResultBySchedule(client);
                 }
             }
-        }
-        else if(Schedule.getPeriod() == 2) { // 매주
-            c1.set(Calendar.DAY_OF_WEEK,Schedule.getFromDay()+1);
-            c2.set(Calendar.DAY_OF_WEEK,Schedule.getToDay()+1);
-            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+        } else if (Schedule.getPeriod() == 2) { // 매주
+            c1.set(Calendar.DAY_OF_WEEK, Schedule.getFromDay() + 1);
+            c2.set(Calendar.DAY_OF_WEEK, Schedule.getToDay() + 1);
+            if (resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
                     df.format(c2.getTime())) == 0) {
                 List<ClientVO> temp = clientMapper.selectClientAll();
                 for (ClientVO client : temp) {
@@ -533,9 +571,8 @@ public class ResultService {
                     resultMapper.insertEmptyResultBySchedule(client);
                 }
             }
-        }
-        else { // 매일
-            if(resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
+        } else { // 매일
+            if (resultMapper.selectByScheduleIsExist(df.format(c1.getTime()),
                     df.format(c2.getTime())) == 0) {
                 List<ClientVO> temp = clientMapper.selectClientAll();
                 for (ClientVO client : temp) {

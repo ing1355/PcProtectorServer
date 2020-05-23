@@ -66,7 +66,6 @@ public class ClientController {
         boolean isLogin = userService.agentLogin(clientVO);
         if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
         else clientService.loginUpdateTime(clientVO.getUserId());
-//        resultService.insertEmptyResultBySchedule(clientVO);
         String department = userService
                 .findById(clientVO.getUserId())
                 .getDepartment();

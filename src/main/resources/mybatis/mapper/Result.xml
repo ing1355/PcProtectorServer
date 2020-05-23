@@ -90,6 +90,7 @@
                  SELECT *, MAX(create_time) FROM user_result GROUP BY ip_address, user_id, check_time
              ) AS B
              ON A.ip_address = B.ip_address AND A.user_id = B.user_id
+        WHERE in_schedule = 1
         ORDER BY B.check_time DESC
     </select>
 
@@ -172,7 +173,7 @@
         SELECT *, MAX(create_time) FROM user_result GROUP BY ip_address, user_id, check_time
         ) AS B
         ON A.ip_address = B.ip_address AND A.user_id = B.user_id
-        where 1 = 1
+        where in_schedule = 1
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')
         </if>
@@ -240,7 +241,8 @@
     </select>
 
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
-        SELECT COUNT(*) FROM user_result
+        SELECT COUNT(*)
+        FROM user_result
         WHERE check_time BETWEEN #{startChecktime} AND #{endChecktime}
     </select>
 
@@ -264,7 +266,7 @@
                                  item5_reasons_vulnerability, item5_password_length, item5_detail_reasons,
                                  item6_pw_last_change_past_date,
                                  item7_execution_status_check, item7_pw_usage_status, item7_period,
-                                 item10_count)
+                                 item10_count, in_schedule)
         VALUES (#{userId},
                 #{ipAddress},
                 #{checkTime},
@@ -284,7 +286,7 @@
                 #{item5ReasonsVulnerability}, #{item5PasswordLength}, #{item5DetailReasons},
                 #{item6PwLastChangePastDate},
                 #{item7ExecutionStatusCheck}, #{item7PwUsageStatus}, #{item7Period},
-                #{item10Count})
+                #{item10Count}, #{inSchedule})
     </insert>
 
     <insert id="insertResultProcess" parameterType="oms.pc_protector.restApi.result.model.ResultProcessVO">
@@ -301,45 +303,47 @@
     </insert>
 
     <insert id="insertEmptyResultBySchedule" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        INSERT INTO user_result (user_id, ip_address, check_time)
-        VALUES (#{userId}, #{ipAddress}, #{checkTime})
+        INSERT INTO user_result (user_id, ip_address, check_time, in_schedule)
+        VALUES (#{userId}, #{ipAddress}, #{checkTime}, 1)
     </insert>
 
     <update id="updateResultClient" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
         UPDATE user_result
-        SET score = #{score},
-            check_time = #{check_time},
-            item1_result = #{item1Result},
-            item2_result = #{item2Result},
-            item3_result = #{item3Result},
-            item4_result = #{item4Result},
-            item5_result = #{item5Result},
-            item6_result = #{item6Result},
-            item7_result = #{item7Result},
-            item8_result = #{item8Result},
-            item9_result = #{item9Result},
-            item10_result = #{item10Result},
-            item11_result = #{item11Result},
-            item12_result = #{item12Result},
-            item13_result = #{item13Result},
-            item14_result = #{item14Result},
-            item15_result = #{item15Result},
-            item16_result = #{item16Result},
-            item1_execution_status_check = #{item1ExecutionStatusCheck},
+        SET score                           = #{score},
+            check_time                      = #{checkTime},
+            item1_result                    = #{item1Result},
+            item2_result                    = #{item2Result},
+            item3_result                    = #{item3Result},
+            item4_result                    = #{item4Result},
+            item5_result                    = #{item5Result},
+            item6_result                    = #{item6Result},
+            item7_result                    = #{item7Result},
+            item8_result                    = #{item8Result},
+            item9_result                    = #{item9Result},
+            item10_result                   = #{item10Result},
+            item11_result                   = #{item11Result},
+            item12_result                   = #{item12Result},
+            item13_result                   = #{item13Result},
+            item14_result                   = #{item14Result},
+            item15_result                   = #{item15Result},
+            item16_result                   = #{item16Result},
+            item1_execution_status_check    = #{item1ExecutionStatusCheck},
             item1_installation_status_check = #{item1InstallationStatusCheck},
-            item2_execution_status_check = #{item2ExecutionStatusCheck},
-            item2_update_status_check = #{item2UpdateStatusCheck},
-            item3_count = #{item3Count},
-            item4_count = #{item4Count},
-            item5_reasons_vulnerability = #{item5ReasonsVulnerability},
+            item2_execution_status_check    = #{item2ExecutionStatusCheck},
+            item2_update_status_check       = #{item2UpdateStatusCheck},
+            item3_count                     = #{item3Count},
+            item4_count                     = #{item4Count},
+            item5_reasons_vulnerability     = #{item5ReasonsVulnerability},
             item5_password_length= #{item5PasswordLength},
-            item5_detail_reasons = #{item5DetailReasons},
-            item6_pw_last_change_past_date = #{item6PwLastChangePastDate},
-            item7_execution_status_check = #{item7ExecutionStatusCheck},
-            item7_pw_usage_status = #{item7PwUsageStatus},
-            item7_period = #{item7Period},
-            item10_count = #{item10Count}
-        WHERE user_id = #{userId} AND ip_address = #{ipAddress}
+            item5_detail_reasons            = #{item5DetailReasons},
+            item6_pw_last_change_past_date  = #{item6PwLastChangePastDate},
+            item7_execution_status_check    = #{item7ExecutionStatusCheck},
+            item7_pw_usage_status           = #{item7PwUsageStatus},
+            item7_period                    = #{item7Period},
+            item10_count                    = #{item10Count}
+        WHERE user_id = #{userId}
+          AND ip_address = #{ipAddress}
+          AND check_time BETWEEN #{startTime} AND #{endTime}
     </update>
 </mapper>
 

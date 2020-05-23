@@ -52,4 +52,8 @@ public class ResultVO {
     private int item7ExecutionStatusCheck;
     private int item7PwUsageStatus;
     private int item7Period;
+
+    private boolean inSchedule = false;
+    private String startTime;
+    private String endTime;
 }
