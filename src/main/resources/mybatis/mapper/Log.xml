@@ -28,7 +28,7 @@
     <insert id="insert" parameterType="oms.pc_protector.restApi.log.model.LogVO">
         INSERT INTO audit_log (manager_id, uri, method, ip_address)
         VALUES (
-                '추가예정',
+                #{managerId},
                 #{uri},
                 #{method},
                 #{ipAddress}

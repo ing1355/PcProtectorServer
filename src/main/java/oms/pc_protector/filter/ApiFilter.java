@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.*;
 
 @Log4j2
@@ -30,6 +31,10 @@ public class ApiFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+    public String GetUserIdByPrincipal(Principal principal) {
+        return principal.getName();
+    }
+
     @Override
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
@@ -38,10 +43,11 @@ public class ApiFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        log.info(request.getParameterMap());
+        Principal User_info = request.getUserPrincipal();
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         LogVO logVO = new LogVO();
+        logVO.setManagerId(GetUserIdByPrincipal(User_info));
         logVO.setUri(request.getRequestURI());
         logVO.setMethod(request.getMethod());
         logVO.setIpAddress(request.getRemoteAddr());
@@ -54,7 +60,8 @@ public class ApiFilter implements Filter {
 
         else {
             log.info("============FRONTEND API============");
-            logService.register(logVO);
+//            if(!(logVO.getMethod().equals("GET")))
+                logService.register(logVO);
         }
 
         log.info("Request Uri: {}", request.getRequestURI());
