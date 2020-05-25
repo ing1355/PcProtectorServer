@@ -47,7 +47,6 @@ public class ApiFilter implements Filter {
         Map<String, String[]> parameterMap = request.getParameterMap();
 
         LogVO logVO = new LogVO();
-        logVO.setManagerId(GetUserIdByPrincipal(User_info));
         logVO.setUri(request.getRequestURI());
         logVO.setMethod(request.getMethod());
         logVO.setIpAddress(request.getRemoteAddr());
@@ -60,6 +59,7 @@ public class ApiFilter implements Filter {
 
         else {
             log.info("============FRONTEND API============");
+            logVO.setManagerId(GetUserIdByPrincipal(User_info));
 //            if(!(logVO.getMethod().equals("GET")))
                 logService.register(logVO);
         }
