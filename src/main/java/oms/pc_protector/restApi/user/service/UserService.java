@@ -123,6 +123,12 @@ public class UserService {
     public void registryFromAdmin(UserRequestVO userRequestVO) {
         boolean duplicateIpAddressCheck = duplicateCheckIpAddress(userRequestVO.getIpAddress());
         if (duplicateIpAddressCheck) return;
+        if(userRequestVO.getEmail() == null) {
+            userRequestVO.setEmail("이메일 없음");
+        }
+        if(userRequestVO.getPhone() == null) {
+            userRequestVO.setPhone("전화번호 없음");
+        }
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
     }
 

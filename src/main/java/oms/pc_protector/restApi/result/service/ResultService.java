@@ -103,7 +103,7 @@ public class ResultService {
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
     public int countByMonth(String month) {
-        return resultMapper.selectCountAllByMonth(month);
+        return resultMapper.selectCountRunByMonth(month);
     }
 
     @Transactional

@@ -31,8 +31,13 @@ public class ApiFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    public String GetUserIdByPrincipal(Principal principal) {
-        return principal.getName();
+    public String GetUserIdByPrincipal(Principal principal) throws NullPointerException {
+        try {
+            return principal.getName();
+        } catch(NullPointerException e) {
+            return "정보 없음";
+        }
+//        return principal.getName();
     }
 
     @Override
@@ -46,6 +51,7 @@ public class ApiFilter implements Filter {
         Principal User_info = request.getUserPrincipal();
         Map<String, String[]> parameterMap = request.getParameterMap();
 
+        String test = request.getRequestURI();
         LogVO logVO = new LogVO();
         logVO.setUri(request.getRequestURI());
         logVO.setMethod(request.getMethod());
