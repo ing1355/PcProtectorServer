@@ -35,8 +35,13 @@ public class ClientService {
 
 
     @Transactional
-    public int findSameIpAddress(String ipAddress) {
-        return clientMapper.selectSameIpAddress(ipAddress);
+    public int findSameClient(ClientVO clientVO) {
+        return clientMapper.selectSameClient(clientVO);
+    }
+
+    @Transactional
+    public int findSameIpAddress(String IpAddress) {
+        return clientMapper.selectSameIpAddress(IpAddress);
     }
 
 

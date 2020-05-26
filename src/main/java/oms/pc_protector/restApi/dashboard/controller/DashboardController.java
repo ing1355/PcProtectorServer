@@ -30,11 +30,11 @@ public class DashboardController {
                                      @RequestParam(value = "term") String term) {
         HashMap<String, Object> dashboardTopMap = dashboardService.dashboardTop();
         HashMap<String, Object> dashboardMiddleMap = dashboardService.dashboardMiddle();
-        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(startdate,enddate,term);
+//        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(startdate,enddate,term);
         HashMap<String, Object> result = new HashMap<>();
         result.put("top",dashboardTopMap);
         result.put("middle",dashboardMiddleMap);
-        result.put("bottom",dashboardBottomMap);
+//        result.put("bottom",dashboardBottomMap);
         return responseService.getSingleResult(result);
     }
 

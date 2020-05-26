@@ -3,7 +3,9 @@ package oms.pc_protector.restApi.clientController;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
+import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
+import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import lombok.extern.java.Log;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -39,11 +42,13 @@ public class ClientController {
     private final ConfigurationService configurationService;
     private final ResultService resultService;
     private final ClientService clientService;
+    private ResultMapper resultMapper;
 
     public ClientController(ResponseService responseService, UserService userService,
                             ClientFileService clientFileService,
                             ProcessService processService,ConfigurationService configurationService,
-                            ResultService resultService, ClientService clientService) {
+                            ResultService resultService, ClientService clientService,
+                            ResultMapper resultMapper) {
         this.responseService = responseService;
         this.userService = userService;
         this.clientFileService = clientFileService;
@@ -51,6 +56,7 @@ public class ClientController {
         this.configurationService = configurationService;
         this.resultService = resultService;
         this.clientService = clientService;
+        this.resultMapper = resultMapper;
     }
 
 
@@ -63,9 +69,10 @@ public class ClientController {
 
     @PostMapping(value = "/first-request")
     public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
-        boolean isLogin = userService.agentLogin(clientVO);
+        boolean isLogin = userService.agentLogin(clientVO, configurationService);
         if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
         else clientService.loginUpdateTime(clientVO.getUserId());
+
         String department = userService
                 .findById(clientVO.getUserId())
                 .getDepartment();

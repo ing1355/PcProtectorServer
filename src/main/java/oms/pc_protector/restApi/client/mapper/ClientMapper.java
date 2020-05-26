@@ -10,7 +10,9 @@ public interface ClientMapper {
 
     public List<ClientVO> selectById(String id);
 
-    public int selectSameIpAddress(String ipAddress);
+    public int selectSameClient(ClientVO clientVO);
+
+    public int selectSameIpAddress(String IpAddress);
 
     public void loginUpdateTime(String id);
 

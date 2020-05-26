@@ -73,7 +73,8 @@
                B.item13_result,
                B.item14_result,
                B.item15_result,
-               B.item16_result
+               B.item16_result,
+               B.in_schedule
         FROM (
                  SELECT DISTINCT t1.department,
                                  t1.user_id,
@@ -87,7 +88,7 @@
              ) AS A
                  LEFT OUTER JOIN
              (
-                 SELECT *, MAX(create_time) FROM user_result GROUP BY ip_address, user_id, check_time
+                 SELECT * FROM user_result
              ) AS B
              ON A.ip_address = B.ip_address AND A.user_id = B.user_id
         WHERE in_schedule = 1
@@ -139,7 +140,7 @@
         FROM user AS t0,
              user_result as t1
                  left outer join user_result as t2
-                                 on t1.ip_address = t2.ip_address
+                                 on t1.ip_address = t2.ip_address AND t1.user_id = t2.user_id
                                      AND (t1.create_time <![CDATA[<]]> t2.create_time
                                          OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
         where t2.ip_address is NULL
@@ -276,6 +277,7 @@
         SELECT COUNT(*)
         FROM user_result
         WHERE check_time BETWEEN #{startChecktime} AND #{endChecktime}
+                AND user_id = #{userId} AND ip_address = #{ipAddress}
     </select>
 
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">

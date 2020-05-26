@@ -35,7 +35,9 @@ public interface ResultMapper {
             @Param("month") String month);
 
     public int selectByScheduleIsExist(@Param(value = "startChecktime") String startChecktime,
-                                       @Param(value = "endChecktime") String endChecktime);
+                                       @Param(value = "endChecktime") String endChecktime,
+                                       @Param(value = "userId") String userId,
+                                       @Param(value = "ipAddress") String IpAddress);
 
     public void insertResult(ResultVO resultVO);
 

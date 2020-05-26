@@ -52,53 +52,30 @@
         LIMIT 6
     </select>
 
-    <select id="selectUserCountByScore" resultType="Integer"
-            parameterType="int">
-        SELECT COUNT(*)
-        FROM (
-                 SELECT DISTINCT t1.department,
-                                 t1.user_id,
-                                 t1.name,
-                                 t2.ip_address,
-                                 t2.os,
-                                 t2.wrong_md5,
-                                 t2.pc_protector_version
-                 FROM USER AS t1
-                          LEFT OUTER JOIN CLIENT AS t2 ON t1.user_id = t2.user_id
-             ) AS A
-                 LEFT OUTER JOIN (
-            SELECT t1.*
-            FROM USER AS t0,
-                 user_result AS t1
-                     LEFT OUTER JOIN user_result AS t2
-                                     ON t1.ip_address = t2.ip_address AND t1.user_id = t2.user_id AND (t1.create_time
-        <![CDATA[<]]>
-                                                                                                       t2.create_time OR
-                                                                                                       (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
-            WHERE t2.ip_address IS NULL
-              AND t0.user_id = t1.user_id
-        ) AS B ON A.ip_address = B.ip_address AND A.user_id = B.user_id
-        WHERE os IS NOT NULL
-            AND score BETWEEN #{startScore} AND #{endScore}
-           AND (item1_result != 0
-           OR item2_result != 0
-           OR item3_result != 0
-           OR item4_result != 0
-           OR item5_result != 0
-           OR item6_result != 0
-           OR item7_result != 0
-           OR item8_result != 0
-           OR item9_result != 0
-           OR item10_result != 0
-           OR item11_result != 0
-           OR item12_result != 0
-           OR item13_result != 0
-           OR item14_result != 0
-           OR item15_result != 0
-           OR item16_result != 0)
-            AND in_schedule = 1
+    <select id="selectUserCountByScore" resultType="Integer">
+        SELECT COUNT(*) FROM (
+                          SELECT *,
+                                 ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+                          FROM user_result
+                      ) AS t1
+
+        WHERE t1.r0 = 1 AND in_schedule = 1 AND score BETWEEN #{startScore} AND #{endScore}
+          AND (t1.item1_result != 0
+            OR t1.item2_result != 0
+            OR t1.item3_result != 0
+            OR t1.item4_result != 0
+            OR t1.item5_result != 0
+            OR t1.item6_result != 0
+            OR t1.item7_result != 0
+            OR t1.item8_result != 0
+            OR t1.item9_result != 0
+            OR t1.item10_result != 0
+            OR t1.item11_result != 0
+            OR t1.item12_result != 0
+            OR t1.item13_result != 0
+            OR t1.item14_result != 0
+            OR t1.item15_result != 0
+            OR t1.item16_result != 0)
     </select>
 
 </mapper>
-
-

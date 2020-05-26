@@ -6,6 +6,8 @@ import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.ChartVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
+import oms.pc_protector.restApi.policy.model.NowScheduleVO;
+import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class DashboardService {
     private ResultService resultService;
     private DepartmentService departmentService;
     private DashboardMapper dashboardMapper;
+    private ConfigurationService configurationService;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
     private String currentTime = format.format(System.currentTimeMillis());
@@ -32,11 +35,13 @@ public class DashboardService {
     public DashboardService(ClientService clientService,
                             ResultService resultService,
                             DepartmentService departmentService,
-                            DashboardMapper dashboardMapper) {
+                            DashboardMapper dashboardMapper,
+                            ConfigurationService configurationService) {
         this.clientService = clientService;
         this.resultService = resultService;
         this.departmentService = departmentService;
         this.dashboardMapper = dashboardMapper;
+        this.configurationService = configurationService;
     }
 
     @Transactional
@@ -73,7 +78,7 @@ public class DashboardService {
         if (term.equals("3개월") || term.equals("6개월"))
             dashboardResultMap.put("resultChart", resultChart());
         else
-            dashboardResultMap.put("resultChart", resultChartDays(startdate,enddate));
+            dashboardResultMap.put("resultChart", resultChartDays(startdate, enddate));
         return dashboardResultMap;
     }
 

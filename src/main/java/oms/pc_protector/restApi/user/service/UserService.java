@@ -3,6 +3,9 @@ package oms.pc_protector.restApi.user.service;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
+import oms.pc_protector.restApi.policy.model.PeriodDateVO;
+import oms.pc_protector.restApi.policy.service.ConfigurationService;
+import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.model.ClientVO;
@@ -11,6 +14,7 @@ import oms.pc_protector.restApi.user.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Log4j2
@@ -21,15 +25,18 @@ public class UserService {
     private final ClientMapper clientMapper;
     private final ClientService clientService;
     private final DepartmentService departmentService;
+    private final ResultMapper resultMapper;
 
     public UserService(UserMapper userMapper,
                        ClientMapper clientMapper,
                        ClientService clientService,
-                       DepartmentService departmentService) {
+                       DepartmentService departmentService,
+                       ResultMapper resultMapper) {
         this.userMapper = userMapper;
         this.clientMapper = clientMapper;
         this.clientService = clientService;
         this.departmentService = departmentService;
+        this.resultMapper = resultMapper;
     }
 
 
@@ -103,8 +110,14 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public boolean duplicateCheckIpAddress(String ipAddress) {
-        int result = clientService.findSameIpAddress(ipAddress);
+    public boolean duplicateCheckClient(ClientVO clientVO) {
+        int result = clientService.findSameClient(clientVO);
+        return result > 0;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean duplicateCheckIpAddress(String IpAddress) {
+        int result = clientService.findSameIpAddress(IpAddress);
         return result > 0;
     }
 
@@ -178,15 +191,32 @@ public class UserService {
 
 
     @Transactional
-    public boolean agentLogin(ClientVO clientVO) {
-        boolean duplicateIpAddress = duplicateCheckIpAddress(clientVO.getIpAddress());
+    public boolean agentLogin(ClientVO clientVO, ConfigurationService configurationService) {
+        boolean duplicateClient = duplicateCheckClient(clientVO);
         boolean duplicateId = duplicateCheckId(clientVO.getUserId());
 
         if (duplicateId) {
-            if (duplicateIpAddress) {
+            if (duplicateClient) {
                 log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
                 clientService.update(clientVO);
                 return true;
+            }
+            PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar start = Calendar.getInstance();
+            Calendar now = Calendar.getInstance();
+            if(periodDateVO.getPeriod() == 1) {
+                start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
+                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
+            }
+            else if(periodDateVO.getPeriod() == 2) {
+                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
+            }
+
+
+            if(df.format(start.getTime()).equals(df.format(now.getTime()))) {
+                clientVO.setCheckTime(df.format(now.getTime()));
+                resultMapper.insertEmptyResultBySchedule(clientVO);
             }
             log.info("새로운 클라이언트 등록 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
             clientService.register(clientVO);
