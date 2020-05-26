@@ -56,7 +56,7 @@
             pc_name              = #{pcName},
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE ip_address = #{ipAddress}
+        WHERE ip_address = #{ipAddress} AND user_id = #{userId}
     </update>
 
     <update id="updateWrongMd5" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -64,7 +64,7 @@
         SET wrong_md5            = true,
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND ip_address = #{ipAddress}
     </update>
 
 </mapper>

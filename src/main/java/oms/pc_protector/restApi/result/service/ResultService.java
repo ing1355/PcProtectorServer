@@ -320,25 +320,27 @@ public class ResultService {
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
-        if(temp.getPeriod() == 1) {
-            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay()+1);
-            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
-            end.set(Calendar.DAY_OF_WEEK, temp.getToDay()+1);
+        boolean Miss = resultMapper.selectClientForMiss(resultVO);
+        if (!Miss) {
+            if (temp.getPeriod() == 1) {
+                start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
+                start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+                end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
+                end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
+            } else if (temp.getPeriod() == 2) {
+                start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+                end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
+            }
+            resultVO.setStartTime(df.format(start.getTime()));
+            resultVO.setEndTime(df.format(end.getTime()));
+            if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
+                    df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::insertResult);
+            else
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::updateResultClient);
         }
-        else if(temp.getPeriod() == 2) {
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay()+1);
-            end.set(Calendar.DAY_OF_WEEK, temp.getToDay()+1);
-        }
-        resultVO.setStartTime(df.format(start.getTime()));
-        resultVO.setEndTime(df.format(end.getTime()));
-        if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
-                df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
-            Optional.ofNullable(resultVO)
-                    .ifPresent(resultMapper::insertResult);
-        else
-            Optional.ofNullable(resultVO)
-                    .ifPresent(resultMapper::updateResultClient);
     }
 
 

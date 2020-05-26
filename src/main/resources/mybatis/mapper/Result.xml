@@ -88,7 +88,8 @@
              ) AS A
                  LEFT OUTER JOIN
              (
-                 SELECT * FROM user_result
+                 SELECT *
+                 FROM user_result
              ) AS B
              ON A.ip_address = B.ip_address AND A.user_id = B.user_id
         WHERE in_schedule = 1
@@ -117,22 +118,22 @@
                  JOIN user_result u2 ON u1.check_time > u2.check_time OR u1.check_time = u2.check_time
             AND DATE_FORMAT(u1.check_time, '%Y-%m') = #{value}
         WHERE (u1.item1_result != 0
-           OR u1.item2_result != 0
-           OR u1.item3_result != 0
-           OR u1.item4_result != 0
-           OR u1.item5_result != 0
-           OR u1.item6_result != 0
-           OR u1.item7_result != 0
-           OR u1.item8_result != 0
-           OR u1.item9_result != 0
-           OR u1.item10_result != 0
-           OR u1.item11_result != 0
-           OR u1.item12_result != 0
-           OR u1.item13_result != 0
-           OR u1.item14_result != 0
-           OR u1.item15_result != 0
-           OR u1.item16_result != 0)
-            AND u1.in_schedule = 1
+            OR u1.item2_result != 0
+            OR u1.item3_result != 0
+            OR u1.item4_result != 0
+            OR u1.item5_result != 0
+            OR u1.item6_result != 0
+            OR u1.item7_result != 0
+            OR u1.item8_result != 0
+            OR u1.item9_result != 0
+            OR u1.item10_result != 0
+            OR u1.item11_result != 0
+            OR u1.item12_result != 0
+            OR u1.item13_result != 0
+            OR u1.item14_result != 0
+            OR u1.item15_result != 0
+            OR u1.item16_result != 0)
+          AND u1.in_schedule = 1
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -277,7 +278,17 @@
         SELECT COUNT(*)
         FROM user_result
         WHERE check_time BETWEEN #{startChecktime} AND #{endChecktime}
-                AND user_id = #{userId} AND ip_address = #{ipAddress}
+          AND user_id = #{userId}
+          AND ip_address = #{ipAddress}
+    </select>
+
+    <select id="selectClientForMiss" parameterType="oms.pc_protector.restApi.result.model.ResultVO"
+            resultType="boolean">
+        SELECT *
+        FROM user_result
+        WHERE check_time BETWEEN #{checkTime} AND now()
+          AND user_id = #{userId}
+          AND ip_address = #{ipAddress}
     </select>
 
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">

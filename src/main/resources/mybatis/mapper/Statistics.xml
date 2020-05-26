@@ -29,7 +29,8 @@
                  OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
         where t2.ip_address is NULL
         AND t0.user_id = t1.user_id
-        AND t0.department_idx = #{departmentCode}
+        AND t0.department_idx = #{departmentCode} AND t1.in_schedule = 1
+
         <if test="yearMonth != null">
         AND DATE_FORMAT(t1.check_time,'%Y-%m') = #{yearMonth}
         </if>

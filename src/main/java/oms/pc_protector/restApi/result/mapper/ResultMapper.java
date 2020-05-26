@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.result.mapper;
 
+import ch.qos.logback.core.net.server.Client;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.ResultProcessVO;
@@ -7,6 +8,7 @@ import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
 import org.springframework.stereotype.Repository;
 
 
@@ -27,6 +29,8 @@ public interface ResultMapper {
     public List<ResultProcessVO> selectResultProcessById(String ipAddress, String checkTime);
 
     public ResultVO selectResultDetailsById(String ipAddress, String checkTime);
+
+    public boolean selectClientForMiss(ResultVO resultVO);
 
     public int selectCountRunByMonth(String month);
 
