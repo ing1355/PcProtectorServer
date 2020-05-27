@@ -91,11 +91,12 @@ public class StatisticsService {
                 int totalPc = statisticsMapper.countClientByMonth(
                         new StatisticsResponseVO(departmentCode, yearMonth));
                 int runPc = statisticsList.size();
-                List<UserVO> userList = userService.findByDepartmentCode(departmentCode);
 
-                for (UserVO user : userList) {
-                    totalPc += clientService.findById(user.getUserId()).size();
-                }
+//                List<UserVO> userList = userService.findByDepartmentCode(departmentCode);
+
+//                for (UserVO user : userList) {
+//                    totalPc += clientService.findById(user.getUserId()).size();
+//                }
 
                 int sumScore = 0;
                 int avgScore = 0;

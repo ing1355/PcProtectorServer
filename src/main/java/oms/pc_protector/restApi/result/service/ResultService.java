@@ -114,8 +114,8 @@ public class ResultService {
     }
 
     @Transactional
-    public List<Integer> findScoreByDepartmentWithMonth(String department, String month) {
-        return resultMapper.selectScoreByDepartmentWithMonth(department, month);
+    public List<Integer> findScoreByDepartmentWithMonth(String department) {
+        return resultMapper.selectScoreByDepartmentWithMonth(department);
     }
 
 
@@ -316,33 +316,51 @@ public class ResultService {
     @Transactional
     public void resultSet(ResultVO resultVO) {
         PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
         int Miss = resultMapper.selectClientForMiss(resultVO);
-            if (temp.getPeriod() == 1) {
-                start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
-                start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-                end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
-                end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
-            } else if (temp.getPeriod() == 2) {
-                start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-                end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
-            }
-            resultVO.setStartTime(df.format(start.getTime()));
-            resultVO.setEndTime(df.format(end.getTime()));
-            if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
-                    df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
-                Optional.ofNullable(resultVO)
-                        .ifPresent(resultMapper::insertResult);
-            else {
-                if(Miss > 0) {
-
-                }
+        if (temp.getPeriod() == 1) {
+            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        } else if (temp.getPeriod() == 2) {
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
+        else {
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
+        resultVO.setStartTime(df.format(start.getTime()));
+        resultVO.setEndTime(df.format(end.getTime()));
+        if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
+                df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
+            Optional.ofNullable(resultVO)
+                    .ifPresent(resultMapper::insertResult);
+        else {
+            if (Miss == 0) {
                 Optional.ofNullable(resultVO)
                         .ifPresent(resultMapper::updateResultClient);
             }
+        }
     }
 
 

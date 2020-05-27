@@ -57,17 +57,16 @@
         SELECT COUNT(*) FROM (
         SELECT A.department_idx, A.user_id, B.ip_address
         FROM user as A, client as B
-        WHERE A.user_id = B.user_id
+        WHERE A.user_id = B.user_id AND A.department_idx = #{departmentCode}
         ) AS t0 LEFT OUTER JOIN
         (
         SELECT *,
         ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
         FROM user_result
-        ) AS t1
+        ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
-        WHERE t1.r0 = 1 AND in_schedule = 1 AND t0.ip_address = t1.ip_address AND
-        t0.user_id = t1.user_id
-        <if test="value != null">
+        WHERE t1.r0 = 1 AND in_schedule = 1
+        <if test="yearMonth != null">
             AND DATE_FORMAT(t1.check_time, '%Y-%m') = #{yearMonth}
         </if>
     </select>

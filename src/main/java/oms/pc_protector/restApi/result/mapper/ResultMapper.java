@@ -35,8 +35,7 @@ public interface ResultMapper {
     public int selectCountRunByMonth(String month);
 
     public List<Integer> selectScoreByDepartmentWithMonth(
-            @Param("department") String department,
-            @Param("month") String month);
+            @Param("department") String department);
 
     public int selectByScheduleIsExist(@Param(value = "startChecktime") String startChecktime,
                                        @Param(value = "endChecktime") String endChecktime,
