@@ -320,8 +320,7 @@ public class ResultService {
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
-        boolean Miss = resultMapper.selectClientForMiss(resultVO);
-        if (!Miss) {
+        int Miss = resultMapper.selectClientForMiss(resultVO);
             if (temp.getPeriod() == 1) {
                 start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
                 start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
@@ -337,10 +336,13 @@ public class ResultService {
                     df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
                 Optional.ofNullable(resultVO)
                         .ifPresent(resultMapper::insertResult);
-            else
+            else {
+                if(Miss > 0) {
+
+                }
                 Optional.ofNullable(resultVO)
                         .ifPresent(resultMapper::updateResultClient);
-        }
+            }
     }
 
 

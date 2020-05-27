@@ -10,4 +10,6 @@ import java.util.List;
 public interface StatisticsMapper {
 
     public List<LinkedHashMap> selectStatisticsByDepartment(StatisticsResponseVO responseVO);
+
+    public int countClientByMonth(StatisticsResponseVO responseVO);
 }

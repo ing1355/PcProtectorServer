@@ -47,9 +47,7 @@ public class StatisticsService {
 
         if (department == null) {
             departmentList = departmentService.findAll();
-        }
-
-        else {
+        } else {
             Long parentCode = departmentService.findByDepartment(department).getCode();
             departmentList.add(departmentService.findByDepartmentCode(parentCode));
             departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
@@ -90,7 +88,8 @@ public class StatisticsService {
                 List<LinkedHashMap> statisticsList = statisticsMapper
                         .selectStatisticsByDepartment(new StatisticsResponseVO(departmentCode, yearMonth));
 
-                int totalPc = 0;
+                int totalPc = statisticsMapper.countClientByMonth(
+                        new StatisticsResponseVO(departmentCode, yearMonth));
                 int runPc = statisticsList.size();
                 List<UserVO> userList = userService.findByDepartmentCode(departmentCode);
 
@@ -204,8 +203,8 @@ public class StatisticsService {
         Collections.sort(list, new Comparator<HashMap<String, Object>>() {
             @Override
             public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-                Long score1 = (Long)o1.get("departmentCode");
-                Long score2 = (Long)o2.get("departmentCode");
+                Long score1 = (Long) o1.get("departmentCode");
+                Long score2 = (Long) o2.get("departmentCode");
                 return score1.compareTo(score2);
             }
         });

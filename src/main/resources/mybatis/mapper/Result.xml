@@ -113,27 +113,31 @@
     </select>
 
     <select id="selectCountRunByMonth" resultType="int" parameterType="String">
-        SELECT COUNT(DISTINCT u1.user_id, u1.ip_address)
-        FROM user_result u1
-                 JOIN user_result u2 ON u1.check_time > u2.check_time OR u1.check_time = u2.check_time
-            AND DATE_FORMAT(u1.check_time, '%Y-%m') = #{value}
-        WHERE (u1.item1_result != 0
-            OR u1.item2_result != 0
-            OR u1.item3_result != 0
-            OR u1.item4_result != 0
-            OR u1.item5_result != 0
-            OR u1.item6_result != 0
-            OR u1.item7_result != 0
-            OR u1.item8_result != 0
-            OR u1.item9_result != 0
-            OR u1.item10_result != 0
-            OR u1.item11_result != 0
-            OR u1.item12_result != 0
-            OR u1.item13_result != 0
-            OR u1.item14_result != 0
-            OR u1.item15_result != 0
-            OR u1.item16_result != 0)
-          AND u1.in_schedule = 1
+        SELECT COUNT(*)
+        FROM (
+                 SELECT *,
+                        ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+                 FROM user_result
+             ) AS t1
+
+        WHERE t1.r0 = 1
+          AND in_schedule = 1
+          AND (t1.item1_result != 0
+            OR t1.item2_result != 0
+            OR t1.item3_result != 0
+            OR t1.item4_result != 0
+            OR t1.item5_result != 0
+            OR t1.item6_result != 0
+            OR t1.item7_result != 0
+            OR t1.item8_result != 0
+            OR t1.item9_result != 0
+            OR t1.item10_result != 0
+            OR t1.item11_result != 0
+            OR t1.item12_result != 0
+            OR t1.item13_result != 0
+            OR t1.item14_result != 0
+            OR t1.item15_result != 0
+            OR t1.item16_result != 0)
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -277,14 +281,15 @@
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE check_time BETWEEN #{startChecktime} AND #{endChecktime}
+        WHERE check_time BETWEEN #{startChecktime}
+            AND #{endChecktime}
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
     </select>
 
     <select id="selectClientForMiss" parameterType="oms.pc_protector.restApi.result.model.ResultVO"
-            resultType="boolean">
-        SELECT *
+            resultType="int">
+        SELECT COUNT(*)
         FROM user_result
         WHERE check_time BETWEEN #{checkTime} AND now()
           AND user_id = #{userId}
@@ -388,7 +393,8 @@
             item10_count                    = #{item10Count}
         WHERE user_id = #{userId}
           AND ip_address = #{ipAddress}
-          AND check_time BETWEEN #{startTime} AND #{endTime}
+          AND check_time BETWEEN #{startTime} AND
+            #{endTime}
     </update>
 </mapper>
 

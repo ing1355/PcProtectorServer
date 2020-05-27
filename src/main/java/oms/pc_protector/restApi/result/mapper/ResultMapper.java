@@ -30,7 +30,7 @@ public interface ResultMapper {
 
     public ResultVO selectResultDetailsById(String ipAddress, String checkTime);
 
-    public boolean selectClientForMiss(ResultVO resultVO);
+    public int selectClientForMiss(ResultVO resultVO);
 
     public int selectCountRunByMonth(String month);
 
