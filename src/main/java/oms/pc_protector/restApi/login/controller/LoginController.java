@@ -47,15 +47,15 @@ public class LoginController {
         return responseService.getSingleResult(result);
     }
 
-    @PostMapping(value = "login")
-    public SingleResult<?> login(@RequestBody @Valid LoginVO login){
-        ManagerVO manager = new ManagerVO();
-        boolean isLogin = loginService.login(login);
-        if(isLogin) manager =  managerService.findById(login.getId());
-        HashMap<String, Object> map = new HashMap<>();
-
-        map.put("info",manager);
-        map.put("FirstLogged",login.getPassword().equals("oms20190211"));
-        return responseService.getSingleResult(manager);
-    }
+//    @PostMapping(value = "login")
+//    public SingleResult<?> login(@RequestBody @Valid LoginVO login){
+//        ManagerVO manager = new ManagerVO();
+//        boolean isLogin = loginService.login(login);
+//        if(isLogin) manager =  managerService.findById(login.getId());
+//        HashMap<String, Object> map = new HashMap<>();
+//
+//        map.put("info",manager);
+//        map.put("FirstLogged",login.getPassword().equals("oms20190211"));
+//        return responseService.getSingleResult(manager);
+//    }
 }

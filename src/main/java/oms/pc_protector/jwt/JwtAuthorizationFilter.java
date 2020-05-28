@@ -12,11 +12,13 @@ import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +28,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.Date;
 
 @CrossOrigin
@@ -43,20 +44,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     // endpoint every request hit with authorization
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException{
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Read the Authorization header, where the JWT Token should be
+        String header = request.getHeader(JwtProperties.HEADER_STRING);
+
+        // If header does not contain BEARER or is null delegate to Spring impl and exit
+        if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+            // rest of the spring pipeline
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // If header is present, try grab user principal from database and perform authorization
+        Authentication authentication = null;
         try {
-            String header = request.getHeader(JwtProperties.HEADER_STRING);
-
-            // If header does not contain BEARER or is null delegate to Spring impl and exit
-            if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
-                // rest of the spring pipeline
-                chain.doFilter(request, response);
-                return;
-            }
-
-            // If header is present, try grab user principal from database and perform authorization
-            Authentication authentication = null;
             String token = request.getHeader(JwtProperties.HEADER_STRING);
             if (token != null) {
                 // parse the token and validate it (decode)
@@ -74,24 +75,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 // Search in the DB if we find the user by token subject (username)
                 // If so, then grab user details and create spring auth token using username, pass, authorities/roles
             }
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            // Continue filter execution
-
-        } catch(TokenExpiredException ex) {
-            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(),"토큰 만료!");
+        } catch (TokenExpiredException ex) {
+//            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "토큰 만료!");
         }
-        log.info(response);
+
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Continue filter execution
         chain.doFilter(request, response);
     }
-
-//    @ExceptionHandler(ServletException.class)
-//    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request,
-//                                                             HttpServletResponse response,
-//                                                             FilterChain chain) throws IOException {
-//
-//        return null;
-//    }
 
 }
