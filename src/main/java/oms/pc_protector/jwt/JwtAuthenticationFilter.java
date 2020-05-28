@@ -67,7 +67,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication auth = authenticationManager.authenticate(authenticationToken);
             System.out.println("auth : " + auth);
             ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
-            if(managerPrincipal.getLocked()) {
+            ManagerVO manager_info = managerPrincipal.getManagerVO();
+            if(manager_info.isLocked()) {
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             }
             return auth;

@@ -61,13 +61,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService))
                 .authorizeRequests()
                 // configure access rules
-//                .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
 //                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")
-//                .antMatchers("/v1/client").hasRole("CLIENT")
-//                .antMatchers("/v1/**").hasRole("MANAGER")
+//                .antMatchers("/v1/client/**").hasRole("CLIENT")
+                .antMatchers("/v1/**").hasRole("MANAGER")
 //                .antMatchers("/api/public/admin/*").hasRole("ADMIN")
-                .anyRequest().permitAll();
-//                .anyRequest().authenticated();
+                .anyRequest().authenticated();
+//                .anyRequest().permitAll();
     }
 
     @Bean

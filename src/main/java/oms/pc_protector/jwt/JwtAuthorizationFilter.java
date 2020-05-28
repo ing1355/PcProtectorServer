@@ -26,6 +26,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
+import java.util.Date;
 
 @CrossOrigin
 @Log4j2
@@ -41,50 +43,55 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     // endpoint every request hit with authorization
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException{
         // Read the Authorization header, where the JWT Token should be
-        String header = request.getHeader(JwtProperties.HEADER_STRING);
-
-        // If header does not contain BEARER or is null delegate to Spring impl and exit
-        if(header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)){
-            // rest of the spring pipeline
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // If header is present, try grab user principal from database and perform authorization
         try {
-            Authentication authentication = getUsernamePasswordAuthentication(request);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        catch(TokenExpiredException ex) {
-            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "토큰 만료!");
-        }
+            String header = request.getHeader(JwtProperties.HEADER_STRING);
 
-        // Continue filter execution
-        chain.doFilter(request, response);
-    }
+            // If header does not contain BEARER or is null delegate to Spring impl and exit
+            if (header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+                // rest of the spring pipeline
+                chain.doFilter(request, response);
+                return;
+            }
 
-    @ExceptionHandler(ServletException.class)
-    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(JwtProperties.HEADER_STRING);
-        if(token != null){
-            // parse the token and validate it (decode)
-                JWTVerifier temp = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes())).build();
-                String userId = temp.verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
+            // If header is present, try grab user principal from database and perform authorization
+            Authentication authentication = null;
+            String token = request.getHeader(JwtProperties.HEADER_STRING);
+            if (token != null) {
+                // parse the token and validate it (decode)
+                String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
+                        .build()
+                        .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
                         .getSubject();
-
-                // Search in the DB if we find the user by token subject (username)
-                // If so, then grab user details and create spring auth token using username, pass, authorities/roles
                 if (userId != null) {
                     ManagerVO manager = managerService.findById(userId);
                     ManagerPrincipal principal = new ManagerPrincipal(manager);
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
-                    return auth;
+                    authentication = auth;
                 }
-            return null;
+
+                // Search in the DB if we find the user by token subject (username)
+                // If so, then grab user details and create spring auth token using username, pass, authorities/roles
+            }
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // Continue filter execution
+
+        } catch(TokenExpiredException ex) {
+            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(),"토큰 만료!");
         }
-        return null;
+        log.info(response);
+        chain.doFilter(request, response);
     }
+
+//    @ExceptionHandler(ServletException.class)
+//    private Authentication getUsernamePasswordAuthentication(HttpServletRequest request,
+//                                                             HttpServletResponse response,
+//                                                             FilterChain chain) throws IOException {
+//
+//        return null;
+//    }
 
 }

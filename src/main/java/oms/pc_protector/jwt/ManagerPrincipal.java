@@ -42,6 +42,10 @@ public class ManagerPrincipal implements UserDetails {
         return authorities;
     }
 
+    public ManagerVO getManagerVO() {
+        return managerVO;
+    }
+
     @Override
     public String getPassword() {
         log.info("getPassword : " + managerVO.getPassword());
@@ -61,10 +65,6 @@ public class ManagerPrincipal implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
         return true;
-    }
-
-    public boolean getLocked() {
-        return managerVO.isLocked();
     }
 
     @Override
