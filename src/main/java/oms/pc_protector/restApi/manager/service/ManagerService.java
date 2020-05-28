@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.manager.service;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
+import oms.pc_protector.restApi.manager.model.ManagerLockVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,7 +50,6 @@ public class ManagerService {
         return Optional.ofNullable(managerMapper.searchManager(searchManagerVO)).orElseGet(() -> Collections.EMPTY_LIST);
     }
 
-
     @Transactional
     public void insertManager(ManagerVO managerVO) {
         String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
@@ -84,6 +84,17 @@ public class ManagerService {
         managerMapper.updateManagerInfoFirstLogin(firstLoginRequestManagerVO);
     }
 
+    @Transactional
+    public void updateManagerLock(ManagerLockVO managerLockVO) {
+        managerMapper.updateManagerLock(managerLockVO);
+    }
+
+    @Transactional
+    public void updateManagerUnLock(ManagerLockVO managerLockVO) {
+        String encodedPassword = new BCryptPasswordEncoder().encode(managerLockVO.getPassword());
+        managerLockVO.setPassword(encodedPassword);
+        managerMapper.updateManagerUnLock(managerLockVO);
+    }
 
     @Transactional
     public boolean removeManager(String id) {

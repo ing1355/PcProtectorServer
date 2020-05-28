@@ -4,9 +4,13 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.login.model.LoginVO;
+import oms.pc_protector.restApi.manager.model.ManagerVO;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -21,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-
+    @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -53,11 +59,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 credentials.getPassword(),
                 new ArrayList<>()
         );
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        log.info(format.format(new Date(System.currentTimeMillis())));
+        log.info(format.format(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME)));
         // Authenticate user
-        Authentication auth = authenticationManager.authenticate(authenticationToken);
-        System.out.println("auth : " + auth);
-        return auth;
+        try {
+            Authentication auth = authenticationManager.authenticate(authenticationToken);
+            System.out.println("auth : " + auth);
+            ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
+            if(managerPrincipal.getLocked()) {
+                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
+            }
+            return auth;
+        } catch(BadCredentialsException ex) {
+            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
+        }
+        return null;
     }
 
 
@@ -65,7 +82,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Grab principal
         ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Create JWT Token
+        log.info(format.format(new Date(System.currentTimeMillis())));
+        log.info(format.format(new Date(System.currentTimeMillis()+JwtProperties.ACCESS_TIME)));
         String encodedPassword = new BCryptPasswordEncoder().encode("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE");
         log.info("encode : "  + encodedPassword);
         String token = JWT.create()

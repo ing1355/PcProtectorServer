@@ -4,7 +4,7 @@
 
 
     <select id="findAll" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT id,name,mobile,email FROM manager
+        SELECT id,name,mobile,email,locked FROM manager
     </select>
 
     <select id="searchManager" parameterType="oms.pc_protector.restApi.manager.model.SearchManagerVO"
@@ -74,6 +74,19 @@
     <update id="updateManagerInfoFirstLogin" parameterType="oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO">
         UPDATE manager
         SET password = #{password}
+        WHERE id = #{userId};
+    </update>
+
+    <update id="updateManagerLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
+        UPDATE manager
+        SET locked = 1
+        WHERE id = #{userId};
+    </update>
+
+    <update id="updateManagerUnLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
+        UPDATE manager
+        SET password = #{password},
+            locked = 0
         WHERE id = #{userId};
     </update>
 

@@ -63,6 +63,10 @@ public class ManagerPrincipal implements UserDetails {
         return true;
     }
 
+    public boolean getLocked() {
+        return managerVO.isLocked();
+    }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;

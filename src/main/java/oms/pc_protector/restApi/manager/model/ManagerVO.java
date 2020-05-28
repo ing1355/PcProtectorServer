@@ -21,6 +21,7 @@ public class ManagerVO {
     private String email;
 
     private int active;
+    private boolean locked;
     private String roles = "";
     private String permissions = "";
 

@@ -4,9 +4,11 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
+import oms.pc_protector.restApi.manager.model.ManagerLockVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
+import org.apache.catalina.Manager;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,6 +80,18 @@ public class ManagerController {
         boolean result = true;
         managerService.updateManagerFirstLogin(firstLoginRequestManagerVO);
         return responseService.getSingleResult(result);
+    }
+
+    @PutMapping(value = "lock")
+    public SingleResult<?> updateManagerLock(@RequestBody @Valid ManagerLockVO managerLockVO) {
+        managerService.updateManagerLock(managerLockVO);
+        return responseService.getSingleResult(true);
+    }
+
+    @PutMapping(value = "unlock")
+    public SingleResult<?> updateManagerUnLock(@RequestBody @Valid ManagerLockVO managerLockVO) {
+        managerService.updateManagerUnLock(managerLockVO);
+        return responseService.getSingleResult(true);
     }
 
     @DeleteMapping(value = "/delete/{id}")
