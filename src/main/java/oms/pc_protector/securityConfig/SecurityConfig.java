@@ -1,9 +1,11 @@
 package oms.pc_protector.securityConfig;
 
 import lombok.RequiredArgsConstructor;
+import oms.pc_protector.jwt.ClientPrincipalDetailService;
 import oms.pc_protector.jwt.JwtAuthenticationFilter;
 import oms.pc_protector.jwt.JwtAuthorizationFilter;
 import oms.pc_protector.jwt.ManagerPrincipalDetailsService;
+import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +28,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ManagerPrincipalDetailsService managerPrincipalDetailsService;
+    private final ClientPrincipalDetailService clientPrincipalDetailService;
     private final ManagerService managerService;
+    private final ClientService clientService;
 
    /* public SecurityConfig(ManagerService managerService,
                           ManagerPrincipalDetailsService managerPrincipalDetailsService) {
@@ -45,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(this.managerPrincipalDetailsService);
+//        daoAuthenticationProvider.setUserDetailsService(this.clientPrincipalDetailService);
 
         return daoAuthenticationProvider;
     }
@@ -59,14 +64,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // add jwt filters (1. authentication, 2. authorization)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService))
+//                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.clientService))
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
 //                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")
 //                .antMatchers("/v1/client/**").hasRole("CLIENT")
+                .antMatchers("/v1/client/**").permitAll()
                 .antMatchers("/v1/**").hasRole("MANAGER")
+                .antMatchers("/v1/**").authenticated();
 //                .antMatchers("/api/public/admin/*").hasRole("ADMIN")
-                .anyRequest().authenticated();
+//                .anyRequest().authenticated();
 //                .anyRequest().permitAll();
     }
 

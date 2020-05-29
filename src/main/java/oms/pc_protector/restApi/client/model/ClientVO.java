@@ -15,4 +15,6 @@ public class ClientVO {
     private String vaccineVersion;
     private String pcName;
     private String checkTime;
+    private String roles;
+    private boolean active;
 }

@@ -1,11 +1,13 @@
 package oms.pc_protector.jwt;
 
+import ch.qos.logback.core.net.server.Client;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
@@ -35,11 +37,17 @@ import java.util.Date;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private ManagerService managerService;
+    private ClientService clientService;
 
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService) {
         super(authenticationManager);
         this.managerService = managerService;
+    }
+
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ClientService clientService) {
+        super(authenticationManager);
+        this.clientService = clientService;
     }
 
     // endpoint every request hit with authorization

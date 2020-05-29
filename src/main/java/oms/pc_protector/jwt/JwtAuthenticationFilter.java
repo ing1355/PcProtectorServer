@@ -1,12 +1,15 @@
 package oms.pc_protector.jwt;
 
+import ch.qos.logback.core.net.server.Client;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.login.model.LoginVO;
+import oms.pc_protector.restApi.login.model.TokenLoginVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,21 +47,31 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String a = request.getRequestURI();
         // Grab credentials and map then to LoginViewModel
-        LoginVO credentials = null;
+        TokenLoginVO credentials = null;
         HttpServletRequestWrapper temp = new HttpServletRequestWrapper(request);
 
         try {
-            credentials = new ObjectMapper().readValue(temp.getInputStream(), LoginVO.class);
+            credentials = new ObjectMapper().readValue(temp.getInputStream(), TokenLoginVO.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        UsernamePasswordAuthenticationToken authenticationToken = null;
         // Create login token
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                credentials.getId(),
-                credentials.getPassword(),
-                new ArrayList<>()
-        );
+        if(credentials.getPassword() == null || credentials.getPassword().length() == 0) {
+            authenticationToken = new UsernamePasswordAuthenticationToken(
+                    credentials.getId(),
+                    credentials.getIpAddress(),
+                    new ArrayList<>()
+            );
+        }
+        else {
+            authenticationToken = new UsernamePasswordAuthenticationToken(
+                    credentials.getId(),
+                    credentials.getPassword(),
+                    new ArrayList<>()
+            );
+        }
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         log.info(format.format(new Date(System.currentTimeMillis())));
         log.info(format.format(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME)));
@@ -66,10 +79,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Authentication auth = authenticationManager.authenticate(authenticationToken);
             System.out.println("auth : " + auth);
-            ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
-            ManagerVO manager_info = managerPrincipal.getManagerVO();
-            if(manager_info.isLocked()) {
-                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
+            if(credentials.getPassword() == null) {
+                ClientPrincipal clientPrincipal = (ClientPrincipal) auth.getPrincipal();
+            }
+            else {
+                ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
+                ManagerVO manager_info = managerPrincipal.getManagerVO();
+                if(manager_info.isLocked()) {
+                    response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
+                }
             }
             return auth;
         } catch(BadCredentialsException ex) {
@@ -82,19 +100,27 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Grab principal
-        ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String token = null;
+        System.out.println("testtestetstest" + authResult.getPrincipal().getClass());
+        if(authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
+            ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
+            token = JWT.create()
+                    .withSubject(principal.getUsername())
+                    .withClaim("role", "MANAGER")
+                    .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
+                    .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE",principal.getPassword())))
+                    .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+        }
+        else {
+            ClientPrincipal principal = (ClientPrincipal) authResult.getPrincipal();
+            token = JWT.create()
+                    .withSubject(principal.getUsername())
+                    .withClaim("role", "CLIENT")
+                    .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
+                    .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+        }
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         // Create JWT Token
-        log.info(format.format(new Date(System.currentTimeMillis())));
-        log.info(format.format(new Date(System.currentTimeMillis()+JwtProperties.ACCESS_TIME)));
-        String encodedPassword = new BCryptPasswordEncoder().encode("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE");
-        log.info("encode : "  + encodedPassword);
-        String token = JWT.create()
-                .withSubject(principal.getUsername())
-                .withClaim("role", "MANAGER")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
-                .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE",principal.getPassword())))
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
 
         // Add token in response
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
