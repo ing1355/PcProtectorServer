@@ -9,7 +9,9 @@ import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.nio.file.Files;
@@ -22,7 +24,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
+import java.util.Map;
 
+import com.system.util.SUtil;
 @Log4j2
 @RestController
 @CrossOrigin
@@ -42,11 +46,17 @@ public class ClientFileController {
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(
-            @RequestParam MultipartFile file)
-            throws IOException, NoSuchAlgorithmException {
+            @RequestParam MultipartFile file) throws IOException, NoSuchAlgorithmException {
+
+        long fileSize = file.getSize();
+        if(fileSize > 104857600) {
+            return responseService.getSingleResult("크기 에러!");
+        }
+        if(!SUtil.fileTypeCheck(file.getInputStream())) {
+            return responseService.getSingleResult("타입 에러!");
+        }
 
         String fileName = file.getOriginalFilename();
-        long fileSize = file.getSize();
         String fileMd5 = clientFileService.makeMd5(file.getInputStream());
         boolean isExistFile = clientFileService.findExistFile();
 
@@ -72,7 +82,6 @@ public class ClientFileController {
         clientFileVO = clientFileService.findClientFile();
         return responseService.getSingleResult(clientFileVO);
     }
-
 
     @GetMapping(value = "")
     public SingleResult<?> findClientFileAll() {

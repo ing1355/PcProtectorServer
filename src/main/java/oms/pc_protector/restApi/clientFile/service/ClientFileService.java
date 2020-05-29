@@ -5,14 +5,23 @@ import oms.pc_protector.restApi.clientFile.mapper.ClientFileMapper;
 import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import com.system.util.SUtil;
 
 @Log4j2
 @Service

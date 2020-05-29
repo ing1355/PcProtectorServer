@@ -38,3 +38,10 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
+# File Upload Size
+---
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
