@@ -37,6 +37,18 @@ public class ConfigurationController {
         return responseService.getSingleResult(checkListMap);
     }
 
+    @GetMapping(value = "/schedule")
+    public SingleResult<?> findScheduleAll() {
+        List<PeriodDateVO> scheduleList = configurationService.findScheduleAll();
+        return responseService.getSingleResult(scheduleList);
+    }
+
+    @GetMapping(value = "/schedule/applied")
+    public SingleResult<?> findApply() {
+        PeriodDateVO result = configurationService.findAppliedSchedule();
+        return responseService.getSingleResult(result);
+    }
+
     @PutMapping(value = "/check/setting/config")
     public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO) {
         configurationService.updateConfiguration_service(configurationVO);
@@ -60,19 +72,6 @@ public class ConfigurationController {
         configurationService.updateForceRun(param);
         return responseService.getSingleResult(true);
     }
-
-    @GetMapping(value = "/schedule")
-    public SingleResult<?> findScheduleAll() {
-        List<PeriodDateVO> scheduleList = configurationService.findScheduleAll();
-        return responseService.getSingleResult(scheduleList);
-    }
-
-    @GetMapping(value = "/schedule/applied")
-    public SingleResult<?> findApply() {
-        PeriodDateVO result = configurationService.findAppliedSchedule();
-        return responseService.getSingleResult(result);
-    }
-
 
     @PostMapping(value = "/schedule/insert")
     public SingleResult<?> registerSchedule(@RequestBody PeriodDateVO periodDateVO) {
