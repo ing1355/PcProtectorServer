@@ -40,13 +40,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private ClientService clientService;
 
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService, ClientService clientService) {
         super(authenticationManager);
         this.managerService = managerService;
-    }
-
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ClientService clientService) {
-        super(authenticationManager);
         this.clientService = clientService;
     }
 
@@ -70,8 +66,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             if (token != null) {
                 // parse the token and validate it (decode)
                 String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
-                        .build()
-                        .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
+                                .build()
+                                .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
                         .getSubject();
                 if (userId != null) {
                     ManagerVO manager = managerService.findById(userId);

@@ -109,8 +109,8 @@ public class ResultService {
 
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
-    public int countByMonth(String month) {
-        return resultMapper.selectCountRunByMonth(month);
+    public int countByMonth(String startDate, String endDate) {
+        return resultMapper.selectCountRunByMonth(startDate, endDate);
     }
 
     @Transactional

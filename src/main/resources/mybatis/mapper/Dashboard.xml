@@ -4,19 +4,30 @@
 
     <select id="selectAvgScoreByMonth" resultType="Integer"
             parameterType="String">
-        SELECT AVG(t1.score) AS avgScore
-        FROM user AS t0,
-             user_result as t1
-                 left outer join user_result as t2
-                                 on t1.ip_address = t2.ip_address
-                                     AND (t1.create_time <![CDATA[<]]> t2.create_time
-                                         OR (t1.create_time = t2.create_time AND t1.ip_address <![CDATA[<]]> t2.ip_address))
-        where t2.ip_address is NULL
-          AND t0.user_id = t1.user_id
-          AND DATE_FORMAT(t1.create_time, '%Y-%m') = #{value}
+
+        SELECT NVL(AVG(score), 0)
+        FROM user_result
+        WHERE DATE_FORMAT(check_time, '%Y-%m') = #{value}
+          AND in_schedule = 1
+          AND (item1_result != 0
+            OR item2_result != 0
+            OR item3_result != 0
+            OR item4_result != 0
+            OR item5_result != 0
+            OR item6_result != 0
+            OR item7_result != 0
+            OR item8_result != 0
+            OR item9_result != 0
+            OR item10_result != 0
+            OR item11_result != 0
+            OR item12_result != 0
+            OR item13_result != 0
+            OR item14_result != 0
+            OR item15_result != 0
+            OR item16_result != 0)
     </select>
 
-    <select id="selectAvgScoreByRecent1Months"
+    <select id="selectAvgScoreByRecent12Months"
             resultType="oms.pc_protector.restApi.dashboard.model.ChartVO"
             parameterType="String">
         SELECT AVG(t1.score)                           AS avgScore,
@@ -53,13 +64,16 @@
     </select>
 
     <select id="selectUserCountByScore" resultType="Integer">
-        SELECT COUNT(*) FROM (
-                          SELECT *,
-                                 ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
-                          FROM user_result
-                      ) AS t1
+        SELECT COUNT(*)
+        FROM (
+                 SELECT *,
+                        ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+                 FROM user_result
+             ) AS t1
 
-        WHERE t1.r0 = 1 AND in_schedule = 1 AND score BETWEEN #{startScore} AND #{endScore}
+        WHERE t1.r0 = 1
+          AND in_schedule = 1
+          AND score BETWEEN #{startScore} AND #{endScore} AND t1.check_time BETWEEN #{startDate} AND #{endDate}
           AND (t1.item1_result != 0
             OR t1.item2_result != 0
             OR t1.item3_result != 0

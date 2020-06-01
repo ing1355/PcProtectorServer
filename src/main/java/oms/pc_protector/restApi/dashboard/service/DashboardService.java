@@ -6,7 +6,9 @@ import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.ChartVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
+import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.NowScheduleVO;
+import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
@@ -28,6 +30,7 @@ public class DashboardService {
     private DepartmentService departmentService;
     private DashboardMapper dashboardMapper;
     private ConfigurationService configurationService;
+    private ConfigurationMapper configurationMapper;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
     private String currentTime = format.format(System.currentTimeMillis());
@@ -36,7 +39,9 @@ public class DashboardService {
                             ResultService resultService,
                             DepartmentService departmentService,
                             DashboardMapper dashboardMapper,
-                            ConfigurationService configurationService) {
+                            ConfigurationService configurationService,
+                            ConfigurationMapper configurationMapper) {
+        this.configurationMapper = configurationMapper;
         this.clientService = clientService;
         this.resultService = resultService;
         this.departmentService = departmentService;
@@ -47,9 +52,40 @@ public class DashboardService {
     @Transactional
     public HashMap<String, Object> dashboardTop() {
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
-
+        PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        if (temp.getPeriod() == 1) {
+            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        } else if (temp.getPeriod() == 2) {
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
+        else {
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
         int totalPc = clientService.count();
-        int runPc = resultService.countByMonth(currentTime);
+        int runPc = resultService.countByMonth(df.format(start.getTime()), df.format(end.getTime()));
         String resultRate = String.valueOf((int) (((double) runPc / (double) totalPc) * 100)) + "%";
 
         log.info("전체 PC : {}", totalPc);
@@ -72,13 +108,33 @@ public class DashboardService {
     }
 
     @Transactional
-    public HashMap<String, Object> dashboardBottom(String startdate, String enddate, String term) {
+    public HashMap<String, Object> dashboardBottom(String startDate, String endDate, String term) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
+        HashMap<String, Object> resultChart = new HashMap<>();
         dashboardResultMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
-        if (term.equals("3개월") || term.equals("6개월"))
-            dashboardResultMap.put("resultChart", resultChart());
-        else
-            dashboardResultMap.put("resultChart", resultChartDays(startdate, enddate));
+        dashboardResultMap.put("resultChart", resultChart);
+        Calendar c = Calendar.getInstance();
+        Date date = new Date();
+        c.setTime(date);
+        Integer temp = 0;
+        if (term.equals("6개월")) {
+            for(int i = 0; i < 6; i++){
+                c.add(Calendar.MONTH, i * -1);
+                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()))).orElseGet(() -> 0);
+                resultChart.put(df.format(c.getTime()),temp);
+                c.setTime(date);
+            }
+        }
+        else{
+            for(int i = 0; i < 12; i++){
+                c.add(Calendar.MONTH, i * -1);
+                temp = dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()));
+                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()))).orElseGet(() -> 0);
+                resultChart.put(df.format(c.getTime()),temp);
+                c.setTime(date);
+            }
+        }
         return dashboardResultMap;
     }
 
@@ -150,9 +206,41 @@ public class DashboardService {
     @Transactional
     public HashMap<String, Object> userCountByScore() {
         LinkedHashMap<String, Object> userCountMap = new LinkedHashMap<>();
-        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100);
-        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89);
-        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69);
+        PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        if (temp.getPeriod() == 1) {
+            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        } else if (temp.getPeriod() == 2) {
+            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
+        else {
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+        }
+        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, df.format(start.getTime()),df.format(end.getTime()));
+        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, df.format(start.getTime()),df.format(end.getTime()));
+        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, df.format(start.getTime()),df.format(end.getTime()));
         userCountMap.put("topScoreUserCount", topScoreUserCount);
         userCountMap.put("middleScoreUserCount", middleScoreUserCount);
         userCountMap.put("lowScoreUserCount", lowScoreUserCount);
@@ -166,21 +254,18 @@ public class DashboardService {
     }
 
     @Transactional
-    public List<ChartVO> resultChart() {
-        LinkedHashMap<String, Object> scoreMap = new LinkedHashMap<>();
+    public List<ChartVO> resultChart6Months(String startDate, String endDate) {
         List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
         return Optional
-                .ofNullable(dashboardMapper.selectAvgScoreByRecent6Months())
+                .ofNullable(dashboardMapper.selectAvgScoreByRecent6Months(startDate,endDate))
                 .orElseGet(ArrayList::new);
     }
 
     @Transactional
-    public List<ChartVO> resultChartDays(String startdate, String enddate) {
-        LinkedHashMap<String, Object> scoreMap = new LinkedHashMap<>();
+    public List<ChartVO> resultChart12Months(String startDate, String endDate) {
         List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
         return Optional
-                .ofNullable(dashboardMapper.selectAvgScoreByRecent1Months())
+                .ofNullable(dashboardMapper.selectAvgScoreByRecent12Months(startDate,endDate))
                 .orElseGet(ArrayList::new);
     }
-
 }

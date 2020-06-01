@@ -49,7 +49,7 @@
             WHERE t2.ip_address IS NULL
               AND t0.user_id = t1.user_id
         ) AS B ON A.ip_address = B.ip_address AND A.user_id = B.user_id */
-        SELECT A.user_id,
+        /* SELECT A.user_id,
                A.os,
                A.wrong_md5,
                A.pc_protector_version,
@@ -93,7 +93,13 @@
              ) AS B
              ON A.ip_address = B.ip_address AND A.user_id = B.user_id
         WHERE in_schedule = 1
-        ORDER BY B.check_time DESC
+        ORDER BY B.check_time DESC */
+
+        SELECT * FROM user_result AS t1, user AS t2, client AS t3
+        WHERE t1.ip_address = t3.ip_address AND
+              t2.user_id = t3.user_id AND t1.user_id = t3.user_id AND
+              t1.in_schedule = 1
+        ORDER BY t1.check_time DESC
     </select>
 
     <select id="selectResultDetailsById" resultType="oms.pc_protector.restApi.result.model.ResultVO"
@@ -138,6 +144,7 @@
             OR t1.item14_result != 0
             OR t1.item15_result != 0
             OR t1.item16_result != 0)
+        AND t1.check_time BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -174,7 +181,7 @@
 
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
-        SELECT
+        /* SELECT
         A.user_id,
         A.os,
         A.wrong_md5,
@@ -210,8 +217,12 @@
         (
         SELECT *, MAX(create_time) FROM user_result GROUP BY ip_address, user_id, check_time
         ) AS B
-        ON A.ip_address = B.ip_address AND A.user_id = B.user_id
-        where in_schedule = 1
+        ON A.ip_address = B.ip_address AND A.user_id = B.user_id */
+
+        SELECT * FROM user_result AS C, user AS A, client AS B
+        WHERE C.ip_address = B.ip_address AND
+        A.user_id = B.user_id AND C.user_id = B.user_id AND
+        C.in_schedule = 1
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')
         </if>
@@ -219,15 +230,15 @@
             AND A.name LIKE concat('%', #{name}, '%')
         </if>
         <if test="ipAddress != null">
-            AND A.ip_address LIKE concat('%', #{ipAddress}, '%')
+            AND B.ip_address LIKE concat('%', #{ipAddress}, '%')
         </if>
         <if test="departmentCode != null">
             AND A.department_idx = #{departmentCode}
         </if>
         <if test="startDate != null and endDate != null">
-            And B.check_time BETWEEN #{startDate} AND #{endDate}
+            And C.check_time BETWEEN #{startDate} AND #{endDate}
         </if>
-        ORDER BY B.check_time DESC
+        ORDER BY C.check_time DESC
     </select>
 
     <select id="findUserDetailStaticInfo" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"

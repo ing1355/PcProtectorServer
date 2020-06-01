@@ -18,11 +18,16 @@ import oms.pc_protector.restApi.user.model.UserResponseVO;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 
 /* 해당 클래스는 AGENT와의 통신을 위한 API만 존재. */
@@ -119,4 +124,14 @@ public class ClientController {
         return responseService.getSingleResult(map);
     }
 
+    @GetMapping(value = "timeout")
+    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
+    public void timeOutResponse() throws TimeoutException, IOException {
+        return;
+    }
+
+    @GetMapping(value = "none")
+    public void noneResponse() throws InterruptedException {
+        Thread.sleep(30000);
+    }
 }

@@ -32,7 +32,8 @@ public interface ResultMapper {
 
     public int selectClientForMiss(ResultVO resultVO);
 
-    public int selectCountRunByMonth(String month);
+    public int selectCountRunByMonth(@Param(value = "startDate") String startDate,
+                                     @Param(value = "endDate") String endDate);
 
     public List<Integer> selectScoreByDepartmentWithMonth(
             @Param("department") String department);
