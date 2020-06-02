@@ -11,13 +11,10 @@ import java.util.List;
 @Repository
 public interface DashboardMapper {
 
-    public Integer selectAvgScoreByMonth(String month);
+    public Integer selectAvgScoreByMonth(@Param(value = "startDate") String startDate,
+                                         @Param(value = "endDate") String endDate);
 
-    public List<ChartVO> selectAvgScoreByRecent6Months(@Param(value = "startDate") String startDate,
-                                                       @Param(value = "endDate") String endDate);
-
-    public List<ChartVO> selectAvgScoreByRecent12Months(@Param(value = "startDate") String startDate,
-                                                        @Param(value = "endDate") String endDate);
+    public Integer selectAvgScoreByRecentMonths(@Param(value = "month") String month);
 
     public Integer selectUserCountByScore(@Param("startScore") int startScore,
                                           @Param("endScore") int endScore,

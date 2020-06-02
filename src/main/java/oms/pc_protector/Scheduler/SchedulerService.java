@@ -62,11 +62,6 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            log.info(df.format(start.getTime()));
-            log.info(df.format(now.getTime()));
-            log.info(Now_Schedule.getFromDay());
-            log.info(df.format(end.getTime()));
-            log.info(Now_Schedule.getToDay());
         } else if (Now_Schedule.getPeriod() == 2) { // 매주
 
             start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
@@ -77,10 +72,6 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            log.info(df.format(now.getTime()));
-            log.info(Now_Schedule.getFromDay());
-            log.info(df.format(end.getTime()));
-            log.info(Now_Schedule.getToDay());
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
@@ -88,14 +79,19 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            log.info(df.format(start.getTime()));
-            log.info(df.format(end.getTime()));
         }
-
+//        log.info(df.format(start.getTime()));
+//        log.info(df.format(now.getTime()));
+//        log.info(Now_Schedule.getFromDay());
+//        log.info(df.format(end.getTime()));
+//        log.info(Now_Schedule.getToDay());
+        log.info("start : " + dft.format(start.getTime()));
+        log.info("end : " + dft.format(end.getTime()));
+        log.info("now : " + dft.format(now.getTime()));
         if (df.format(start.getTime()).equals(df.format(now.getTime()))) {
             dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(df.format(start.getTime()), df.format(end.getTime())));
             for (ClientVO client : temp) {
-                if (resultMapper.selectByScheduleIsExist((dft.format(now.getTime())),
+                if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
                         dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {
                     client.setCheckTime(dft.format(start.getTime()));
                     resultMapper.insertEmptyResultBySchedule(client);

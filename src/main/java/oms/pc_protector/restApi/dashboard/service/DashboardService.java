@@ -122,7 +122,7 @@ public class DashboardService {
         if (term.equals("6개월")) {
             for(int i = 0; i < 6; i++){
                 c.add(Calendar.MONTH, i * -1);
-                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()))).orElseGet(() -> 0);
+                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByRecentMonths(df.format(c.getTime()))).orElseGet(() -> 0);
                 resultChart.put(df.format(c.getTime()),temp);
                 c.setTime(date);
             }
@@ -130,8 +130,7 @@ public class DashboardService {
         else{
             for(int i = 0; i < 12; i++){
                 c.add(Calendar.MONTH, i * -1);
-                temp = dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()));
-                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByMonth(df.format(c.getTime()))).orElseGet(() -> 0);
+                temp = Optional.ofNullable(dashboardMapper.selectAvgScoreByRecentMonths(df.format(c.getTime()))).orElseGet(() -> 0);
                 resultChart.put(df.format(c.getTime()),temp);
                 c.setTime(date);
             }
@@ -250,16 +249,8 @@ public class DashboardService {
 
     @Transactional
     public int resultAvgScoreByCurrentMonth() {
-        log.info(dashboardMapper.selectAvgScoreByMonth(currentTime));
-        return dashboardMapper.selectAvgScoreByMonth(currentTime);
-    }
-
-    @Transactional
-    public List<ChartVO> resultChart6Months(String startDate, String endDate) {
-        List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
-        return Optional
-                .ofNullable(dashboardMapper.selectAvgScoreByRecent6Months(startDate,endDate))
-                .orElseGet(ArrayList::new);
+        DashboardPeriodVO temp = selectDashboardPeriod();
+        return dashboardMapper.selectAvgScoreByMonth(temp.getStartDate(),temp.getEndDate());
     }
 
     @Transactional

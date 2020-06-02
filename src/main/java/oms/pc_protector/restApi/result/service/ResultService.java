@@ -351,10 +351,14 @@ public class ResultService {
         }
         resultVO.setStartTime(df.format(start.getTime()));
         resultVO.setEndTime(df.format(end.getTime()));
+        log.info("start : " + df.format(start.getTime()));
+        log.info("end : " + df.format(end.getTime()));
+        log.info("now : " + df.format(now.getTime()));
         if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
-                df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0)
+                df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
             Optional.ofNullable(resultVO)
                     .ifPresent(resultMapper::insertResult);
+        }
         else {
             if (Miss == 0) {
                 Optional.ofNullable(resultVO)
