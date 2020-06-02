@@ -3,9 +3,11 @@ package oms.pc_protector.restApi.dashboard.controller;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.dashboard.service.DashboardService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 
 @Log4j2
@@ -35,6 +37,7 @@ public class DashboardController {
         result.put("top",dashboardTopMap);
         result.put("middle",dashboardMiddleMap);
         result.put("bottom",dashboardBottomMap);
+        result.put("Period",dashboardService.selectDashboardPeriod());
         return responseService.getSingleResult(result);
     }
 

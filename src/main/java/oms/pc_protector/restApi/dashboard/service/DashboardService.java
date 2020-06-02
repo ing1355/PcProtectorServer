@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.ChartVO;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
@@ -262,10 +263,15 @@ public class DashboardService {
     }
 
     @Transactional
-    public List<ChartVO> resultChart12Months(String startDate, String endDate) {
-        List<HashMap<String, Object>> avgScoreList = new ArrayList<>();
+    public DashboardPeriodVO selectDashboardPeriod() {
         return Optional
-                .ofNullable(dashboardMapper.selectAvgScoreByRecent12Months(startDate,endDate))
-                .orElseGet(ArrayList::new);
+                .ofNullable(dashboardMapper.selectDashboardPeriod())
+                .orElseGet(null);
+    }
+
+    @Transactional
+    public void dashboardPeriodUpdate(DashboardPeriodVO dashboardPeriodVO) {
+        log.info("update to dashboard");
+        dashboardMapper.dashboardPeriodUpdate(dashboardPeriodVO);
     }
 }

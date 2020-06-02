@@ -92,4 +92,14 @@
             OR t1.item16_result != 0)
     </select>
 
+    <select id="selectDashboardPeriod" resultType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
+        SELECT * FROM dashboard_period;
+    </select>
+
+    <update id="dashboardPeriodUpdate" parameterType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
+        UPDATE dashboard_period
+        SET start_date = #{startDate},
+            end_date = #{endDate}
+    </update>
+
 </mapper>
