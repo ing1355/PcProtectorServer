@@ -25,6 +25,8 @@ public interface ManagerMapper {
 
     public void updateManagerLock(ManagerLockVO managerLockVO);
 
+    public void initManagerLock(String userId);
+
     public void updateManagerUnLock(ManagerLockVO managerLockVO);
 
     public void insertManager(ManagerVO managerVO);

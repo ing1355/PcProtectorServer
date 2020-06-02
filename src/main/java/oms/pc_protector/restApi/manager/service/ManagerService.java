@@ -25,7 +25,6 @@ public class ManagerService {
         this.managerMapper = managerMapper;
     }
 
-
     @Transactional(readOnly = true)
     public List<ManagerVO> findAll() {
         return Optional.ofNullable(managerMapper.findAll()).orElseGet(() -> Collections.EMPTY_LIST);
@@ -90,8 +89,13 @@ public class ManagerService {
     }
 
     @Transactional
+    public void initManagerLock(String userId) {
+        managerMapper.initManagerLock(userId);
+    }
+
+    @Transactional
     public void updateManagerUnLock(ManagerLockVO managerLockVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode(managerLockVO.getPassword());
+        String encodedPassword = new BCryptPasswordEncoder().encode("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE");
         managerLockVO.setPassword(encodedPassword);
         managerMapper.updateManagerUnLock(managerLockVO);
     }

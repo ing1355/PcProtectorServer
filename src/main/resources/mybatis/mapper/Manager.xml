@@ -77,9 +77,15 @@
         WHERE id = #{userId};
     </update>
 
+    <update id="initManagerLock" parameterType="String">
+        UPDATE manager
+        SET locked = 0
+        WHERE id = #{value};
+    </update>
+
     <update id="updateManagerLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
         UPDATE manager
-        SET locked = 1
+        SET locked = locked + 1
         WHERE id = #{userId};
     </update>
 

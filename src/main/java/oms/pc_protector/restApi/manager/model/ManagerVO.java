@@ -19,7 +19,7 @@ public class ManagerVO {
     private String name;
     private String mobile;
     private String email;
-    private boolean locked;
+    private int locked;
 
     private int active;
     private String roles = "";

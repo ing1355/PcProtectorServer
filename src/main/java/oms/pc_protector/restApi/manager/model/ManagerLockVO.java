@@ -8,5 +8,5 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Setter
 public class ManagerLockVO {
     private String userId;
-    private String password = new BCryptPasswordEncoder().encode("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE");
+    private String password;
 }

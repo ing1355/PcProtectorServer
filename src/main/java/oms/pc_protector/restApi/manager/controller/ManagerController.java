@@ -10,6 +10,7 @@ import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.apache.catalina.Manager;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -83,6 +84,7 @@ public class ManagerController {
     }
 
     @PutMapping(value = "lock")
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public SingleResult<?> updateManagerLock(@RequestBody @Valid ManagerLockVO managerLockVO) {
         managerService.updateManagerLock(managerLockVO);
         return responseService.getSingleResult(true);

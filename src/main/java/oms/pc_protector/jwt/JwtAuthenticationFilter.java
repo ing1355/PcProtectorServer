@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.login.model.LoginVO;
 import oms.pc_protector.restApi.login.model.TokenLoginVO;
+import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
+import oms.pc_protector.restApi.manager.service.ManagerService;
+import org.apache.catalina.Manager;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -35,11 +37,16 @@ import java.util.Date;
 
 @CrossOrigin
 @Log4j2
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final ManagerService managerService;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, ManagerService managerService) {
+        this.authenticationManager = authenticationManager;
+        this.managerService = managerService;
+    }
 
     @SneakyThrows
     @Override
@@ -58,14 +65,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         UsernamePasswordAuthenticationToken authenticationToken = null;
         // Create login token
-        if(credentials.getPassword() == null || credentials.getPassword().length() == 0) {
+        if (credentials.getPassword() == null || credentials.getPassword().length() == 0) {
             authenticationToken = new UsernamePasswordAuthenticationToken(
                     credentials.getId(),
                     credentials.getIpAddress(),
                     new ArrayList<>()
             );
-        }
-        else {
+        } else {
             authenticationToken = new UsernamePasswordAuthenticationToken(
                     credentials.getId(),
                     credentials.getPassword(),
@@ -79,19 +85,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             Authentication auth = authenticationManager.authenticate(authenticationToken);
             System.out.println("auth : " + auth);
-            if(credentials.getPassword() == null) {
+            if (credentials.getPassword() == null) {
                 ClientPrincipal clientPrincipal = (ClientPrincipal) auth.getPrincipal();
-            }
-            else {
+            } else {
                 ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
                 ManagerVO manager_info = managerPrincipal.getManagerVO();
-                if(manager_info.isLocked()) {
+                if (manager_info.getLocked() > 4) {
                     response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
                 }
             }
             return auth;
-        } catch(BadCredentialsException ex) {
-            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
+        } catch (BadCredentialsException ex) {
+            ManagerVO managerVO = this.managerService.findById(credentials.getId());
+            if (managerVO.getLocked() > 4) {
+                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
+            } else {
+                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
+            }
+
         }
         return null;
     }
@@ -102,16 +113,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // Grab principal
         String token = null;
         System.out.println("testtestetstest" + authResult.getPrincipal().getClass());
-        if(authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
+        if (authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
             ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
+            this.managerService.initManagerLock(principal.getUsername());
             token = JWT.create()
                     .withSubject(principal.getUsername())
                     .withClaim("role", "MANAGER")
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
-                    .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE",principal.getPassword())))
+                    .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE", principal.getPassword())))
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
-        }
-        else {
+        } else {
             ClientPrincipal principal = (ClientPrincipal) authResult.getPrincipal();
             token = JWT.create()
                     .withSubject(principal.getUsername())
