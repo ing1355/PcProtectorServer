@@ -92,6 +92,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 ManagerVO manager_info = managerPrincipal.getManagerVO();
                 if (manager_info.getLocked() > 4) {
                     response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
+                    return null;
                 }
             }
             return auth;
