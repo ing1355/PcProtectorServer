@@ -66,7 +66,7 @@ public class ApiFilter implements Filter {
         else {
             log.info("============FRONTEND API============");
             logVO.setManagerId(GetUserIdByPrincipal(User_info));
-//            if(!(logVO.getMethod().equals("GET")))
+            if(!(logVO.getMethod().equals("GET")))
                 logService.register(logVO);
         }
 

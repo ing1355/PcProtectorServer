@@ -11,6 +11,7 @@ import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.NowScheduleVO;
 import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
+import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class DashboardService {
     private DashboardMapper dashboardMapper;
     private ConfigurationService configurationService;
     private ConfigurationMapper configurationMapper;
+    private ResultMapper resultMapper;
 
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
     private String currentTime = format.format(System.currentTimeMillis());
@@ -41,52 +43,23 @@ public class DashboardService {
                             DepartmentService departmentService,
                             DashboardMapper dashboardMapper,
                             ConfigurationService configurationService,
-                            ConfigurationMapper configurationMapper) {
+                            ConfigurationMapper configurationMapper,
+                            ResultMapper resultMapper) {
         this.configurationMapper = configurationMapper;
         this.clientService = clientService;
         this.resultService = resultService;
         this.departmentService = departmentService;
         this.dashboardMapper = dashboardMapper;
         this.configurationService = configurationService;
+        this.resultMapper = resultMapper;
     }
 
     @Transactional
     public HashMap<String, Object> dashboardTop() {
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
-        PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        if (temp.getPeriod() == 1) {
-            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        } else if (temp.getPeriod() == 2) {
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
-        else {
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         int totalPc = clientService.count();
-        int runPc = resultService.countByMonth(df.format(start.getTime()), df.format(end.getTime()));
+        int runPc = resultService.countByMonth();
         String resultRate = String.valueOf((int) (((double) runPc / (double) totalPc) * 100)) + "%";
 
         log.info("전체 PC : {}", totalPc);
@@ -238,9 +211,9 @@ public class DashboardService {
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
         }
-        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, df.format(start.getTime()),df.format(end.getTime()));
-        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, df.format(start.getTime()),df.format(end.getTime()));
-        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, df.format(start.getTime()),df.format(end.getTime()));
+        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, df.format(start.getTime()), df.format(end.getTime()));
+        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, df.format(start.getTime()), df.format(end.getTime()));
+        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, df.format(start.getTime()), df.format(end.getTime()));
         userCountMap.put("topScoreUserCount", topScoreUserCount);
         userCountMap.put("middleScoreUserCount", middleScoreUserCount);
         userCountMap.put("lowScoreUserCount", lowScoreUserCount);

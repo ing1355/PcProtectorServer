@@ -11,6 +11,4 @@ public class StatisticsResponseVO {
 
     private Long departmentCode;
     private String yearMonth;
-
-
 }

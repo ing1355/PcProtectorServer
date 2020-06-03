@@ -1,7 +1,10 @@
 package oms.pc_protector.restApi.result.service;
 
+import lombok.SneakyThrows;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
@@ -21,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.sql.Date;
+import java.util.Date;
 import java.util.*;
 
 @Log4j2
@@ -33,17 +36,20 @@ public class ResultService {
     private final ConfigurationMapper configurationMapper;
     private final ClientMapper clientMapper;
     private final ConfigurationService configurationService;
+    private final DashboardMapper dashboardMapper;
 
     public ResultService(ResultMapper resultMapper,
                          DepartmentService departmentService,
                          ConfigurationMapper configurationMapper,
                          ClientMapper clientMapper,
-                         ConfigurationService configurationService) {
+                         ConfigurationService configurationService,
+                         DashboardMapper dashboardMapper) {
         this.resultMapper = resultMapper;
         this.configurationMapper = configurationMapper;
         this.departmentService = departmentService;
         this.clientMapper = clientMapper;
         this.configurationService = configurationService;
+        this.dashboardMapper = dashboardMapper;
     }
 
     @Transactional
@@ -109,13 +115,29 @@ public class ResultService {
 
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
-    public int countByMonth(String startDate, String endDate) {
-        return resultMapper.selectCountRunByMonth(startDate, endDate);
+    public int countByMonth() {
+        return resultMapper.selectCountRunByMonth();
     }
 
+    @SneakyThrows
     @Transactional
     public List<Integer> findScoreByDepartmentWithMonth(String department) {
-        return resultMapper.selectScoreByDepartmentWithMonth(department);
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startDate = df.parse(dashboardPeriodVO.getStartDate());
+        Date endDate = df.parse(dashboardPeriodVO.getEndDate());
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(startDate);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(startDate);
+        c1.set(Calendar.HOUR_OF_DAY, 0);
+        c1.set(Calendar.MINUTE, 0);
+        c1.set(Calendar.SECOND, 0);
+        c2.set(Calendar.HOUR_OF_DAY, 23);
+        c2.set(Calendar.MINUTE, 59);
+        c2.set(Calendar.SECOND, 59);
+        return resultMapper.selectScoreByDepartmentWithMonth(department, dft.format(c1.getTime()),dft.format(c2.getTime()));
     }
 
 

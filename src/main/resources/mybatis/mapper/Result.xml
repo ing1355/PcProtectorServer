@@ -118,16 +118,20 @@
           AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
 
-    <select id="selectCountRunByMonth" resultType="int" parameterType="String">
-        SELECT COUNT(*)
-        FROM (
-                 SELECT *,
-                        ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
-                 FROM user_result
-             ) AS t1
+    <select id="selectCountBySchedule" resultType="int">
+        SELECT COUNT(*) FROM user_result
+        WHERE check_time BETWEEN #{startDate} AND #{endDate}
+    </select>
 
-        WHERE t1.r0 = 1
-          AND in_schedule = 1
+    <select id="selectCountRunByMonth" resultType="int" parameterType="String">
+        SELECT COUNT(*) FROM
+            (
+                SELECT user_id, ip_address FROM client
+            ) AS t0 LEFT OUTER JOIN
+            (SELECT *,
+                    ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+             FROM user_result) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
+        WHERE t1.r0 = 1 AND t1.in_schedule = 1
           AND (t1.item1_result != 0
             OR t1.item2_result != 0
             OR t1.item3_result != 0
@@ -144,7 +148,6 @@
             OR t1.item14_result != 0
             OR t1.item15_result != 0
             OR t1.item16_result != 0)
-        AND t1.check_time BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -155,12 +158,11 @@
                                  WHERE A.user_id = B.user_id AND A.department = #{department}
                              ) AS t0 LEFT OUTER JOIN
                              (
-                                 SELECT *,
-                                        ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
-                                 FROM user_result
+                                 SELECt * FROM user_result
+                                 WHERE check_time BETWEEN #{startDate} AND #{endDate}
                              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
-        WHERE t1.r0 = 1 AND in_schedule = 1
+        WHERE in_schedule = 1
           AND (t1.item1_result != 0
             OR t1.item2_result != 0
             OR t1.item3_result != 0

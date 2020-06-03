@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.statistics.service;
 
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
@@ -85,8 +86,10 @@ public class StatisticsService {
 
                 String departmentName = departmentService.findByDepartmentCode(departmentCode).getName();
                 Long myParentCode = departmentService.findByDepartmentCode(departmentCode).getParentCode();
-                List<LinkedHashMap> statisticsList = statisticsMapper
-                        .selectStatisticsByDepartment(new StatisticsResponseVO(departmentCode, yearMonth));
+
+                List<LinkedHashMap> statisticsList = statisticsMapper.selectStatisticsByDepartment(new StatisticsResponseVO(departmentCode, yearMonth));
+                List<ClientVO> clientVO = clientService.findAll();
+
 
                 int totalPc = statisticsMapper.countClientByMonth(
                         new StatisticsResponseVO(departmentCode, yearMonth));

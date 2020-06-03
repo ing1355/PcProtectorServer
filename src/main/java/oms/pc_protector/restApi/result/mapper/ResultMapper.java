@@ -32,11 +32,12 @@ public interface ResultMapper {
 
     public int selectClientForMiss(ResultVO resultVO);
 
-    public int selectCountRunByMonth(@Param(value = "startDate") String startDate,
-                                     @Param(value = "endDate") String endDate);
+    public int selectCountRunByMonth();
 
     public List<Integer> selectScoreByDepartmentWithMonth(
-            @Param("department") String department);
+            @Param("department") String department,
+            @Param(value = "startDate") String startDate,
+            @Param(value = "endDate") String endDate);
 
     public int selectByScheduleIsExist(@Param(value = "startChecktime") String startChecktime,
                                        @Param(value = "endChecktime") String endChecktime,
