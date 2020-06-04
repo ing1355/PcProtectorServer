@@ -6,6 +6,8 @@ import oms.pc_protector.jwt.JwtAuthenticationFilter;
 import oms.pc_protector.jwt.JwtAuthorizationFilter;
 import oms.pc_protector.jwt.ManagerPrincipalDetailsService;
 import oms.pc_protector.restApi.client.service.ClientService;
+import oms.pc_protector.restApi.login.mapper.LoginMapper;
+import oms.pc_protector.restApi.login.service.LoginService;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -27,10 +29,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final LoginMapper loginMapper;
+
     private final ManagerPrincipalDetailsService managerPrincipalDetailsService;
     private final ClientPrincipalDetailService clientPrincipalDetailService;
     private final ManagerService managerService;
-    private final ClientService clientService;
 
    /* public SecurityConfig(ManagerService managerService,
                           ManagerPrincipalDetailsService managerPrincipalDetailsService) {
@@ -49,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(this.managerPrincipalDetailsService);
+        daoAuthenticationProvider.setUserDetailsService(this.clientPrincipalDetailService);
 
         return daoAuthenticationProvider;
     }
@@ -62,15 +66,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // add jwt filters (1. authentication, 2. authorization)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService, this.clientService))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService, this.loginMapper))
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/login/client").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/firstlogin").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/lock").permitAll()
 //                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")
-//                .antMatchers("/v1/client/**").hasRole("CLIENT")
-                .antMatchers("/v1/client/**").permitAll()
+                .antMatchers("/v1/client/**").hasRole("CLIENT")
+//                .antMatchers("/v1/client/**").permitAll()
                 .antMatchers("/v1/**").hasRole("MANAGER")
                 .antMatchers("/v1/**").authenticated();
 //                .antMatchers("/api/public/admin/*").hasRole("ADMIN")

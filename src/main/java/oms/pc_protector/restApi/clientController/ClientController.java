@@ -124,14 +124,14 @@ public class ClientController {
         return responseService.getSingleResult(map);
     }
 
-    @GetMapping(value = "timeout")
-    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
-    public void timeOutResponse() throws TimeoutException, IOException {
-        return;
-    }
-
-    @GetMapping(value = "none")
-    public void noneResponse() throws InterruptedException {
-        Thread.sleep(30000);
-    }
+//    @GetMapping(value = "timeout")
+//    @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
+//    public void timeOutResponse() throws TimeoutException, IOException {
+//        return;
+//    }
+//
+//    @GetMapping(value = "none")
+//    public void noneResponse() throws InterruptedException {
+//        Thread.sleep(30000);
+//    }
 }

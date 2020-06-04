@@ -1,7 +1,9 @@
 package oms.pc_protector.restApi.login.service;
 
         import lombok.extern.log4j.Log4j2;
+        import oms.pc_protector.restApi.client.model.ClientVO;
         import oms.pc_protector.restApi.login.mapper.LoginMapper;
+        import oms.pc_protector.restApi.login.model.ClientLoginVO;
         import oms.pc_protector.restApi.login.model.LoginVO;
         import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
         import oms.pc_protector.restApi.manager.service.ManagerService;
@@ -44,6 +46,15 @@ public class LoginService {
             throw new RuntimeException("패스워드를 확인해주세요.");
         }
         return true;
+    }
+
+    public boolean loginForClient(ClientLoginVO loginVO) {
+        return loginMapper.loginForClient(loginVO) > 0;
+    }
+
+    @Transactional(readOnly = true)
+    public ClientVO findClient(ClientLoginVO loginVO) {
+        return loginMapper.findClient(loginVO);
     }
 
     @Transactional(readOnly = true)

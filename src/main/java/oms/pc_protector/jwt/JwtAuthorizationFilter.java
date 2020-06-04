@@ -5,9 +5,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
+import oms.pc_protector.restApi.login.mapper.LoginMapper;
+import oms.pc_protector.restApi.login.model.ClientLoginVO;
+import oms.pc_protector.restApi.login.service.LoginService;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
@@ -37,13 +43,13 @@ import java.util.Date;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private ManagerService managerService;
-    private ClientService clientService;
+    private LoginMapper loginMapper;
 
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService, ClientService clientService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, ManagerService managerService, LoginMapper loginMapper) {
         super(authenticationManager);
         this.managerService = managerService;
-        this.clientService = clientService;
+        this.loginMapper = loginMapper;
     }
 
     // endpoint every request hit with authorization
@@ -65,15 +71,25 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             String token = request.getHeader(JwtProperties.HEADER_STRING);
             if (token != null) {
                 // parse the token and validate it (decode)
-                String userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
-                                .build()
-                                .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""))
-                        .getSubject();
+                DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
+                        .build()
+                        .verify(token.replace(JwtProperties.TOKEN_PREFIX, ""));
+                String userId = decodedJWT.getSubject();
+                String role = decodedJWT.getClaim("role").asString();
                 if (userId != null) {
-                    ManagerVO manager = managerService.findById(userId);
-                    ManagerPrincipal principal = new ManagerPrincipal(manager);
-                    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
-                    authentication = auth;
+                    if(role.equals("MANAGER")) {
+                        ManagerVO manager = managerService.findById(userId);
+                        ManagerPrincipal principal = new ManagerPrincipal(manager);
+                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
+                        authentication = auth;
+                    }
+                    else if(role.equals("CLIENT")) {
+                        String ipAddress = decodedJWT.getAudience().get(0);
+                        ClientVO client = loginMapper.findClient(new ClientLoginVO(userId, ipAddress));
+                        ClientPrincipal principal = new ClientPrincipal(client);
+                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
+                        authentication = auth;
+                    }
                 }
 
                 // Search in the DB if we find the user by token subject (username)
