@@ -199,27 +199,25 @@ public class UserService {
             if (duplicateClient) {
                 log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
                 clientService.update(clientVO);
+                PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                Calendar start = Calendar.getInstance();
+                Calendar now = Calendar.getInstance();
+                if(periodDateVO.getPeriod() == 1) {
+                    start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
+                    start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
+                }
+                else if(periodDateVO.getPeriod() == 2) {
+                    start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
+                }
+
+
+                if(df.format(start.getTime()).equals(df.format(now.getTime()))) {
+                    clientVO.setCheckTime(df.format(now.getTime()));
+                    resultMapper.insertEmptyResultBySchedule(clientVO);
+                }
                 return true;
             }
-            PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar start = Calendar.getInstance();
-            Calendar now = Calendar.getInstance();
-            if(periodDateVO.getPeriod() == 1) {
-                start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
-                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
-            }
-            else if(periodDateVO.getPeriod() == 2) {
-                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
-            }
-
-
-            if(df.format(start.getTime()).equals(df.format(now.getTime()))) {
-                clientVO.setCheckTime(df.format(now.getTime()));
-                resultMapper.insertEmptyResultBySchedule(clientVO);
-            }
-            log.info("새로운 클라이언트 등록 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
-            clientService.register(clientVO);
         } else {
             log.info("등록되지 않은 사용자입니다.");
             return false;

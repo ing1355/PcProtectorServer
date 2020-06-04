@@ -33,19 +33,19 @@ import java.util.HashMap;
 public class LoginController {
 
     private ResponseService responseService;
-
     private LoginService loginService;
-
+    private ClientService clientService;
     private ManagerService managerService;
-
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public LoginController(ResponseService responseService,
                            LoginService loginService,
-                           ManagerService managerService){
+                           ManagerService managerService,
+                           ClientService clientService){
         this.responseService = responseService;
         this.loginService = loginService;
         this.managerService = managerService;
+        this.clientService = clientService;
     }
 
     @GetMapping(value = "confirm")
@@ -75,7 +75,10 @@ public class LoginController {
                                           HttpServletResponse response){
         ClientVO client = new ClientVO();
         boolean isLogin = loginService.loginForClient(login);
-        if(isLogin) client =  loginService.findClient(login);
+        if(!isLogin) {
+            clientService.register(new ClientVO(login.getId(), login.getIpAddress()));
+        }
+        client = loginService.findClient(login);
         String token = null;
         token = JWT.create()
                 .withSubject(client.getUserId())

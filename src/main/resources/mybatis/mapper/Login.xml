@@ -9,14 +9,14 @@
     <select id="loginForClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO" resultType="int">
         SELECT COUNT(*) FROM client
         WHERE user_id = #{id} AND
-              ip_address = #{ipAddress}
+              mac_address = #{ipAddress}
     </select>
 
     <select id="findClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO"
             resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT * FROM client
         WHERE user_id = #{id} AND
-            ip_address = #{ipAddress}
+            mac_address = #{ipAddress}
     </select>
 
     <select id="findPasswordById" resultType="String" parameterType="String">

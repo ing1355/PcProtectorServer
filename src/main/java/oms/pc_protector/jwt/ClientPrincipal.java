@@ -38,7 +38,7 @@ public class ClientPrincipal implements UserDetails {
     @Override
     public String getPassword() {
         log.info("getClientPassword : " + this.clientVO.getIpAddress());
-        return this.clientVO.getIpAddress();
+        return this.clientVO.getMacAddress();
     }
 
     @Override

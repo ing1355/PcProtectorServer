@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.login.mapper.LoginMapper;
 import oms.pc_protector.restApi.login.model.LoginVO;
 import oms.pc_protector.restApi.login.model.TokenLoginVO;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
@@ -16,6 +17,7 @@ import org.apache.catalina.Manager;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -42,10 +44,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ManagerService managerService;
+    private final LoginMapper loginMapper;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, ManagerService managerService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, ManagerService managerService, LoginMapper loginMapper) {
         this.authenticationManager = authenticationManager;
         this.managerService = managerService;
+        this.loginMapper = loginMapper;
     }
 
     @SneakyThrows
@@ -97,13 +101,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             }
             return auth;
         } catch (BadCredentialsException ex) {
+            ex.printStackTrace();
             ManagerVO managerVO = this.managerService.findById(credentials.getId());
             if (managerVO.getLocked() > 4) {
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             } else {
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
             }
-
+        } catch (InternalAuthenticationServiceException ia) {
+            ia.printStackTrace();
+            response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "아이디가 존재하지 않습니다.");
         }
         return null;
     }

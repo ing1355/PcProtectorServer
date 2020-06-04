@@ -51,8 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     DaoAuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(this.managerPrincipalDetailsService);
         daoAuthenticationProvider.setUserDetailsService(this.clientPrincipalDetailService);
+        daoAuthenticationProvider.setUserDetailsService(this.managerPrincipalDetailsService);
 
         return daoAuthenticationProvider;
     }
@@ -65,7 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 // add jwt filters (1. authentication, 2. authorization)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService, this.loginMapper))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService, this.loginMapper))
                 .authorizeRequests()
                 // configure access rules

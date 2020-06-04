@@ -17,4 +17,13 @@ public class ClientVO {
     private String checkTime;
     private String roles;
     private boolean active;
+
+    public ClientVO(String id, String ipAddress) {
+        this.userId = id;
+        this.macAddress = ipAddress;
+    }
+
+    public ClientVO() {
+
+    }
 }
