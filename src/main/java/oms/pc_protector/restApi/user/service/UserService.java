@@ -47,7 +47,6 @@ public class UserService {
     }
 
 
-
     @Transactional
     public boolean findSameId(String id) {
         int result = userMapper.selectSameId(id);
@@ -58,7 +57,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<UserVO> findBySearchInput(UserSearchInputVO userSearchVO) {
         List<UserVO> userList = new ArrayList<>();
-        if(userSearchVO.getDepartmentCode() != null) {
+        if (userSearchVO.getDepartmentCode() != null) {
             Long code = userSearchVO.getDepartmentCode();
             List<DepartmentVO> childCodeList = new ArrayList<>();
             childCodeList.add(departmentService.findByDepartmentCode(code));
@@ -136,10 +135,10 @@ public class UserService {
     public void registryFromAdmin(UserRequestVO userRequestVO) {
         boolean duplicateIpAddressCheck = duplicateCheckIpAddress(userRequestVO.getIpAddress());
         if (duplicateIpAddressCheck) return;
-        if(userRequestVO.getEmail() == null) {
+        if (userRequestVO.getEmail() == null) {
             userRequestVO.setEmail("이메일 없음");
         }
-        if(userRequestVO.getPhone() == null) {
+        if (userRequestVO.getPhone() == null) {
             userRequestVO.setPhone("전화번호 없음");
         }
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
@@ -192,32 +191,57 @@ public class UserService {
 
     @Transactional
     public boolean agentLogin(ClientVO clientVO, ConfigurationService configurationService) {
-        boolean duplicateClient = duplicateCheckClient(clientVO);
         boolean duplicateId = duplicateCheckId(clientVO.getUserId());
+        ClientVO client_prev = clientMapper.selectById(clientVO.getUserId());
 
         if (duplicateId) {
-            if (duplicateClient) {
-                log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
-                clientService.update(clientVO);
-                PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                Calendar start = Calendar.getInstance();
-                Calendar now = Calendar.getInstance();
-                if(periodDateVO.getPeriod() == 1) {
-                    start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
-                    start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
-                }
-                else if(periodDateVO.getPeriod() == 2) {
-                    start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay());
-                }
-
-
-                if(df.format(start.getTime()).equals(df.format(now.getTime()))) {
-                    clientVO.setCheckTime(df.format(now.getTime()));
-                    resultMapper.insertEmptyResultBySchedule(clientVO);
-                }
-                return true;
+            log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
+            if(client_prev.getIpAddress() != null && !(client_prev.getIpAddress().equals(clientVO.getIpAddress()))) {
+                resultMapper.updateResultByUpdateClient(clientVO);
             }
+            PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Calendar start = Calendar.getInstance();
+            Calendar end = Calendar.getInstance();
+            Calendar now = Calendar.getInstance();
+
+            if (periodDateVO.getPeriod() == 1) { // 매달
+                start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
+                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay() + 1);
+                start.set(Calendar.HOUR_OF_DAY, 0);
+                start.set(Calendar.MINUTE, 0);
+                start.set(Calendar.SECOND, 0);
+                end.set(Calendar.WEEK_OF_MONTH, periodDateVO.getToWeek());
+                end.set(Calendar.DAY_OF_WEEK, periodDateVO.getToDay() + 1);
+                end.set(Calendar.HOUR_OF_DAY, 23);
+                end.set(Calendar.MINUTE, 59);
+                end.set(Calendar.SECOND, 59);
+            } else if (periodDateVO.getPeriod() == 2) { // 매주
+                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay() + 1);
+                start.set(Calendar.HOUR_OF_DAY, 0);
+                start.set(Calendar.MINUTE, 0);
+                start.set(Calendar.SECOND, 0);
+                end.set(Calendar.DAY_OF_WEEK, periodDateVO.getToDay() + 1);
+                end.set(Calendar.HOUR_OF_DAY, 23);
+                end.set(Calendar.MINUTE, 59);
+                end.set(Calendar.SECOND, 59);
+            } else { // 매일
+                start.set(Calendar.HOUR_OF_DAY, 0);
+                start.set(Calendar.MINUTE, 0);
+                start.set(Calendar.SECOND, 0);
+                end.set(Calendar.HOUR_OF_DAY, 23);
+                end.set(Calendar.MINUTE, 59);
+                end.set(Calendar.SECOND, 59);
+            }
+
+            clientVO.setCheckTime(df.format(now.getTime()));
+
+            if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
+                    dft.format(end.getTime()), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
+                resultMapper.insertEmptyResultBySchedule(clientVO);
+            }
+            clientService.First_update(clientVO);
         } else {
             log.info("등록되지 않은 사용자입니다.");
             return false;

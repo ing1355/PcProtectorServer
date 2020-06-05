@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/v1/login/client").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/client/login").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/firstlogin").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/lock").permitAll()
 //                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")

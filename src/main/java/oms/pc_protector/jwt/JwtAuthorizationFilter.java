@@ -87,7 +87,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                         String ipAddress = decodedJWT.getAudience().get(0);
                         ClientVO client = loginMapper.findClient(new ClientLoginVO(userId, ipAddress));
                         ClientPrincipal principal = new ClientPrincipal(client);
-                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, principal.getAuthorities());
+                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, ipAddress, principal.getAuthorities());
                         authentication = auth;
                     }
                 }

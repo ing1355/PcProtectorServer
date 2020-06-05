@@ -7,11 +7,12 @@
 
         SELECT NVL(AVG(score), 0)
         FROM (
-                 SELECT user_id, ip_address
+                 SELECT user_id
                  FROM client
              ) AS t1
                  LEFT OUTER join
-             (SELECT *
+             (SELECT *,
+                     ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
               FROM user_result
               WHERE DATE_FORMAT(check_time, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
                 AND in_schedule = 1
@@ -31,8 +32,8 @@
                   OR item14_result != 0
                   OR item15_result != 0
                   OR item16_result != 0)) AS t2 ON
-                 t1.user_id = t2.user_id AND t1.ip_address = t2.ip_address
-        WHERE idx IS NOT NULL
+                 t1.user_id = t2.user_id
+        WHERE idx IS NOT NULL AND t2.r0 = 1
     </select>
 
     <select id="selectAvgScoreByRecentMonths"
@@ -60,7 +61,7 @@
                      OR item14_result != 0
                      OR item15_result != 0
                      OR item16_result != 0)
-                 GROUP BY user_id, ip_address, DATE_FORMAT(check_time, '%Y-%m-%d')) AS t1
+                 GROUP BY user_id, DATE_FORMAT(check_time, '%Y-%m-%d')) AS t1
     </select>
 
     <!--    <select id="selectAvgScoreByRecent6Months"-->
@@ -88,9 +89,9 @@
              ) AS t0
                  LEFT OUTER JOIN (
             SELECT *,
-                   ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+                   ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
             FROM user_result
-        ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
+        ) AS t1 ON t0.user_id = t1.user_id
 
         WHERE t1.r0 = 1
           AND in_schedule = 1

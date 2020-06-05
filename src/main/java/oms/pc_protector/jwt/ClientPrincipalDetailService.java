@@ -21,9 +21,7 @@ public class ClientPrincipalDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        List<ClientVO> client = this.clientService.findById(userId);
-        List<ClientVO> clientPrincipal = new ArrayList<>();
-        return (UserDetails) clientPrincipal;
+    public ClientPrincipal loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return new ClientPrincipal(clientService.findById(userId));
     }
 }

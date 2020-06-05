@@ -1,8 +1,13 @@
 package oms.pc_protector.restApi.clientController;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.jwt.JwtProperties;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
+import oms.pc_protector.restApi.login.model.ClientLoginVO;
+import oms.pc_protector.restApi.login.service.LoginService;
 import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -47,12 +53,14 @@ public class ClientController {
     private final ResultService resultService;
     private final ClientService clientService;
     private ResultMapper resultMapper;
+    private final LoginService loginService;
 
     public ClientController(ResponseService responseService, UserService userService,
                             ClientFileService clientFileService,
                             ProcessService processService,ConfigurationService configurationService,
                             ResultService resultService, ClientService clientService,
-                            ResultMapper resultMapper) {
+                            ResultMapper resultMapper,
+                            LoginService loginService) {
         this.responseService = responseService;
         this.userService = userService;
         this.clientFileService = clientFileService;
@@ -61,15 +69,8 @@ public class ClientController {
         this.resultService = resultService;
         this.clientService = clientService;
         this.resultMapper = resultMapper;
+        this.loginService = loginService;
     }
-
-
-    @GetMapping(value = "")
-    public SingleResult<?> findClientList(@RequestParam @Valid String id) {
-        List<ClientVO> clientVOList = clientService.findById(id);
-        return responseService.getSingleResult(clientVOList);
-    }
-
 
     @PostMapping(value = "/first-request")
     public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
@@ -122,6 +123,28 @@ public class ClientController {
         HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
         return responseService.getSingleResult(map);
+    }
+
+
+    @PostMapping(value = "/login")
+    public SingleResult<?> loginForClient(@RequestBody @Valid ClientLoginVO login,
+                                          HttpServletRequest request,
+                                          HttpServletResponse response){
+        ClientVO client = new ClientVO();
+        boolean isLogin = loginService.loginForClient(login);
+        if(!isLogin) {
+            clientService.register(new ClientVO(login.getId(), login.getIpAddress()));
+        }
+        client = loginService.findClient(login);
+        String token = null;
+        token = JWT.create()
+                .withSubject(client.getUserId())
+                .withClaim("role", "CLIENT")
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_TIME))
+                .withAudience(client.getMacAddress())
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
+        return responseService.getSingleResult(client);
     }
 
 //    @GetMapping(value = "timeout")

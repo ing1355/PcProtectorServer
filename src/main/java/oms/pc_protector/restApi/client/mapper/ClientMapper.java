@@ -8,9 +8,13 @@ import java.util.List;
 @Repository
 public interface ClientMapper {
 
-    public List<ClientVO> selectById(String id);
+    public ClientVO selectById(String id);
+
+    public int selectByIdCount(String id);
 
     public int selectSameClient(ClientVO clientVO);
+
+    public ClientVO selectSameIdIpAddress(ClientVO clientVO);
 
     public int selectSameIpAddress(String IpAddress);
 
@@ -25,4 +29,6 @@ public interface ClientMapper {
     public boolean updateClientInfo(ClientVO clientVO);
 
     public void updateWrongMd5(ClientVO clientVO);
+
+    public void deleteClientInfo(ClientVO clientVO);
 }

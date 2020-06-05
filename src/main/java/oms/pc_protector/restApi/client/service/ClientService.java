@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.client.service;
 
+import ch.qos.logback.core.net.server.Client;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,15 @@ public class ClientService {
     }
 
     public int count() {
-       return clientMapper.selectCountAll();
+        return clientMapper.selectCountAll();
     }
 
     public void loginUpdateTime(String id) {
         clientMapper.loginUpdateTime(id);
+    }
+
+    public ClientVO selectSameIdIpAddress(ClientVO clientVO) {
+        return clientMapper.selectSameIdIpAddress(clientVO);
     }
 
 
@@ -46,14 +51,24 @@ public class ClientService {
 
 
     @Transactional
-    public List<ClientVO> findById(String id) {
+    public ClientVO findById(String id) {
         return clientMapper.selectById(id);
     }
 
 
     @Transactional
-    public void register(ClientVO clientVO){
-        int test = clientMapper.insertClientInfo(clientVO);
+    public void register(ClientVO clientVO) {
+        ClientVO temp = clientMapper.selectById(clientVO.getUserId());
+        if (clientMapper.selectByIdCount(clientVO.getUserId()) > 0) {
+            clientMapper.updateClientInfo(clientVO);
+        } else {
+            int test = clientMapper.insertClientInfo(clientVO);
+        }
+    }
+
+    @Transactional
+    public void First_update(ClientVO clientVO) {
+        clientMapper.updateClientInfo(clientVO);
     }
 
 
@@ -64,7 +79,7 @@ public class ClientService {
 
 
     @Transactional
-    public void update(ClientVO clientVO){
+    public void update(ClientVO clientVO) {
         clientMapper.updateClientInfo(clientVO);
     }
 }

@@ -6,9 +6,18 @@
         SELECT * FROM client
     </select>
 
+    <select id="selectByIdCount" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM client
+        WHERE user_id = #{userId}
+    </select>
+
     <select id="selectById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT * FROM client
         WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectSameIdIpAddress" resultType="oms.pc_protector.restApi.client.model.ClientVO" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT * FROM client WHERE user_id = #{userId} AND ip_address = #{ipAddress}
     </select>
 
     <select id="selectSameIpAddress" resultType="int" parameterType="String">
@@ -16,7 +25,7 @@
     </select>
 
     <select id="selectSameClient" resultType="int" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT COUNT(*) FROM client WHERE ip_address = #{ipAddress} AND user_id = #{userId}
+        SELECT COUNT(*) FROM client WHERE mac_address = #{macAddress} AND user_id = #{userId}
     </select>
 
     <select id="selectCountAll" resultType="int">
@@ -52,11 +61,12 @@
         UPDATE client
         SET user_id              = #{userId},
             os                   = #{os},
+            ip_address           = #{ipAddress},
             mac_address          = #{macAddress},
             pc_name              = #{pcName},
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE ip_address = #{ipAddress} AND user_id = #{userId}
+        WHERE user_id = #{userId}
     </update>
 
     <update id="updateWrongMd5" parameterType="oms.pc_protector.restApi.client.model.ClientVO">

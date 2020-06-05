@@ -51,4 +51,6 @@ public interface ResultMapper {
     public void insertEmptyResultBySchedule(ClientVO clientVO);
 
     public void updateResultClient(ResultVO resultVO);
+
+    public void updateResultByUpdateClient(ClientVO clientVO);
 }
