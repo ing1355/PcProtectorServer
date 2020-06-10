@@ -5,9 +5,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.dashboard.service.DashboardService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
@@ -25,15 +27,18 @@ public class SchedulerService {
     private final ResultMapper resultMapper;
     private final ClientMapper clientMapper;
     private final DashboardService dashboardService;
+    private final DashboardMapper dashboardMapper;
 
     public SchedulerService(ConfigurationMapper configurationMapper,
                             ResultMapper resultMapper,
                             ClientMapper clientMapper,
-                            DashboardService dashboardService) {
+                            DashboardService dashboardService,
+                            DashboardMapper dashboardMapper) {
         this.clientMapper = clientMapper;
         this.resultMapper = resultMapper;
         this.configurationMapper = configurationMapper;
         this.dashboardService = dashboardService;
+        this.dashboardMapper = dashboardMapper;
     }
 
     @PostConstruct
@@ -41,6 +46,7 @@ public class SchedulerService {
         cronJobSch();
     }
 
+    @SneakyThrows
     @Scheduled(cron = "0 0 0 * * *")
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
@@ -89,7 +95,13 @@ public class SchedulerService {
         log.info("end : " + dft.format(end.getTime()));
         log.info("now : " + dft.format(now.getTime()));
         if (df.format(start.getTime()).equals(df.format(now.getTime()))) {
-            dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(df.format(start.getTime()), df.format(end.getTime())));
+            DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+            Date d1 = df.parse(dashboardPeriodVO.getEndDate());
+            Calendar c1 = Calendar.getInstance();
+            c1.setTime(d1);
+            if (df.format(c1.getTime()).compareTo(df.format(now.getTime())) < 0) {
+                dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()), dft.format(end.getTime())));
+            }
             for (ClientVO client : temp) {
                 if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
                         dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {

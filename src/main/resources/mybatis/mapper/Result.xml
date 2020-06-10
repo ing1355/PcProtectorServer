@@ -3,9 +3,13 @@
 <mapper namespace="oms.pc_protector.restApi.result.mapper.ResultMapper">
 
     <select id="selectResultAll" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO">
-                SELECT * FROM user_result AS t1, user AS t2, client AS t3
-        WHERE t2.user_id = t3.user_id AND t1.user_id = t3.user_id AND
-              t1.in_schedule = 1
+        SELECT *
+        FROM user_result AS t1,
+             user AS t2,
+             client AS t3
+        WHERE t2.user_id = t3.user_id
+          AND t1.user_id = t3.user_id
+          AND t1.in_schedule = 1
         ORDER BY t1.check_time DESC
     </select>
 
@@ -15,6 +19,7 @@
         FROM user_result
         WHERE ip_address = #{ipAddress}
           AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
+          AND in_schedule = 1
     </select>
 
     <select id="selectResultProcessById" resultType="oms.pc_protector.restApi.result.model.ResultProcessVO"
@@ -26,20 +31,22 @@
     </select>
 
     <select id="selectCountBySchedule" resultType="int">
-        SELECT COUNT(*) FROM user_result
+        SELECT COUNT(*)
+        FROM user_result
         WHERE check_time BETWEEN #{startDate} AND #{endDate}
+          AND in_schedule = 1
     </select>
 
     <select id="selectCountRunByMonth" resultType="int" parameterType="String">
-        SELECT COUNT(*) FROM
-            (
-                SELECT user_id, ip_address FROM client
-            ) AS t0 LEFT OUTER JOIN
-            (SELECT *,
-                    ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
-             FROM user_result) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
-        WHERE t1.r0 = 1 AND t1.in_schedule = 1
-          AND (t1.item1_result != 0
+        SELECT COUNT(*)
+        FROM (
+                 SELECT user_id, ip_address
+                 FROM client
+             ) AS t0
+                 LEFT OUTER JOIN
+             (SELECT * FROM user_result WHERE in_schedule = 1 AND check_time BETWEEN #{startDate} AND #{endDate}) AS t1
+             ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
+        WHERE (t1.item1_result != 0
             OR t1.item2_result != 0
             OR t1.item3_result != 0
             OR t1.item4_result != 0
@@ -59,18 +66,22 @@
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
 
-        SELECT t1.score FROM (
-                                 SELECT A.department_idx, A.user_id, B.ip_address
-                                 FROM user as A, client as B
-                                 WHERE A.user_id = B.user_id AND A.department = #{department}
-                             ) AS t0 LEFT OUTER JOIN
-                             (
-                                 SELECt * FROM user_result
-                                 WHERE check_time BETWEEN #{startDate} AND #{endDate}
-                             ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
+        SELECT t1.score
+        FROM (
+                 SELECT A.department_idx, A.user_id, B.ip_address
+                 FROM user as A,
+                      client as B
+                 WHERE A.user_id = B.user_id
+                   AND A.department = #{department}
+             ) AS t0
+                 LEFT OUTER JOIN
+             (
+                 SELECt *
+                 FROM user_result
+                 WHERE check_time BETWEEN #{startDate} AND #{endDate} AND in_schedule = 1
+             ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
-        WHERE in_schedule = 1
-          AND (t1.item1_result != 0
+        WHERE (t1.item1_result != 0
             OR t1.item2_result != 0
             OR t1.item3_result != 0
             OR t1.item4_result != 0
@@ -90,8 +101,11 @@
 
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
-        SELECT * FROM user_result A, user B
-        WHERE A.in_schedule = 1
+        SELECT * FROM (
+        SELECT t0.user_id, t0.name, t0.department, t0.department_idx FROM user t0 , client t1
+        WHERE t0.user_id = t1.user_id
+        ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1
+        WHERE A.user_id = B.user_id
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')
         </if>
@@ -105,9 +119,9 @@
             AND B.department_idx = #{departmentCode}
         </if>
         <if test="startDate != null and endDate != null">
-            And C.check_time BETWEEN #{startDate} AND #{endDate}
+            And A.check_time BETWEEN #{startDate} AND #{endDate}
         </if>
-        ORDER BY C.check_time DESC
+        ORDER BY A.check_time DESC
     </select>
 
     <select id="findUserDetailStaticInfo" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
@@ -153,7 +167,7 @@
                  LEFT OUTER JOIN (
             SELECT *, MAX(create_time) FROM user_result GROUP BY ip_address, user_id, check_time
         ) AS B
-                                 ON A.ip_address = B.ip_address AND A.user_id = B.user_id
+                                 ON A.ip_address = B.ip_address AND A.user_id = B.user_id AND B.in_schedule = 1
         WHERE A.user_id = #{value}
         ORDER BY B.check_time DESC
     </select>
@@ -165,6 +179,7 @@
             AND #{endChecktime}
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
+          AND in_schedule = 1
     </select>
 
     <select id="selectClientForMiss" parameterType="oms.pc_protector.restApi.result.model.ResultVO"
@@ -174,6 +189,7 @@
         WHERE check_time BETWEEN #{checkTime} AND now()
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
+          AND in_schedule = 1
     </select>
 
     <insert id="insertResult" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
@@ -275,6 +291,7 @@
           AND ip_address = #{ipAddress}
           AND check_time BETWEEN #{startTime} AND
             #{endTime}
+          AND in_schedule = 1
     </update>
 
     <update id="updateResultByUpdateClient" parameterType="oms.pc_protector.restApi.client.model.ClientVO">

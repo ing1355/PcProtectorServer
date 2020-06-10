@@ -27,12 +27,10 @@ public class DashboardController {
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> dashboard(@RequestParam(value = "startdate") String startdate,
-                                     @RequestParam(value = "enddate") String enddate,
-                                     @RequestParam(value = "term") String term) {
+    public SingleResult<?> dashboard(@RequestParam(value = "term") String term) {
         HashMap<String, Object> dashboardTopMap = dashboardService.dashboardTop();
         HashMap<String, Object> dashboardMiddleMap = dashboardService.dashboardMiddle();
-        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(startdate,enddate,term);
+        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(term);
         HashMap<String, Object> result = new HashMap<>();
         result.put("top",dashboardTopMap);
         result.put("middle",dashboardMiddleMap);
@@ -54,10 +52,8 @@ public class DashboardController {
     }
 
     @GetMapping(value = "bottom")
-    public SingleResult<?> dashboardBottom(@RequestParam(value = "startdate") String startdate,
-                                           @RequestParam(value = "enddate") String enddate,
-                                           @RequestParam(value = "term") String term) {
-        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(startdate,enddate,term);
+    public SingleResult<?> dashboardBottom(@RequestParam(value = "term") String term) {
+        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(term);
         return responseService.getSingleResult(dashboardBottomMap);
     }
 }

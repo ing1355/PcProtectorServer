@@ -96,7 +96,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 // If so, then grab user details and create spring auth token using username, pass, authorities/roles
             }
         } catch (TokenExpiredException ex) {
-//            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "토큰 만료!");
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "토큰 만료!");
+            return;
         }
 
 

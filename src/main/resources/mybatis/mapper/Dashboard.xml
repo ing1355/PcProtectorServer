@@ -14,7 +14,7 @@
              (SELECT *,
                      ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
               FROM user_result
-              WHERE DATE_FORMAT(check_time, '%Y-%m-%d') BETWEEN #{startDate} AND #{endDate}
+              WHERE check_time BETWEEN #{startDate} AND #{endDate}
                 AND in_schedule = 1
                 AND (item1_result != 0
                   OR item2_result != 0
@@ -88,13 +88,12 @@
                  FROM client
              ) AS t0
                  LEFT OUTER JOIN (
-            SELECT *,
-                   ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
+            SELECT *
             FROM user_result
-        ) AS t1 ON t0.user_id = t1.user_id
+        ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
-        WHERE t1.r0 = 1
-          AND in_schedule = 1
+        WHERE in_schedule = 1
+          AND t1.check_time BETWEEN #{startDate} AND #{endDate}
           AND score BETWEEN #{startScore} AND #{endScore}
           AND (t1.item1_result != 0
             OR t1.item2_result != 0

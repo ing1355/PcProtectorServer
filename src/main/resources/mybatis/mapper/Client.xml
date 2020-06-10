@@ -74,7 +74,7 @@
         SET wrong_md5            = true,
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE user_id = #{userId} AND ip_address = #{ipAddress}
+        WHERE user_id = #{userId}
     </update>
 
 </mapper>

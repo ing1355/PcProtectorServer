@@ -55,12 +55,6 @@ public class ManagerService {
         System.out.println(encodedPassword);
         managerVO.setPassword(encodedPassword);
         managerVO.setRoles("MANAGER");
-        if(managerVO.getEmail() == null) {
-            managerVO.setEmail("이메일 없음");
-        }
-        if(managerVO.getMobile() == null) {
-            managerVO.setMobile("전화번호 없음");
-        }
         managerMapper.insertManager(managerVO);
     }
 

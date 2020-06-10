@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -116,28 +117,15 @@ public class ResultService {
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
     public int countByMonth() {
-        return resultMapper.selectCountRunByMonth();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        return resultMapper.selectCountRunByMonth(dashboardPeriodVO.getStartDate(), dashboardPeriodVO.getEndDate());
     }
 
     @SneakyThrows
     @Transactional
     public List<Integer> findScoreByDepartmentWithMonth(String department) {
         DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date startDate = df.parse(dashboardPeriodVO.getStartDate());
-        Date endDate = df.parse(dashboardPeriodVO.getEndDate());
-        Calendar c1 = Calendar.getInstance();
-        c1.setTime(startDate);
-        Calendar c2 = Calendar.getInstance();
-        c2.setTime(startDate);
-        c1.set(Calendar.HOUR_OF_DAY, 0);
-        c1.set(Calendar.MINUTE, 0);
-        c1.set(Calendar.SECOND, 0);
-        c2.set(Calendar.HOUR_OF_DAY, 23);
-        c2.set(Calendar.MINUTE, 59);
-        c2.set(Calendar.SECOND, 59);
-        return resultMapper.selectScoreByDepartmentWithMonth(department, dft.format(c1.getTime()),dft.format(c2.getTime()));
+        return resultMapper.selectScoreByDepartmentWithMonth(department, dashboardPeriodVO.getStartDate(), dashboardPeriodVO.getEndDate());
     }
 
 
@@ -335,47 +323,27 @@ public class ResultService {
     }
 
     /* 아이템별 결과값을 등록한다. */
+    @SneakyThrows
     @Transactional
     public void resultSet(ResultVO resultVO) {
-        PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        Date d1 = df.parse(dashboardPeriodVO.getStartDate());
+        Date d2 = df.parse(dashboardPeriodVO.getEndDate());
+        Date d3 = df.parse(resultVO.getCheckTime());
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
+        start.setTime(d1);
+        end.setTime(d2);
+        now.setTime(d3);
+//        if(df.format(now.getTime()).compareTo(df.format(Calendar.getInstance().getTime())) < 0) {
+//            response.sendError(400, "올바르지 않은 점검일입니다.");
+//            return;
+//        }
         int Miss = resultMapper.selectClientForMiss(resultVO);
-        if (temp.getPeriod() == 1) {
-            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        } else if (temp.getPeriod() == 2) {
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
-        else {
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
-        resultVO.setStartTime(df.format(start.getTime()));
-        resultVO.setEndTime(df.format(end.getTime()));
-        log.info("start : " + df.format(start.getTime()));
-        log.info("end : " + df.format(end.getTime()));
-        log.info("now : " + df.format(now.getTime()));
+        resultVO.setStartTime(dashboardPeriodVO.getStartDate());
+        resultVO.setEndTime(dashboardPeriodVO.getEndDate());
         if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
                 df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
             Optional.ofNullable(resultVO)

@@ -6,8 +6,15 @@ import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeException;
+import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -27,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.system.util.SUtil;
+
 @Log4j2
 @RestController
 @CrossOrigin
@@ -43,17 +51,30 @@ public class ClientFileController {
         this.clientFileService = clientFileService;
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> nullex(Exception e) {
+        System.err.println("testtest");
+        return null;
+    }
+
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(
-            @RequestParam MultipartFile file) throws IOException, NoSuchAlgorithmException {
+            @RequestParam MultipartFile file,
+            HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
         long fileSize = file.getSize();
-        if(fileSize > 104857600) {
-            return responseService.getSingleResult("크기 에러!");
+        if (fileSize > 104857600) {
+            httpServletResponse.sendError(400, "크기 에러!");
+            return null;
         }
-        if(!SUtil.fileTypeCheck(file.getInputStream())) {
-            return responseService.getSingleResult("타입 에러!");
+        if(!file.getOriginalFilename().contains(".exe")) {
+            httpServletResponse.sendError(400,"타입 에러!");
+            return null;
+        }
+        if (!SUtil.fileTypeCheck(file.getInputStream())) {
+            httpServletResponse.sendError(400,"형식 에러!");
+            return null;
         }
 
         String fileName = file.getOriginalFilename();
@@ -70,11 +91,10 @@ public class ClientFileController {
         log.info("FILE 크기 : " + fileSize);
         log.info("MD5 : " + fileMd5);
 
-        if(isExistFile) {
+        if (isExistFile) {
             log.info("FILE 업데이트");
             clientFileService.update(clientFileVO);
-        }
-        else {
+        } else {
             log.info("FILE 등록");
             clientFileService.registerClientFile(clientFileVO);
         }

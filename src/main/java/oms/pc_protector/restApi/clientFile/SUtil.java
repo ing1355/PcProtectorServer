@@ -73,7 +73,7 @@ public class SUtil {
             log.info(" ContentType : " + info.getName());
             log.info(" MimeType : " + info.getMimeType());
 
-            if(!info.getName().equals("exe")) {
+            if(!info.getName().equals("32")) {
                 log.info("exe 파일이 아닙니다.");
                 return false;
             }

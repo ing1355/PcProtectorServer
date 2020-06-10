@@ -82,13 +82,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new ArrayList<>()
             );
         }
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        log.info(format.format(new Date(System.currentTimeMillis())));
-        log.info(format.format(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME)));
         // Authenticate user
         try {
             Authentication auth = authenticationManager.authenticate(authenticationToken);
-            System.out.println("auth : " + auth);
             if (credentials.getPassword() == null) {
                 ClientPrincipal clientPrincipal = (ClientPrincipal) auth.getPrincipal();
             } else {
@@ -120,7 +116,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Grab principal
         String token = null;
-        System.out.println("testtestetstest" + authResult.getPrincipal().getClass());
         if (authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
             ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
             this.managerService.initManagerLock(principal.getUsername());

@@ -132,12 +132,15 @@ public class ClientController {
                                           HttpServletResponse response){
         ClientVO client = new ClientVO();
         boolean isLogin = loginService.loginForClient(login);
-        if(!isLogin) {
+        boolean userExist = userService.findSameId(login.getId());
+        if(!isLogin && userExist) {
             clientService.register(new ClientVO(login.getId(), login.getIpAddress()));
         }
+        else if(!userExist) {
+            return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
+        }
         client = loginService.findClient(login);
-        String token = null;
-        token = JWT.create()
+        String token = JWT.create()
                 .withSubject(client.getUserId())
                 .withClaim("role", "CLIENT")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_TIME))

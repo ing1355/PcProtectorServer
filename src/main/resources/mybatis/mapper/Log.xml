@@ -19,7 +19,7 @@
             <if test='ipAddress != null and ipAddress != ""'>
                 AND ip_address LIKE CONCAT('%',${ipAddress},'%')
             </if>
-            <if test="startDay != null and endDay != null">
+            <if test='startDay != null and endDay != null and startDay != "" and endDay != ""'>
                 AND create_time BETWEEN ${startDay} AND ${endDay}
             </if>
         ORDER BY idx DESC

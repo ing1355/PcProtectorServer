@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.dashboard.service;
 
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
@@ -69,6 +70,7 @@ public class DashboardService {
         dashboardTopMap.put("totalPc", totalPc);
         dashboardTopMap.put("runPc", runPc);
         dashboardTopMap.put("resultRate", resultRate);
+        dashboardTopMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
         return dashboardTopMap;
     }
 
@@ -82,11 +84,10 @@ public class DashboardService {
     }
 
     @Transactional
-    public HashMap<String, Object> dashboardBottom(String startDate, String endDate, String term) {
+    public HashMap<String, Object> dashboardBottom(String term) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         HashMap<String, Object> resultChart = new HashMap<>();
-        dashboardResultMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
         dashboardResultMap.put("resultChart", resultChart);
         Calendar c = Calendar.getInstance();
         Date date = new Date();
@@ -179,47 +180,19 @@ public class DashboardService {
     @Transactional
     public HashMap<String, Object> userCountByScore() {
         LinkedHashMap<String, Object> userCountMap = new LinkedHashMap<>();
-        PeriodDateVO temp = configurationMapper.selectAppliedSchedule();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DashboardPeriodVO temp = selectDashboardPeriod();
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
-        if (temp.getPeriod() == 1) {
-            start.set(Calendar.WEEK_OF_MONTH, temp.getFromWeek());
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.WEEK_OF_MONTH, temp.getToWeek());
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        } else if (temp.getPeriod() == 2) {
-            start.set(Calendar.DAY_OF_WEEK, temp.getFromDay() + 1);
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.DAY_OF_WEEK, temp.getToDay() + 1);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
-        else {
-            start.set(Calendar.HOUR_OF_DAY, 0);
-            start.set(Calendar.MINUTE, 0);
-            start.set(Calendar.SECOND, 0);
-            end.set(Calendar.HOUR_OF_DAY, 23);
-            end.set(Calendar.MINUTE, 59);
-            end.set(Calendar.SECOND, 59);
-        }
-        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, df.format(start.getTime()), df.format(end.getTime()));
-        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, df.format(start.getTime()), df.format(end.getTime()));
-        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, df.format(start.getTime()), df.format(end.getTime()));
+        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, temp.getStartDate(), temp.getEndDate());
+        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, temp.getStartDate(), temp.getEndDate());
+        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, temp.getStartDate(), temp.getEndDate());
         userCountMap.put("topScoreUserCount", topScoreUserCount);
         userCountMap.put("middleScoreUserCount", middleScoreUserCount);
         userCountMap.put("lowScoreUserCount", lowScoreUserCount);
         return userCountMap;
     }
 
+    @SneakyThrows
     @Transactional
     public int resultAvgScoreByCurrentMonth() {
         DashboardPeriodVO temp = selectDashboardPeriod();

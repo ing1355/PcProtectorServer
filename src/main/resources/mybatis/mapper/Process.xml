@@ -33,7 +33,11 @@
         SELECT #{registryItem},
                #{displayName}
         FROM DUAL
-        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem})
+        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem});
+        UPDATE process
+        SET display_name = #{displayName}
+        WHERE registry_item = #{registryItem};
+
     </insert>
 
     <insert id="insertUnApprovedProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">

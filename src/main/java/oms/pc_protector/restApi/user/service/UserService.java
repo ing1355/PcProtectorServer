@@ -1,21 +1,23 @@
 package oms.pc_protector.restApi.user.service;
 
-import oms.pc_protector.restApi.client.service.ClientService;
-import oms.pc_protector.restApi.department.model.DepartmentVO;
-import oms.pc_protector.restApi.department.service.DepartmentService;
-import oms.pc_protector.restApi.policy.model.PeriodDateVO;
-import oms.pc_protector.restApi.policy.service.ConfigurationService;
-import oms.pc_protector.restApi.result.mapper.ResultMapper;
-import oms.pc_protector.restApi.user.mapper.UserMapper;
-import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.restApi.client.model.ClientVO;
-import oms.pc_protector.restApi.client.mapper.ClientMapper;
-import oms.pc_protector.restApi.user.model.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+        import oms.pc_protector.restApi.client.service.ClientService;
+        import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+        import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
+        import oms.pc_protector.restApi.department.model.DepartmentVO;
+        import oms.pc_protector.restApi.department.service.DepartmentService;
+        import oms.pc_protector.restApi.policy.model.PeriodDateVO;
+        import oms.pc_protector.restApi.policy.service.ConfigurationService;
+        import oms.pc_protector.restApi.result.mapper.ResultMapper;
+        import oms.pc_protector.restApi.user.mapper.UserMapper;
+        import lombok.extern.log4j.Log4j2;
+        import oms.pc_protector.restApi.client.model.ClientVO;
+        import oms.pc_protector.restApi.client.mapper.ClientMapper;
+        import oms.pc_protector.restApi.user.model.*;
+        import org.springframework.stereotype.Service;
+        import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+        import java.text.SimpleDateFormat;
+        import java.util.*;
 
 @Log4j2
 @Service
@@ -26,17 +28,20 @@ public class UserService {
     private final ClientService clientService;
     private final DepartmentService departmentService;
     private final ResultMapper resultMapper;
+    private final DashboardMapper dashboardMapper;
 
     public UserService(UserMapper userMapper,
                        ClientMapper clientMapper,
                        ClientService clientService,
                        DepartmentService departmentService,
-                       ResultMapper resultMapper) {
+                       ResultMapper resultMapper,
+                       DashboardMapper dashboardMapper) {
         this.userMapper = userMapper;
         this.clientMapper = clientMapper;
         this.clientService = clientService;
         this.departmentService = departmentService;
         this.resultMapper = resultMapper;
+        this.dashboardMapper = dashboardMapper;
     }
 
 
@@ -135,12 +140,6 @@ public class UserService {
     public void registryFromAdmin(UserRequestVO userRequestVO) {
         boolean duplicateIpAddressCheck = duplicateCheckIpAddress(userRequestVO.getIpAddress());
         if (duplicateIpAddressCheck) return;
-        if (userRequestVO.getEmail() == null) {
-            userRequestVO.setEmail("이메일 없음");
-        }
-        if (userRequestVO.getPhone() == null) {
-            userRequestVO.setPhone("전화번호 없음");
-        }
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
     }
 
@@ -196,49 +195,16 @@ public class UserService {
 
         if (duplicateId) {
             log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
-            if(client_prev.getIpAddress() != null && !(client_prev.getIpAddress().equals(clientVO.getIpAddress()))) {
-                resultMapper.updateResultByUpdateClient(clientVO);
-            }
-            PeriodDateVO periodDateVO = configurationService.findAppliedSchedule();
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            Calendar now = Calendar.getInstance();
+//            if(client_prev.getIpAddress() != null && !(client_prev.getIpAddress().equals(clientVO.getIpAddress()))) {
+//                resultMapper.updateResultByUpdateClient(clientVO);
+//            }
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
 
-            if (periodDateVO.getPeriod() == 1) { // 매달
-                start.set(Calendar.WEEK_OF_MONTH, periodDateVO.getFromWeek());
-                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay() + 1);
-                start.set(Calendar.HOUR_OF_DAY, 0);
-                start.set(Calendar.MINUTE, 0);
-                start.set(Calendar.SECOND, 0);
-                end.set(Calendar.WEEK_OF_MONTH, periodDateVO.getToWeek());
-                end.set(Calendar.DAY_OF_WEEK, periodDateVO.getToDay() + 1);
-                end.set(Calendar.HOUR_OF_DAY, 23);
-                end.set(Calendar.MINUTE, 59);
-                end.set(Calendar.SECOND, 59);
-            } else if (periodDateVO.getPeriod() == 2) { // 매주
-                start.set(Calendar.DAY_OF_WEEK, periodDateVO.getFromDay() + 1);
-                start.set(Calendar.HOUR_OF_DAY, 0);
-                start.set(Calendar.MINUTE, 0);
-                start.set(Calendar.SECOND, 0);
-                end.set(Calendar.DAY_OF_WEEK, periodDateVO.getToDay() + 1);
-                end.set(Calendar.HOUR_OF_DAY, 23);
-                end.set(Calendar.MINUTE, 59);
-                end.set(Calendar.SECOND, 59);
-            } else { // 매일
-                start.set(Calendar.HOUR_OF_DAY, 0);
-                start.set(Calendar.MINUTE, 0);
-                start.set(Calendar.SECOND, 0);
-                end.set(Calendar.HOUR_OF_DAY, 23);
-                end.set(Calendar.MINUTE, 59);
-                end.set(Calendar.SECOND, 59);
-            }
+            clientVO.setCheckTime(df.format(Calendar.getInstance().getTime()));
 
-            clientVO.setCheckTime(df.format(now.getTime()));
-
-            if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
-                    dft.format(end.getTime()), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
+            if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate(),
+                    dashboardPeriodVO.getEndDate(), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }
             clientService.First_update(clientVO);
