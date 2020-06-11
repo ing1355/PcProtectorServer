@@ -118,8 +118,9 @@ public class DashboardService {
         List<HashMap<String, Object>> departmentScore = new ArrayList<>();
 
         for (DepartmentVO department : departmentList) {
+            if(department.getCode() == 1) continue;
             List<Integer> scoreList =
-                    resultService.findScoreByDepartmentWithMonth(department.getName());
+                    resultService.findScoreByDepartmentWithMonth(Long.toString(department.getCode()));
             int scoreSum = 0;
             int totalPc = scoreList.size();
 

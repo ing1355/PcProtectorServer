@@ -44,10 +44,10 @@ public class SchedulerService {
     @PostConstruct
     public void onStartup() {
         cronJobSch();
-    }
+    } // 최초 서버 구동시 1회 실행
 
     @SneakyThrows
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *") // 매일 자정
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,15 +94,15 @@ public class SchedulerService {
         log.info("start : " + dft.format(start.getTime()));
         log.info("end : " + dft.format(end.getTime()));
         log.info("now : " + dft.format(now.getTime()));
-        if (df.format(start.getTime()).equals(df.format(now.getTime()))) {
+        if (df.format(start.getTime()).equals(df.format(now.getTime()))) { // 오늘이 현재 정책 점검 기간 시작 날인지 체크
             DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
             Date d1 = df.parse(dashboardPeriodVO.getEndDate());
             Calendar c1 = Calendar.getInstance();
             c1.setTime(d1);
-            if (df.format(c1.getTime()).compareTo(df.format(now.getTime())) < 0) {
+            if (df.format(c1.getTime()).compareTo(df.format(now.getTime())) < 0) { // 현재 저장된 점검 기간이 지나야 새로운 점검 기간 업데이트
                 dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()), dft.format(end.getTime())));
             }
-            for (ClientVO client : temp) {
+            for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
                 if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
                         dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {
                     client.setCheckTime(dft.format(start.getTime()));

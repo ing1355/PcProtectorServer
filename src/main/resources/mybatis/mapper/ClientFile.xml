@@ -3,7 +3,7 @@
 <mapper namespace="oms.pc_protector.restApi.clientFile.mapper.ClientFileMapper">
 
     <select id="selectClientFile" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO" >
-        SELECT file_name, file_size, md5, update_time FROM client_file
+        SELECT file_name, file_size, md5, update_time, version FROM client_file
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">

@@ -63,19 +63,106 @@
                  FROM user as A,
                       client as B
                  WHERE A.user_id = B.user_id
-                   AND A.department_idx = #{departmentCode}
+                   AND A.department_idx LIKE CONCAT(#{departmentCode},'%')
              ) AS t0
                  LEFT OUTER JOIN
              (
                  SELECT *,
                         ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
                  FROM user_result
-                 WHERE DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth}
+                 WHERE DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth} AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
         WHERE t1.r0 = 1
-          AND in_schedule = 1
 
+    </select>
+
+    <select id="countRunPcByMonth" parameterType="oms.pc_protector.restApi.statistics.model.StatisticsResponseVO"
+            resultType="oms.pc_protector.restApi.statistics.model.RunPcAndScoreVO">
+        SELECT COUNT(*) AS runPc,
+               AVG(score) AS score
+        FROM (
+                 SELECT t1.user_id, t1.ip_address
+                 FROM client AS t1,
+                      user AS t2
+                 WHERE t1.user_id = t2.user_id
+                   AND t2.department_idx LIKE CONCAT(#{departmentCode}, '%')
+             ) AS A
+                 LEFT OUTER JOIN
+             (SELECT *,
+                     ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+              FROM user_result
+              WHERE in_schedule = 1
+                AND DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth}) AS B
+             ON A.user_id = B.user_id AND A.ip_address = B.ip_address
+        WHERE B.r0 = 1
+          AND (B.item1_result != 0
+            OR B.item2_result != 0
+            OR B.item3_result != 0
+            OR B.item4_result != 0
+            OR B.item5_result != 0
+            OR B.item6_result != 0
+            OR B.item7_result != 0
+            OR B.item8_result != 0
+            OR B.item9_result != 0
+            OR B.item10_result != 0
+            OR B.item11_result != 0
+            OR B.item12_result != 0
+            OR B.item13_result != 0
+            OR B.item14_result != 0
+            OR B.item15_result != 0
+            OR B.item16_result != 0)
+    </select>
+
+    <select id="selectItemsByMonth" parameterType="oms.pc_protector.restApi.statistics.model.StatisticsResponseVO"
+            resultType="oms.pc_protector.restApi.statistics.model.StatisticsVO">
+        SELECT item1_result,
+               item2_result,
+               item3_result,
+               item4_result,
+               item5_result,
+               item6_result,
+               item7_result,
+               item8_result,
+               item9_result,
+               item10_result,
+               item11_result,
+               item12_result,
+               item13_result,
+               item14_result,
+               item15_result,
+               item16_result
+        FROM (
+                 SELECT t1.user_id, t1.ip_address
+                 FROM client AS t1,
+                      user AS t2
+                 WHERE t1.user_id = t2.user_id
+                   AND t2.department_idx LIKE CONCAT(#{departmentCode}, '%')
+             ) AS A
+                 LEFT OUTER JOIN
+             (SELECT *,
+                     ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
+              FROM user_result
+              WHERE in_schedule = 1
+                AND DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth}) AS B
+             ON A.user_id = B.user_id AND A.ip_address = B.ip_address
+        WHERE B.r0 = 1
+          AND (B.item1_result != 0
+            OR B.item2_result != 0
+            OR B.item3_result != 0
+            OR B.item4_result != 0
+            OR B.item5_result != 0
+            OR B.item6_result != 0
+            OR B.item7_result != 0
+            OR B.item8_result != 0
+            OR B.item9_result != 0
+            OR B.item10_result != 0
+            OR B.item11_result != 0
+            OR B.item12_result != 0
+            OR B.item13_result != 0
+            OR B.item14_result != 0
+            OR B.item15_result != 0
+            OR B.item16_result != 0)
     </select>
 
 </mapper>

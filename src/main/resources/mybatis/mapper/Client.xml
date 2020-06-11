@@ -29,7 +29,8 @@
     </select>
 
     <select id="selectCountAll" resultType="int">
-        SELECT COUNT(*) FROM client
+        SELECT COUNT(*) FROM client t1, user t2
+        WHERE t1.user_id = t2.user_id
     </select>
 
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">

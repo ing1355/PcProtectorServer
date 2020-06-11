@@ -15,5 +15,5 @@ public class ClientFileVO {
     private Long fileSize;
     private String md5;
     private String updateTime;
-
+    private String version;
 }

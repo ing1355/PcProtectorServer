@@ -11,4 +11,9 @@ public class StatisticsResponseVO {
 
     private Long departmentCode;
     private String yearMonth;
+
+    public StatisticsResponseVO(String yearMonth, Long code) {
+        this.departmentCode = code;
+        this.yearMonth = yearMonth;
+    }
 }

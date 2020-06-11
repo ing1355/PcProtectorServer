@@ -72,7 +72,7 @@
                  FROM user as A,
                       client as B
                  WHERE A.user_id = B.user_id
-                   AND A.department = #{department}
+                   AND A.department_idx LIKE CONCAT(#{department}, '%')
              ) AS t0
                  LEFT OUTER JOIN
              (

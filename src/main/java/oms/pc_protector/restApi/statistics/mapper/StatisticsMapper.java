@@ -1,6 +1,8 @@
 package oms.pc_protector.restApi.statistics.mapper;
 
+import oms.pc_protector.restApi.statistics.model.RunPcAndScoreVO;
 import oms.pc_protector.restApi.statistics.model.StatisticsResponseVO;
+import oms.pc_protector.restApi.statistics.model.StatisticsVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +15,8 @@ public interface StatisticsMapper {
     public List<LinkedHashMap> selectStatisticsByDepartment(StatisticsResponseVO responseVO);
 
     public int countClientByMonth(StatisticsResponseVO responseVO);
+
+    public RunPcAndScoreVO countRunPcByMonth(StatisticsResponseVO responseVO);
+
+    public List<StatisticsVO> selectItemsByMonth(StatisticsResponseVO responseVO);
 }
