@@ -10,16 +10,9 @@
 
     <select id="selectClientFileRecent" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         SELECT *
-        FROM (
-                 SELECT file_name
-                      , file_size
-                      , MD5
-                      , update_time
-                      , VERSION
-                      , ROW_NUMBER() OVER (PARTITION BY MD5 ORDER BY update_time DESC) AS r0
-                 FROM client_file
-             ) t1
-        WHERE r0 = 1
+        FROM client_file AS t1,
+             (SELECT MAX(update_time) AS max FROM client_file) AS t2
+        WHERE t1.update_time = t2.max
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">

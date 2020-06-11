@@ -64,24 +64,11 @@ public class ResultController {
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "departmentCode", required = false) Long departmentCode) {
         SearchInputVO searchInputVO = new SearchInputVO();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        Date d1 = df.parse(startDate);
-        Date d2 = df.parse(endDate);
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        start.setTime(d1);
-        start.set(Calendar.HOUR_OF_DAY,0);
-        start.set(Calendar.MINUTE, 0);
-        start.set(Calendar.SECOND, 0);
-        end.setTime(d2);
-        end.set(Calendar.HOUR_OF_DAY, 23);
-        end.set(Calendar.MINUTE, 59);
-        end.set(Calendar.SECOND, 59);
         searchInputVO.setUserId(id);
         searchInputVO.setName(name);
         searchInputVO.setIpAddress(ipAddress);
-        searchInputVO.setStartDate(df.format(start.getTime()));
-        searchInputVO.setEndDate(df.format(end.getTime()));
+        searchInputVO.setStartDate(startDate);
+        searchInputVO.setEndDate(endDate);
         searchInputVO.setDepartmentCode(departmentCode);
         List<?> list = resultService.findBySearchInput(searchInputVO);
         return responseService.getSingleResult(list);
