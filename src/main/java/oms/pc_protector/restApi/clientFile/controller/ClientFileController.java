@@ -11,6 +11,7 @@ import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +61,7 @@ public class ClientFileController {
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(
+            @RequestPart("version") String version,
             @RequestParam MultipartFile file,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
@@ -68,45 +70,64 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "크기 에러!");
             return null;
         }
-        if(!file.getOriginalFilename().contains(".exe")) {
-            httpServletResponse.sendError(400,"타입 에러!");
+        if (!file.getOriginalFilename().contains(".exe")) {
+            httpServletResponse.sendError(400, "타입 에러!");
             return null;
         }
         if (!SUtil.fileTypeCheck(file.getInputStream())) {
-            httpServletResponse.sendError(400,"형식 에러!");
+            httpServletResponse.sendError(400, "형식 에러!");
             return null;
         }
 
         String fileName = file.getOriginalFilename();
         String fileMd5 = clientFileService.makeMd5(file.getInputStream());
-        boolean isExistFile = clientFileService.findExistFile();
+        boolean isExistFile = clientFileService.findExistFile(version);
+        boolean isExistMd5 = clientFileService.findExistMd5(fileMd5);
 
         ClientFileVO clientFileVO = ClientFileVO.builder()
                 .fileName(fileName)
                 .fileSize(fileSize)
                 .md5(fileMd5)
+                .version(version)
                 .build();
 
         log.info("FILE 이름 : " + fileName);
         log.info("FILE 크기 : " + fileSize);
+        log.info("FILE 버전 : " + version);
         log.info("MD5 : " + fileMd5);
 
-        if (isExistFile) {
-            log.info("FILE 업데이트");
-            clientFileService.update(clientFileVO);
+        if (isExistMd5) {
+            httpServletResponse.sendError(400, "Md5 중복!");
+            return null;
         } else {
-            log.info("FILE 등록");
-            clientFileService.registerClientFile(clientFileVO);
+            if (isExistFile) {
+                log.info("FILE 업데이트");
+                clientFileService.update(clientFileVO);
+            } else {
+                log.info("FILE 등록");
+                clientFileService.registerClientFile(clientFileVO);
+            }
         }
 
-        clientFileVO = clientFileService.findClientFile();
-        return responseService.getSingleResult(clientFileVO);
+
+        return responseService.getSingleResult(clientFileService.findClientFile());
     }
 
     @GetMapping(value = "")
     public SingleResult<?> findClientFileAll() {
-        ClientFileVO clientFile = clientFileService.findClientFile();
+        List<ClientFileVO> clientFile = clientFileService.findClientFile();
         return responseService.getSingleResult(clientFile);
+    }
+
+    @PutMapping(value = "update")
+    public SingleResult<?> updateClientFile(@RequestBody ClientFileVO clientFileVO) {
+        return responseService.getSingleResult(clientFileService.findClientFile());
+    }
+
+    @PutMapping(value = "delete")
+    public SingleResult<?> deleteClientFile(@RequestBody List<ClientFileVO> clientFileVO) {
+        clientFileService.removeClientFile(clientFileVO);
+        return responseService.getSingleResult(clientFileService.findClientFile());
     }
 
 }

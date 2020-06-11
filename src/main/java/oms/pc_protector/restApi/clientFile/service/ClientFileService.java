@@ -34,16 +34,27 @@ public class ClientFileService {
     }
 
     @Transactional
-    public ClientFileVO findClientFile() {
+    public List<ClientFileVO> findClientFile() {
         return Optional.ofNullable(clientFileMapper.selectClientFile())
                 .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
     }
 
+    @Transactional
+    public ClientFileVO findClientFileRecent() {
+        return Optional.ofNullable(clientFileMapper.selectClientFileRecent())
+                .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
+    }
 
     @Transactional
     public String findRecentMd5() {
-        return Optional.ofNullable(findClientFile())
+        return Optional.ofNullable(findClientFileRecent())
                 .map(ClientFileVO::getMd5).orElse("");
+    }
+
+    @Transactional
+    public String findRecentVersion() {
+        return Optional.ofNullable(findClientFileRecent())
+                .map(ClientFileVO::getVersion).orElse("");
     }
 
 
@@ -54,17 +65,24 @@ public class ClientFileService {
 
 
     @Transactional
-    public void removeClientFile(ClientFileVO clientFileVO) {
-        clientFileMapper.deleteClientFile(clientFileVO);
+    public void removeClientFile(List<ClientFileVO> clientFileVO) {
+        for(ClientFileVO clientFileVO1 : clientFileVO) {
+            clientFileMapper.deleteClientFile(clientFileVO1);
+        }
     }
 
 
     @Transactional
-    public boolean findExistFile() {
-        int result = clientFileMapper.selectExistFile();
+    public boolean findExistFile(String version) {
+        int result = clientFileMapper.selectExistFile(version);
         return result > 0;
     }
 
+    @Transactional
+    public boolean findExistMd5(String md5) {
+        int result = clientFileMapper.selectExistMd5(md5);
+        return result > 0;
+    }
 
     @Transactional
     public void update(ClientFileVO clientFileVO) {
@@ -94,5 +112,4 @@ public class ClientFileService {
         formatter.close();
         return hashString;
     }
-
 }

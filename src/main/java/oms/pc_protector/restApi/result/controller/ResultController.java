@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.result.controller;
 
+import lombok.SneakyThrows;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.result.model.ResponseResultVO;
@@ -11,9 +12,8 @@ import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Log4j2
 @CrossOrigin
@@ -54,6 +54,7 @@ public class ResultController {
 
 
     // 조건 검색하여 점검결과를 가져온다.
+    @SneakyThrows
     @GetMapping(value = "/search")
     public SingleResult<?> findByUserIdWithIpAddress(
             @RequestParam(value = "id", required = false) String id,
@@ -63,11 +64,24 @@ public class ResultController {
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "departmentCode", required = false) Long departmentCode) {
         SearchInputVO searchInputVO = new SearchInputVO();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date d1 = df.parse(startDate);
+        Date d2 = df.parse(endDate);
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        start.setTime(d1);
+        start.set(Calendar.HOUR_OF_DAY,0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        end.setTime(d2);
+        end.set(Calendar.HOUR_OF_DAY, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
         searchInputVO.setUserId(id);
         searchInputVO.setName(name);
         searchInputVO.setIpAddress(ipAddress);
-        searchInputVO.setStartDate(startDate);
-        searchInputVO.setEndDate(endDate);
+        searchInputVO.setStartDate(df.format(start.getTime()));
+        searchInputVO.setEndDate(df.format(end.getTime()));
         searchInputVO.setDepartmentCode(departmentCode);
         List<?> list = resultService.findBySearchInput(searchInputVO);
         return responseService.getSingleResult(list);

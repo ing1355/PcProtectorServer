@@ -83,6 +83,7 @@ public class ClientController {
                 .getDepartment();
 
         String md5 = Optional.ofNullable(clientFileService.findRecentMd5()).orElse("");
+        String version = Optional.ofNullable(clientFileService.findRecentVersion()).orElse("");
 
         boolean forceRun = configurationService
                 .findForceRun()
@@ -97,6 +98,7 @@ public class ClientController {
         map.put("forceRun", forceRun);
         map.put("department", department);
         map.put("md5", md5);
+        map.put("version", version);
         return responseService.getSingleResult(map);
     }
 
