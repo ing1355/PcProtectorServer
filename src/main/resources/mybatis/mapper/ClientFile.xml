@@ -5,14 +5,12 @@
     <select id="selectClientFile" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         SELECT file_name, file_size, md5, update_time, version
         FROM client_file
-        ORDER BY update_time DESC
+        ORDER BY version DESC
     </select>
 
     <select id="selectClientFileRecent" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
-        SELECT *
-        FROM client_file AS t1,
-             (SELECT MAX(update_time) AS max FROM client_file) AS t2
-        WHERE t1.update_time = t2.max
+        SELECT *, MAX(VERSION)
+        FROM client_file
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">

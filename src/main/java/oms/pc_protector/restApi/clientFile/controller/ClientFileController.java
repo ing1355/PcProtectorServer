@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.system.util.SUtil;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Log4j2
 @RestController
@@ -52,9 +53,10 @@ public class ClientFileController {
         this.clientFileService = clientFileService;
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> nullex(Exception e) {
-        System.err.println("testtest");
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<?> fileEx(Exception e, HttpServletResponse response) throws IOException {
+        System.err.println("file Missing");
+        response.sendError(400, "파일 없음!");
         return null;
     }
 

@@ -27,8 +27,12 @@ public class ProcessService {
     public int insertProcess(List<ProcessVO> processVOList) {
         int resultNum = 0;
         if (processVOList == null) return resultNum;
-        for (ProcessVO processVO : processVOList)
-            resultNum += processMapper.insertProcess((ProcessVO) processVO);
+        for (ProcessVO processVO : processVOList) {
+            if (processMapper.existProcess(processVO) == 0) {
+                resultNum += processMapper.insertProcess((ProcessVO) processVO);
+            }
+        }
+
         return resultNum;
     }
 
@@ -41,7 +45,7 @@ public class ProcessService {
 
     @Transactional(readOnly = true)
     public List<ProcessVO> searchProcess(String displayName, String registryName) {
-        return processMapper.searchProcess(displayName,registryName);
+        return processMapper.searchProcess(displayName, registryName);
     }
 
     /* 해당 종류의 프로세스 Registry Item 목록을 가져온다. */
