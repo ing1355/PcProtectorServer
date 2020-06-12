@@ -97,12 +97,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             }
             return auth;
         } catch (BadCredentialsException ex) {
-            ex.printStackTrace();
             ManagerVO managerVO = this.managerService.findById(credentials.getId());
             if (managerVO.getLocked() > 4) {
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             } else {
-                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
+                if(managerVO.getLocked() > 1) {
+                    response.sendError(HttpStatus.NOT_ACCEPTABLE.value(),"비밀번호를 " + managerVO.getLocked() + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
+                } else {
+                    response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
+                }
             }
         } catch (InternalAuthenticationServiceException ia) {
             ia.printStackTrace();

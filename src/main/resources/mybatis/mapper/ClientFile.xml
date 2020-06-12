@@ -9,8 +9,12 @@
     </select>
 
     <select id="selectClientFileRecent" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
-        SELECT *, MAX(VERSION)
-        FROM client_file
+        SELECT *
+        FROM client_file t1,
+             (
+                 SELECT MAX(VERSION) AS lastest_version
+                 FROM client_file) t2
+        WHERE t1.version = t2.lastest_version
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">

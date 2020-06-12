@@ -13,6 +13,7 @@ import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.dashboard.service.DashboardService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
+import oms.pc_protector.restApi.policy.model.NowScheduleVO;
 import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,7 +54,9 @@ public class SchedulerService {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar start = Calendar.getInstance();
+        Calendar next_start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
+        Calendar next_end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
         List<ClientVO> temp = clientMapper.selectClientAll();
 
@@ -68,8 +71,20 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
+            if(start.compareTo(now) < 0) {
+                next_start.add(Calendar.MONTH, 1);
+                next_end.add(Calendar.MONTH, 1);
+                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            } else {
+                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            }
         } else if (Now_Schedule.getPeriod() == 2) { // 매주
-
             start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
@@ -78,6 +93,15 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
+            if(start.compareTo(now) < 0) {
+                next_start.add(Calendar.DATE, 7);
+                next_end.add(Calendar.DATE, 7);
+                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            } else {
+                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            }
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
@@ -85,14 +109,26 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
+            next_start.add(Calendar.DATE, 1);
+            next_end.add(Calendar.DATE, 1);
         }
 //        log.info(df.format(start.getTime()));
 //        log.info(df.format(now.getTime()));
 //        log.info(Now_Schedule.getFromDay());
 //        log.info(df.format(end.getTime()));
 //        log.info(Now_Schedule.getToDay());
+
+        if(configurationMapper.selectNextScheduleCount() > 0) {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()),df.format(next_end.getTime())));
+        }
+        else {
+            configurationMapper.insertNextSchedule(new NowScheduleVO(df.format(next_start.getTime()),df.format(next_end.getTime())));
+        }
+
         log.info("start : " + dft.format(start.getTime()));
+        log.info("next_start : " + df.format(next_start.getTime()));
         log.info("end : " + dft.format(end.getTime()));
+        log.info("next_end : " + df.format(next_end.getTime()));
         log.info("now : " + dft.format(now.getTime()));
         if (df.format(start.getTime()).equals(df.format(now.getTime()))) { // 오늘이 현재 정책 점검 기간 시작 날인지 체크
             DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();

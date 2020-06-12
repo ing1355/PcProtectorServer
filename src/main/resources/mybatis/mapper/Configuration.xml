@@ -37,6 +37,16 @@
         FROM edit_program_check
     </select>
 
+    <select id="selectNextSchedule" resultType="oms.pc_protector.restApi.policy.model.NowScheduleVO">
+        SELECT *
+        FROM next_period_date_configuration
+    </select>
+
+    <select id="selectNextScheduleCount" resultType="int">
+        SELECT COUNT(*)
+        FROM next_period_date_configuration
+    </select>
+
     <insert id="insertConfiguration" parameterType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
         INSERT INTO configuration (vaccine_installation_execution,
                                    vaccine_patch,
@@ -83,6 +93,11 @@
     <insert id="insertSecurityUsbDetails" parameterType="oms.pc_protector.restApi.policy.model.SecurityUsbDetailsVO">
         INSERT INTO security_usb_details (registry_name, process_name, run_file_name)
         VALUES (#{registryName}, #{processName}, #{runFileName})
+    </insert>
+
+    <insert id="insertNextSchedule" parameterType="oms.pc_protector.restApi.policy.model.NowScheduleVO">
+        INSERT INTO next_period_date_configuration (start_date, end_date)
+        VALUES (#{startDate}, #{endDate})
     </insert>
 
     <update id="updateConfiguration" parameterType="oms.pc_protector.restApi.policy.model.ConfigurationVO">
@@ -146,6 +161,12 @@
     <update id="updateForceRun" parameterType="boolean">
         UPDATE configuration
         SET force_run    = ${value}
+    </update>
+
+    <update id="updateNextSchedule" parameterType="oms.pc_protector.restApi.policy.model.NowScheduleVO">
+        UPDATE next_period_date_configuration
+        SET start_date = #{startDate},
+            end_date = #{endDate}
     </update>
 
     <delete id="deleteSchedule" parameterType="oms.pc_protector.restApi.policy.model.PeriodDateVO">

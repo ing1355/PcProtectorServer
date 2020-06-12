@@ -6,6 +6,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NowScheduleVO {
-    private String startDay;
-    private String endDay;
+    private String startDate;
+    private String endDate;
+
+    public NowScheduleVO(String format, String format1) {
+        this.startDate = format;
+        this.endDate = format1;
+    }
+
+    public NowScheduleVO() {
+
+    }
 }

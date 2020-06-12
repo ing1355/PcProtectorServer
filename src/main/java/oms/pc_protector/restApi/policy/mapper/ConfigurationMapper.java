@@ -24,6 +24,10 @@ public interface ConfigurationMapper {
 
     public EditProgramVO selectEditProgramFlag();
 
+    public NowScheduleVO selectNextSchedule();
+
+    public int selectNextScheduleCount();
+
     public int insertConfiguration(ConfigurationVO configurationVO);
 
     public int updateConfiguration(ConfigurationVO configurationVO);
@@ -34,6 +38,8 @@ public interface ConfigurationMapper {
 
     public int insertSchedule(PeriodDateVO periodDateVO);
 
+    public int insertNextSchedule(NowScheduleVO nowScheduleVO);
+
     public int updateSchedule(@Param("new_data") PeriodDateVO periodDateVO_new);
 
     public int updateApply(Long old_idx, Long new_idx);
@@ -43,6 +49,8 @@ public interface ConfigurationMapper {
     public boolean insertEditProgramFlag(EditProgramVO editProgramVO);
 
     public boolean updateEditProgramFlag(EditProgramVO editProgramVO);
+
+    public void updateNextSchedule(NowScheduleVO nowScheduleVO);
 
     public void updateForceRun(boolean param);
 }

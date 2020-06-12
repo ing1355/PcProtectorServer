@@ -92,6 +92,11 @@ public class ConfigurationService {
                 .orElseGet(ArrayList::new);
     }
 
+    @Transactional
+    public NowScheduleVO findNextSchedule() {
+        return configurationMapper.selectNextSchedule();
+    }
+
 
     @Transactional
     public PeriodDateVO findAppliedSchedule() {
@@ -191,6 +196,7 @@ public class ConfigurationService {
 
         periodDateMap.put("periodDateCheck", hasAppliedFlag());
         periodDateMap.put("periodDateArray", findAppliedSchedule());
+        periodDateMap.put("nextPeriodDateArray",findNextSchedule());
 
         boolean forceRun = (boolean) Optional.ofNullable(findConfiguration()
                 .get("forceRun")).orElse(false);
