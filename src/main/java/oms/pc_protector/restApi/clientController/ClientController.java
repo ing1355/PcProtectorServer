@@ -145,7 +145,7 @@ public class ClientController {
                 .withAudience(client.getMacAddress())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
-        HashMap<String, Object> result = null;
+        HashMap<String, Object> result = new HashMap<>();
         result.put("client",client);
         result.put("nextPeriodDateArray",configurationMapper.selectNextSchedule());
         return responseService.getSingleResult(result);

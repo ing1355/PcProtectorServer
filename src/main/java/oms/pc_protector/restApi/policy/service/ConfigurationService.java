@@ -187,6 +187,16 @@ public class ConfigurationService {
 
         } else if (requestPeriodDateVO.getNew_data().getPeriod() == 2) { // 매주
             start.set(Calendar.DAY_OF_WEEK, now.getMinimum((Calendar.DAY_OF_WEEK)));
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+
+            int count = resultMapper.selectCountBySchedule(new NowScheduleVO(dft.format(start.getTime()), dft.format(end.getTime())));
+            // 같은 주기에 스케줄 결과가 있는지 체크
+
             start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
@@ -195,25 +205,12 @@ public class ConfigurationService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            if(start.compareTo(now) <= 0) {
+
+            next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+            next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+            if (count > 0) { // 같은 주기에 스케줄 결과가 있는지 체크
                 next_start.add(Calendar.DATE, 7);
                 next_end.add(Calendar.DATE, 7);
-                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
-                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
-            } else {
-                next_start.set(Calendar.DAY_OF_WEEK, 1);
-                now.set(Calendar.HOUR_OF_DAY, 23);
-                now.set(Calendar.MINUTE, 59);
-                end.set(Calendar.SECOND, 59);
-                int count = resultMapper.selectCountBySchedule(new NowScheduleVO(dft.format(next_start.getTime()), dft.format(now.getTime())));
-                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
-                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
-                if(count > 0) {
-                    next_start.add(Calendar.DATE, 7);
-                    next_end.add(Calendar.DATE, 7);
-                    next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
-                    next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
-                }
             }
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);
