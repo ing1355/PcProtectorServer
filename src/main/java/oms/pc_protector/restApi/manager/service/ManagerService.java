@@ -34,7 +34,7 @@ public class ManagerService {
     @Transactional(readOnly = true)
     public ManagerVO findById(String id) {
         return Optional.ofNullable(managerMapper.findById(id))
-                .orElseThrow(() -> new RuntimeException("값이 없습니다."));
+                .orElseThrow(() -> new RuntimeException("운영자 아이디가 존재하지 않습니다."));
     }
 
 

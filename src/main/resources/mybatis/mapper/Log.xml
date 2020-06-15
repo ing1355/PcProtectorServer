@@ -14,13 +14,13 @@
         SELECT * FROM audit_log
         WHERE 1 = 1
             <if test='managerId != null and managerId != ""'>
-                AND manager_id LIKE CONCAT('%',${managerId},'%')
+                AND manager_id LIKE CONCAT('%',#{managerId},'%')
             </if>
             <if test='ipAddress != null and ipAddress != ""'>
-                AND ip_address LIKE CONCAT('%',${ipAddress},'%')
+                AND ip_address LIKE CONCAT('%',#{ipAddress},'%')
             </if>
             <if test='startDay != null and endDay != null and startDay != "" and endDay != ""'>
-                AND create_time BETWEEN ${startDay} AND ${endDay}
+                AND create_time BETWEEN #{startDay} AND #{endDay}
             </if>
         ORDER BY idx DESC
     </select>

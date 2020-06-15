@@ -24,7 +24,7 @@
             AND display_name LIKE CONCAT('%',#{displayName},'%')
         </if>
         <if test='registryName != null and registryName != ""'>
-            AND registry_item LIKE CONCAT('%',#{registryItem},'%')
+            AND registry_item LIKE CONCAT('%',#{registryName},'%')
         </if>
     </select>
 
