@@ -186,6 +186,7 @@ public class ConfigurationService {
             }
 
         } else if (requestPeriodDateVO.getNew_data().getPeriod() == 2) { // 매주
+            start.set(Calendar.DAY_OF_WEEK, now.getMinimum((Calendar.DAY_OF_WEEK)));
             start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
