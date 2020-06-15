@@ -1,18 +1,14 @@
 package oms.pc_protector.restApi.result.mapper;
 
-import ch.qos.logback.core.net.server.Client;
 import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.policy.model.NowScheduleVO;
 import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.ResultProcessVO;
 import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.LinkedHashMap;
 import java.util.List;
 
 @Repository
@@ -34,6 +30,10 @@ public interface ResultMapper {
 
     public int selectCountRunByMonth(@Param(value = "startDate") String startDate,
                                      @Param(value = "endDate") String endDate);
+
+    public int selectCountBySchedule(NowScheduleVO nowScheduleVO);
+
+    public int selectCountByNowScheduleMonth(@Param(value = "month") String month);
 
     public List<Integer> selectScoreByDepartmentWithMonth(
             @Param("department") String department,

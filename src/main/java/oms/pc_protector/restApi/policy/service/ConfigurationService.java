@@ -3,23 +3,14 @@ package oms.pc_protector.restApi.policy.service;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.*;
-import oms.pc_protector.restApi.process.model.ProcessVO;
 import oms.pc_protector.restApi.process.service.ProcessService;
+import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Security;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.function.Supplier;
 
 @Log4j2
 @Service
@@ -28,13 +19,16 @@ public class ConfigurationService {
     private final ConfigurationMapper configurationMapper;
     private final ProcessService processService;
     private final UserService userService;
+    private final ResultMapper resultMapper;
 
     public ConfigurationService(UserService userService,
                                 ConfigurationMapper configurationMapper,
-                                ProcessService processService) {
+                                ProcessService processService,
+                                ResultMapper resultMapper) {
         this.configurationMapper = configurationMapper;
         this.processService = processService;
         this.userService = userService;
+        this.resultMapper = resultMapper;
     }
 
 
@@ -113,6 +107,131 @@ public class ConfigurationService {
 
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
+        SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar start = Calendar.getInstance();
+        Calendar next_start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        Calendar next_end = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        if (requestPeriodDateVO.getNew_data().getPeriod() == 1) { // 매달
+            start.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getToWeek());
+            end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+            if (requestPeriodDateVO.getNew_data().getFromWeek() == 1) {
+                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
+                    start.add(Calendar.MONTH, 1);
+                    start.set(Calendar.DAY_OF_MONTH, 1);
+                } else if (start.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1 && end.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1) {
+                    start.add(Calendar.DATE, 7);
+                    end.add(Calendar.DATE, 7);
+                }
+            } else if (requestPeriodDateVO.getNew_data().getFromWeek() == 5) {
+                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
+                    end.set(Calendar.MONTH, start.get(Calendar.MONTH));
+                    end.set(Calendar.DAY_OF_WEEK, start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                } else if (start.get(Calendar.MONTH) != now.get(Calendar.MONTH) && end.get(Calendar.MONTH) != now.get(Calendar.MONTH)) {
+                    start.add(Calendar.DATE, -7);
+                    end.add(Calendar.DATE, -7);
+                }
+
+            } else {
+                next_start.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getFromWeek());
+                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+                next_end.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getToWeek());
+                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+            }
+            int count = resultMapper.selectCountByNowScheduleMonth(dfm.format(start.getTime()));
+            if (count > 0) {
+                next_start.add(Calendar.MONTH, 1);
+                next_end.add(Calendar.MONTH, 1);
+                int next_month = next_start.get(Calendar.MONTH);
+                next_start.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getFromWeek());
+                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+                next_end.set(Calendar.WEEK_OF_MONTH, requestPeriodDateVO.getNew_data().getToWeek());
+                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+                if (requestPeriodDateVO.getNew_data().getFromWeek() == 1) {
+                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                        next_start.add(Calendar.MONTH, 1);
+                        next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
+                    } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
+                        next_start.add(Calendar.DATE, 7);
+                        next_end.add(Calendar.DATE, 7);
+                    }
+                } else if (requestPeriodDateVO.getNew_data().getFromWeek() == 5) {
+                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                        next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
+                        next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
+                        next_start.add(Calendar.DATE, -7);
+                        next_end.add(Calendar.DATE, -7);
+                    }
+
+                }
+            }
+            else {
+                next_start.set(Calendar.WEEK_OF_MONTH, start.get(Calendar.WEEK_OF_MONTH));
+                next_start.set(Calendar.DAY_OF_WEEK, start.get(Calendar.DAY_OF_WEEK));
+                next_end.set(Calendar.WEEK_OF_MONTH, end.get(Calendar.WEEK_OF_MONTH));
+                next_end.set(Calendar.DAY_OF_WEEK, end.get(Calendar.DAY_OF_WEEK));
+            }
+
+        } else if (requestPeriodDateVO.getNew_data().getPeriod() == 2) { // 매주
+            start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+            if(start.compareTo(now) <= 0) {
+                next_start.add(Calendar.DATE, 7);
+                next_end.add(Calendar.DATE, 7);
+                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+            } else {
+                next_start.set(Calendar.DAY_OF_WEEK, 1);
+                now.set(Calendar.HOUR_OF_DAY, 23);
+                now.set(Calendar.MINUTE, 59);
+                end.set(Calendar.SECOND, 59);
+                int count = resultMapper.selectCountBySchedule(new NowScheduleVO(dft.format(next_start.getTime()), dft.format(now.getTime())));
+                next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+                next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+                if(count > 0) {
+                    next_start.add(Calendar.DATE, 7);
+                    next_end.add(Calendar.DATE, 7);
+                    next_start.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getFromDay() + 1);
+                    next_end.set(Calendar.DAY_OF_WEEK, requestPeriodDateVO.getNew_data().getToDay() + 1);
+                }
+            }
+        } else { // 매일
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+            next_start.add(Calendar.DATE, 1);
+            next_end.add(Calendar.DATE, 1);
+        }
+
+        log.info("start : " + dft.format(start.getTime()));
+        log.info("next_start : " + df.format(next_start.getTime()));
+        log.info("end : " + dft.format(end.getTime()));
+        log.info("next_end : " + df.format(next_end.getTime()));
+        log.info("now : " + dft.format(now.getTime()));
+
+        configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
         return configurationMapper.updateSchedule(requestPeriodDateVO.getNew_data());
     }
 

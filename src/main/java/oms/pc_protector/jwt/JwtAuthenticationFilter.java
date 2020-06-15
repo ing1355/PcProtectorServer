@@ -1,19 +1,14 @@
 package oms.pc_protector.jwt;
 
-import ch.qos.logback.core.net.server.Client;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
-import oms.pc_protector.restApi.login.model.LoginVO;
 import oms.pc_protector.restApi.login.model.TokenLoginVO;
-import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
-import org.apache.catalina.Manager;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Principal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 

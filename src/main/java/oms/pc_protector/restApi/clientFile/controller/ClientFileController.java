@@ -60,6 +60,13 @@ public class ClientFileController {
         return null;
     }
 
+//    @ExceptionHandler(MultipartException.class)
+//    public ResponseEntity<?> fileEx(Exception e, HttpServletResponse response) throws IOException {
+//        System.err.println("file Missing");
+//        response.sendError(400, "파일 없음!");
+//        return null;
+//    }
+
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(

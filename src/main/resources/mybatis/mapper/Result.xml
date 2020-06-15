@@ -37,6 +37,13 @@
           AND in_schedule = 1
     </select>
 
+    <select id="selectCountByNowScheduleMonth" resultType="int">
+        SELECT COUNT(*)
+        FROM user_result
+        WHERE in_schedule = 1
+          AND DATE_FORMAT(check_time, '%Y-%m')
+    </select>
+
     <select id="selectCountRunByMonth" resultType="int" parameterType="String">
         SELECT COUNT(*)
         FROM (
@@ -78,7 +85,8 @@
              (
                  SELECt *
                  FROM user_result
-                 WHERE check_time BETWEEN #{startDate} AND #{endDate} AND in_schedule = 1
+                 WHERE check_time BETWEEN #{startDate} AND #{endDate}
+                   AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
         WHERE (t1.item1_result != 0

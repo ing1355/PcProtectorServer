@@ -1,10 +1,5 @@
 package oms.pc_protector.Scheduler;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
@@ -20,6 +15,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Log4j2
 @Component
@@ -51,6 +50,7 @@ public class SchedulerService {
     @Scheduled(cron = "0 0 0 * * *") // 매일 자정
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
+        SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Calendar start = Calendar.getInstance();
@@ -71,19 +71,64 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            if(start.compareTo(now) < 0) {
-                next_start.add(Calendar.MONTH, 1);
-                next_end.add(Calendar.MONTH, 1);
-                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
-                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
-                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
-                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            if (Now_Schedule.getFromWeek() == 1) {
+                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
+                    start.add(Calendar.MONTH, 1);
+                    start.set(Calendar.DAY_OF_MONTH, 1);
+                } else if (start.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1 && end.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1) {
+                    start.add(Calendar.DATE, 7);
+                    end.add(Calendar.DATE, 7);
+                }
+            } else if (Now_Schedule.getFromWeek() == 5) {
+                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
+                    end.set(Calendar.MONTH, start.get(Calendar.MONTH));
+                    end.set(Calendar.DAY_OF_WEEK, start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                } else if (start.get(Calendar.MONTH) != now.get(Calendar.MONTH) && end.get(Calendar.MONTH) != now.get(Calendar.MONTH)) {
+                    start.add(Calendar.DATE, -7);
+                    end.add(Calendar.DATE, -7);
+                }
+
             } else {
                 next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
                 next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
                 next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
                 next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
             }
+            int count = resultMapper.selectCountByNowScheduleMonth(dfm.format(start.getTime()));
+            if (count > 0) {
+                next_start.add(Calendar.MONTH, 1);
+                next_end.add(Calendar.MONTH, 1);
+                int next_month = next_start.get(Calendar.MONTH);
+                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+                if (Now_Schedule.getFromWeek() == 1) {
+                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                        next_start.add(Calendar.MONTH, 1);
+                        next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
+                    } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
+                        next_start.add(Calendar.DATE, 7);
+                        next_end.add(Calendar.DATE, 7);
+                    }
+                } else if (Now_Schedule.getFromWeek() == 5) {
+                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                        next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
+                        next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
+                        next_start.add(Calendar.DATE, -7);
+                        next_end.add(Calendar.DATE, -7);
+                    }
+
+                }
+            }
+            else {
+                next_start.set(Calendar.WEEK_OF_MONTH, start.get(Calendar.WEEK_OF_MONTH));
+                next_start.set(Calendar.DAY_OF_WEEK, start.get(Calendar.DAY_OF_WEEK));
+                next_end.set(Calendar.WEEK_OF_MONTH, end.get(Calendar.WEEK_OF_MONTH));
+                next_end.set(Calendar.DAY_OF_WEEK, end.get(Calendar.DAY_OF_WEEK));
+            }
+
         } else if (Now_Schedule.getPeriod() == 2) { // 매주
             start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
             start.set(Calendar.HOUR_OF_DAY, 0);
@@ -93,14 +138,25 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-            if(start.compareTo(now) < 0) {
+            if (start.compareTo(now) <= 0) {
                 next_start.add(Calendar.DATE, 7);
                 next_end.add(Calendar.DATE, 7);
                 next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
                 next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
             } else {
+                next_start.set(Calendar.DAY_OF_WEEK, 1);
+                now.set(Calendar.HOUR_OF_DAY, 23);
+                now.set(Calendar.MINUTE, 59);
+                end.set(Calendar.SECOND, 59);
+                int count = resultMapper.selectCountBySchedule(new NowScheduleVO(dft.format(next_start.getTime()), dft.format(now.getTime())));
                 next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
                 next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+                if (count > 0) {
+                    next_start.add(Calendar.DATE, 7);
+                    next_end.add(Calendar.DATE, 7);
+                    next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+                    next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+                }
             }
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);
@@ -112,17 +168,18 @@ public class SchedulerService {
             next_start.add(Calendar.DATE, 1);
             next_end.add(Calendar.DATE, 1);
         }
+
 //        log.info(df.format(start.getTime()));
 //        log.info(df.format(now.getTime()));
 //        log.info(Now_Schedule.getFromDay());
 //        log.info(df.format(end.getTime()));
 //        log.info(Now_Schedule.getToDay());
 
-        if(configurationMapper.selectNextScheduleCount() > 0) {
-            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()),df.format(next_end.getTime())));
-        }
-        else {
-            configurationMapper.insertNextSchedule(new NowScheduleVO(df.format(next_start.getTime()),df.format(next_end.getTime())));
+
+        if (configurationMapper.selectNextScheduleCount() > 0) {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+        } else {
+            configurationMapper.insertNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
         }
 
         log.info("start : " + dft.format(start.getTime()));
