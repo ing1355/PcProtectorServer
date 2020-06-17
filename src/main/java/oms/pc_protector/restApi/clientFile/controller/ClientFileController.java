@@ -1,46 +1,28 @@
 package oms.pc_protector.restApi.clientFile.controller;
 
 
+import com.system.util.SUtil;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
-import org.apache.commons.fileupload.FileUploadBase;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
-import org.apache.tomcat.util.http.fileupload.impl.SizeException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Formatter;
 import java.util.List;
-import java.util.Map;
-
-import com.system.util.SUtil;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Log4j2
 @RestController
 @CrossOrigin
-@RequestMapping(value = "**/client-file")
+@RequestMapping(value = "v1/client-file")
 public class ClientFileController {
 
     private final ResponseService responseService;
