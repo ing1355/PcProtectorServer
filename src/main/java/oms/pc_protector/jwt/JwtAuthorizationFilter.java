@@ -1,42 +1,27 @@
 package oms.pc_protector.jwt;
 
-import ch.qos.logback.core.net.server.Client;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.model.ClientVO;
-import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
 import oms.pc_protector.restApi.login.model.ClientLoginVO;
-import oms.pc_protector.restApi.login.service.LoginService;
-import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
-import oms.pc_protector.restApi.manager.model.ResponseManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.servlet.FilterChain;
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 @CrossOrigin
 @Log4j2
@@ -96,6 +81,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 // If so, then grab user details and create spring auth token using username, pass, authorities/roles
             }
         } catch (TokenExpiredException ex) {
+            log.info("토큰 만료입니다!!!!!!!");
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "토큰 만료!");
             return;
         }

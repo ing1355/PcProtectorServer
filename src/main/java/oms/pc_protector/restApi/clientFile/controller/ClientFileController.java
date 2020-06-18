@@ -22,7 +22,7 @@ import java.util.List;
 @Log4j2
 @RestController
 @CrossOrigin
-@RequestMapping(value = "v1/client-file")
+@RequestMapping(value = "/v1/client-file")
 public class ClientFileController {
 
     private final ResponseService responseService;
