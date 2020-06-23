@@ -39,29 +39,30 @@
     <select id="selectAvgScoreByRecentMonths"
             resultType="Integer"
             parameterType="String">
-        SELECT NVL(AVG(t1.score), 0)
-        FROM (
-                 SELECT *
-                 FROM user_result
-                 WHERE DATE_FORMAT(check_time, '%Y-%m') = #{month}
-                   AND in_schedule = 1
-                   AND (item1_result != 0
-                     OR item2_result != 0
-                     OR item3_result != 0
-                     OR item4_result != 0
-                     OR item5_result != 0
-                     OR item6_result != 0
-                     OR item7_result != 0
-                     OR item8_result != 0
-                     OR item9_result != 0
-                     OR item10_result != 0
-                     OR item11_result != 0
-                     OR item12_result != 0
-                     OR item13_result != 0
-                     OR item14_result != 0
-                     OR item15_result != 0
-                     OR item16_result != 0)
-                 GROUP BY user_id, DATE_FORMAT(check_time, '%Y-%m-%d')) AS t1
+        SELECT NVL(AVG(t2.score), 0) FROM
+            (SELECT c.user_id, c.ip_address FROM user u, client c
+             WHERE u.user_id = c.user_id) AS t1 LEFT OUTER JOIN
+            (SELECT *,
+                    ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
+             FROM user_result WHERE DATE_FORMAT(check_time,'%Y-%m') = #{month}
+                                AND in_schedule = 1
+                                AND (item1_result != 0
+                    OR item2_result != 0
+                    OR item3_result != 0
+                    OR item4_result != 0
+                    OR item5_result != 0
+                    OR item6_result != 0
+                    OR item7_result != 0
+                    OR item8_result != 0
+                    OR item9_result != 0
+                    OR item10_result != 0
+                    OR item11_result != 0
+                    OR item12_result != 0
+                    OR item13_result != 0
+                    OR item14_result != 0
+                    OR item15_result != 0
+                    OR item16_result != 0)) AS t2 ON t1.user_id = t2.user_id
+        WHERE t2.r0 = 1
     </select>
 
     <!--    <select id="selectAvgScoreByRecent6Months"-->
