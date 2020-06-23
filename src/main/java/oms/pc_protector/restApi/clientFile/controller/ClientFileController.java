@@ -65,6 +65,10 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "타입 에러!");
             return null;
         }
+        if (!file.getOriginalFilename().equals("Protector.exe")) {
+            httpServletResponse.sendError(400, "AGENT 파일 아님!");
+            return null;
+        }
         if (!SUtil.fileTypeCheck(file.getInputStream())) {
             httpServletResponse.sendError(400, "형식 에러!");
             return null;

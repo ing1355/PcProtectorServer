@@ -2,7 +2,9 @@ package oms.pc_protector.restApi.policy.service;
 
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
+import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.*;
 import oms.pc_protector.restApi.process.service.ProcessService;
@@ -11,6 +13,8 @@ import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Log4j2
@@ -113,7 +117,7 @@ public class ConfigurationService {
 
 
     @Transactional
-    public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) {
+    public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) throws ParseException {
 //        SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
 //        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 //        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -261,6 +265,92 @@ public class ConfigurationService {
 //        log.info("now : " + dft.format(now.getTime()));
 //
 //        configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+        PeriodDateVO Now_Schedule = requestPeriodDateVO.getNew_data();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Calendar start = Calendar.getInstance();
+        Calendar next_start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        Calendar next_end = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+        List<ClientVO> temp = clientMapper.selectClientAll();
+
+        if (Now_Schedule.getPeriod() == 1) { // 매달
+            start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+            start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+            end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+            next_start.add(Calendar.MONTH, 1);
+            next_end.add(Calendar.MONTH, 1);
+            int next_month = next_start.get(Calendar.MONTH);
+            next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+            next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+            next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            if (Now_Schedule.getFromWeek() == 1) {
+                if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    next_start.add(Calendar.MONTH, 1);
+                    next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
+                } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
+                    next_start.add(Calendar.DATE, 7);
+                    next_end.add(Calendar.DATE, 7);
+                }
+            } else if (Now_Schedule.getFromWeek() == 5) {
+                if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
+                    next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
+                    next_start.add(Calendar.DATE, -7);
+                    next_end.add(Calendar.DATE, -7);
+                }
+
+            }
+        } else if (Now_Schedule.getPeriod() == 2) { // 매주
+            start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+
+            next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            next_start.add(Calendar.DATE, 7);
+            next_end.add(Calendar.DATE, 7);
+        } else { // 매일
+            start.set(Calendar.HOUR_OF_DAY, 0);
+            start.set(Calendar.MINUTE, 0);
+            start.set(Calendar.SECOND, 0);
+            end.set(Calendar.HOUR_OF_DAY, 23);
+            end.set(Calendar.MINUTE, 59);
+            end.set(Calendar.SECOND, 59);
+            next_start.add(Calendar.DATE, 1);
+            next_end.add(Calendar.DATE, 1);
+        }
+        Calendar dash_start = Calendar.getInstance();
+        Date dash_1 = dft.parse(dashboardPeriodVO.getStartDate());
+        Calendar dash_end = Calendar.getInstance();
+        Date dash_2 = dft.parse(dashboardPeriodVO.getEndDate());
+
+        dash_start.setTime(dash_1);
+        dash_end.setTime(dash_2);
+
+        if ((start.getTime().compareTo(dash_start.getTime()) >= 0 && start.getTime().compareTo(dash_end.getTime()) <= 0) ||
+                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0)) {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+        } else {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime())));
+        }
         return configurationMapper.updateSchedule(requestPeriodDateVO.getNew_data());
     }
 

@@ -1,17 +1,15 @@
 package oms.pc_protector.restApi.policy.controller;
 
 
+import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.policy.model.*;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
-import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.restApi.process.model.ProcessVO;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
+import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class ConfigurationController {
     }
 
     @PutMapping(value = "/schedule/update")
-    public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO) {
+    public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO) throws ParseException {
         int resultNum = configurationService.updateSchedule(requestPeriodDateVO);
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);
