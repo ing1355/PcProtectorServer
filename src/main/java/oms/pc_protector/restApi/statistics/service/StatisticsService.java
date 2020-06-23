@@ -5,7 +5,6 @@ import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
-import oms.pc_protector.restApi.statistics.model.ResultStatisticsVO;
 import oms.pc_protector.restApi.statistics.model.RunPcAndScoreVO;
 import oms.pc_protector.restApi.statistics.model.StatisticsResponseVO;
 import oms.pc_protector.restApi.statistics.model.StatisticsVO;
@@ -54,11 +53,11 @@ public class StatisticsService {
             departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
         }
 
-
         for (DepartmentVO departmentVO : departmentList) {
+            int TotalPc = statisticsMapper.countClientByDepartment(departmentVO.getCode());
             LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
             StatisticsResponseVO statisticsResponseVO = new StatisticsResponseVO(yearMonth, departmentVO.getCode());
-            int TotalPc = statisticsMapper.countClientByMonth(statisticsResponseVO);
+
             RunPcAndScoreVO runPcAndScoreVO = statisticsMapper.countRunPcByMonth(statisticsResponseVO);
             List<StatisticsVO> statisticsVO = statisticsMapper.selectItemsByMonth(statisticsResponseVO);
             int[] safePc = new int[16];

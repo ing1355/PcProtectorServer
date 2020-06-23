@@ -63,23 +63,32 @@
                  FROM user as A,
                       client as B
                  WHERE A.user_id = B.user_id
-                   AND A.department_idx LIKE CONCAT(#{departmentCode},'%')
+                   AND A.department_idx LIKE CONCAT(#{departmentCode}, '%')
              ) AS t0
                  LEFT OUTER JOIN
              (
                  SELECT *,
                         ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
                  FROM user_result
-                 WHERE DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth} AND in_schedule = 1
+                 WHERE DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth}
+                   AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
         WHERE t1.r0 = 1
 
     </select>
 
+    <select id="countClientByDepartment" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM user u,
+             client c
+        WHERE u.user_id = c.user_id
+          AND u.department_idx LIKE CONCAT(#{value}, '%')
+    </select>
+
     <select id="countRunPcByMonth" parameterType="oms.pc_protector.restApi.statistics.model.StatisticsResponseVO"
             resultType="oms.pc_protector.restApi.statistics.model.RunPcAndScoreVO">
-        SELECT COUNT(*) AS runPc,
+        SELECT COUNT(*)   AS runPc,
                AVG(score) AS score
         FROM (
                  SELECT t1.user_id, t1.ip_address
