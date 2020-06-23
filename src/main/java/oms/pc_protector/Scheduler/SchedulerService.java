@@ -50,6 +50,7 @@ public class SchedulerService {
     @Scheduled(cron = "0 0 0 * * *") // 매일 자정
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -96,38 +97,37 @@ public class SchedulerService {
 //            }
 //            int count = resultMapper.selectCountByNowScheduleMonth(dfm.format(start.getTime()));
 //            if (count > 0) {
-                next_start.add(Calendar.MONTH, 1);
-                next_end.add(Calendar.MONTH, 1);
-                int next_month = next_start.get(Calendar.MONTH);
-                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
-                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
-                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
-                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
-                if (Now_Schedule.getFromWeek() == 1) {
-                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
-                        next_start.add(Calendar.MONTH, 1);
-                        next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
-                    } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
-                        next_start.add(Calendar.DATE, 7);
-                        next_end.add(Calendar.DATE, 7);
-                    }
-                } else if (Now_Schedule.getFromWeek() == 5) {
-                    if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
-                        next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
-                        next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
-                        next_start.add(Calendar.DATE, -7);
-                        next_end.add(Calendar.DATE, -7);
-                    }
-
+            next_start.add(Calendar.MONTH, 1);
+            next_end.add(Calendar.MONTH, 1);
+            int next_month = next_start.get(Calendar.MONTH);
+            next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
+            next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
+            next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
+            next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
+            if (Now_Schedule.getFromWeek() == 1) {
+                if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    next_start.add(Calendar.MONTH, 1);
+                    next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
+                } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
+                    next_start.add(Calendar.DATE, 7);
+                    next_end.add(Calendar.DATE, 7);
                 }
+            } else if (Now_Schedule.getFromWeek() == 5) {
+                if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
+                    next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
+                } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
+                    next_start.add(Calendar.DATE, -7);
+                    next_end.add(Calendar.DATE, -7);
+                }
+
+            }
 //            } else {
 //                next_start.set(Calendar.WEEK_OF_MONTH, start.get(Calendar.WEEK_OF_MONTH));
 //                next_start.set(Calendar.DAY_OF_WEEK, start.get(Calendar.DAY_OF_WEEK));
 //                next_end.set(Calendar.WEEK_OF_MONTH, end.get(Calendar.WEEK_OF_MONTH));
 //                next_end.set(Calendar.DAY_OF_WEEK, end.get(Calendar.DAY_OF_WEEK));
 //            }
-
         } else if (Now_Schedule.getPeriod() == 2) { // 매주
             start.set(Calendar.DAY_OF_WEEK, now.getMinimum((Calendar.DAY_OF_WEEK)));
             start.set(Calendar.HOUR_OF_DAY, 0);
@@ -152,7 +152,7 @@ public class SchedulerService {
             next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
             next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
 //            if (count > 0) { // 같은 주기에 스케줄 결과가 있는지 체크
-                next_start.add(Calendar.DATE, 7);
+            next_start.add(Calendar.DATE, 7);
             next_end.add(Calendar.DATE, 7);
 //            }
         } else { // 매일
@@ -172,7 +172,20 @@ public class SchedulerService {
 //        log.info(df.format(end.getTime()));
 //        log.info(Now_Schedule.getToDay());
 
-        configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+        Calendar dash_start = Calendar.getInstance();
+        Date dash_1 = dft.parse(dashboardPeriodVO.getStartDate());
+        Calendar dash_end = Calendar.getInstance();
+        Date dash_2 = dft.parse(dashboardPeriodVO.getEndDate());
+
+        dash_start.setTime(dash_1);
+        dash_end.setTime(dash_2);
+
+        if ((start.getTime().compareTo(dash_start.getTime()) >= 0 && start.getTime().compareTo(dash_end.getTime()) <= 0) ||
+                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0)) {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+        } else {
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime())));
+        }
 
         log.info("start : " + dft.format(start.getTime()));
         log.info("next_start : " + df.format(next_start.getTime()));
@@ -180,7 +193,6 @@ public class SchedulerService {
         log.info("next_end : " + df.format(next_end.getTime()));
         log.info("now : " + dft.format(now.getTime()));
         if (df.format(start.getTime()).equals(df.format(now.getTime()))) { // 오늘이 현재 정책 점검 기간 시작 날인지 체크
-            DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
             Date d1 = df.parse(dashboardPeriodVO.getEndDate());
             Calendar c1 = Calendar.getInstance();
             c1.setTime(d1);
