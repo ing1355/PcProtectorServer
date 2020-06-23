@@ -28,6 +28,8 @@ public interface ResultMapper {
 
     public int selectClientForMiss(ResultVO resultVO);
 
+    public int selectExistByDay(String day);
+
     public int selectCountRunByMonth(@Param(value = "startDate") String startDate,
                                      @Param(value = "endDate") String endDate);
 
@@ -52,6 +54,8 @@ public interface ResultMapper {
     public void insertEmptyResultBySchedule(ClientVO clientVO);
 
     public void updateResultClient(ResultVO resultVO);
+
+    public void updateResultClientNotInSchedule(ResultVO resultVO);
 
     public void updateResultByUpdateClient(ClientVO clientVO);
 }

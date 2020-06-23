@@ -44,6 +44,13 @@
           AND DATE_FORMAT(check_time, '%Y-%m')
     </select>
 
+    <select id="selectExistByDay" resultType="int">
+        SELECT COUNT(*)
+        FROM user_result
+        WHERE in_schedule = 0
+          AND DATE_FORMAT(check_time, '%Y-%m-%d') = #{value}
+    </select>
+
     <select id="selectCountRunByMonth" resultType="int" parameterType="String">
         SELECT COUNT(*)
         FROM (
@@ -299,6 +306,46 @@
           AND ip_address = #{ipAddress}
           AND check_time BETWEEN #{startTime} AND
             #{endTime}
+          AND in_schedule = 1
+    </update>
+
+    <update id="updateResultClientNotInSchedule" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
+        UPDATE user_result
+        SET score                           = #{score},
+            check_time                      = #{checkTime},
+            item1_result                    = #{item1Result},
+            item2_result                    = #{item2Result},
+            item3_result                    = #{item3Result},
+            item4_result                    = #{item4Result},
+            item5_result                    = #{item5Result},
+            item6_result                    = #{item6Result},
+            item7_result                    = #{item7Result},
+            item8_result                    = #{item8Result},
+            item9_result                    = #{item9Result},
+            item10_result                   = #{item10Result},
+            item11_result                   = #{item11Result},
+            item12_result                   = #{item12Result},
+            item13_result                   = #{item13Result},
+            item14_result                   = #{item14Result},
+            item15_result                   = #{item15Result},
+            item16_result                   = #{item16Result},
+            item1_execution_status_check    = #{item1ExecutionStatusCheck},
+            item1_installation_status_check = #{item1InstallationStatusCheck},
+            item2_execution_status_check    = #{item2ExecutionStatusCheck},
+            item2_update_status_check       = #{item2UpdateStatusCheck},
+            item3_count                     = #{item3Count},
+            item4_count                     = #{item4Count},
+            item5_reasons_vulnerability     = #{item5ReasonsVulnerability},
+            item5_password_length= #{item5PasswordLength},
+            item5_detail_reasons            = #{item5DetailReasons},
+            item6_pw_last_change_past_date  = #{item6PwLastChangePastDate},
+            item7_execution_status_check    = #{item7ExecutionStatusCheck},
+            item7_pw_usage_status           = #{item7PwUsageStatus},
+            item7_period                    = #{item7Period},
+            item10_count                    = #{item10Count}
+        WHERE user_id = #{userId}
+          AND ip_address = #{ipAddress}
+          AND DATE_FORMAT(check_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
           AND in_schedule = 1
     </update>
 

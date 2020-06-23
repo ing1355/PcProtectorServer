@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.result.service;
 
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
@@ -8,24 +9,14 @@ import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
-import oms.pc_protector.restApi.policy.model.NowScheduleVO;
-import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
-import oms.pc_protector.restApi.result.model.*;
-import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
-import oms.pc_protector.restApi.user.model.UserVO;
+import oms.pc_protector.restApi.result.model.*;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.*;
 
 @Log4j2
@@ -327,6 +318,7 @@ public class ResultService {
     @Transactional
     public void resultSet(ResultVO resultVO) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat dfd = new SimpleDateFormat("yyyy-MM-dd");
         DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         Date d1 = df.parse(dashboardPeriodVO.getStartDate());
         Date d2 = df.parse(dashboardPeriodVO.getEndDate());
@@ -344,13 +336,24 @@ public class ResultService {
         int Miss = resultMapper.selectClientForMiss(resultVO);
         resultVO.setStartTime(dashboardPeriodVO.getStartDate());
         resultVO.setEndTime(dashboardPeriodVO.getEndDate());
+        log.info("start : " + df.format(start.getTime()));
+        log.info("end : " + df.format(end.getTime()));
+        log.info("now : " + df.format(now.getTime()));
         if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
                 df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
-            Optional.ofNullable(resultVO)
-                    .ifPresent(resultMapper::insertResult);
-        }
-        else {
+            if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
+                log.info("-------------------case 1------------------");
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::updateResultClientNotInSchedule);
+            } else {
+                log.info("-------------------case 2------------------");
+                Optional.ofNullable(resultVO)
+                        .ifPresent(resultMapper::insertResult);
+            }
+
+        } else {
             if (Miss == 0) {
+                log.info("-------------------case 3------------------");
                 Optional.ofNullable(resultVO)
                         .ifPresent(resultMapper::updateResultClient);
             }

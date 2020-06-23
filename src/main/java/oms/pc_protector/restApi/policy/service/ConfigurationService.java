@@ -1,6 +1,10 @@
 package oms.pc_protector.restApi.policy.service;
 
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.restApi.client.mapper.ClientMapper;
+import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.*;
 import oms.pc_protector.restApi.process.service.ProcessService;
@@ -20,15 +24,21 @@ public class ConfigurationService {
     private final ProcessService processService;
     private final UserService userService;
     private final ResultMapper resultMapper;
+    private final DashboardMapper dashboardMapper;
+    private final ClientMapper clientMapper;
 
     public ConfigurationService(UserService userService,
                                 ConfigurationMapper configurationMapper,
                                 ProcessService processService,
-                                ResultMapper resultMapper) {
+                                ResultMapper resultMapper,
+                                DashboardMapper dashboardMapper,
+                                ClientMapper clientMapper) {
         this.configurationMapper = configurationMapper;
         this.processService = processService;
         this.userService = userService;
         this.resultMapper = resultMapper;
+        this.dashboardMapper = dashboardMapper;
+        this.clientMapper = clientMapper;
     }
 
 
@@ -183,6 +193,18 @@ public class ConfigurationService {
                 next_start.set(Calendar.DAY_OF_WEEK, start.get(Calendar.DAY_OF_WEEK));
                 next_end.set(Calendar.WEEK_OF_MONTH, end.get(Calendar.WEEK_OF_MONTH));
                 next_end.set(Calendar.DAY_OF_WEEK, end.get(Calendar.DAY_OF_WEEK));
+                if(dft.format(start.getTime()).compareTo(dft.format(now.getTime())) <= 0 &&
+                    dft.format(end.getTime()).compareTo(dft.format(now.getTime())) >= 0) {
+                    dashboardMapper.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()),dft.format(end.getTime())));
+                    List<ClientVO> temp = clientMapper.selectClientAll();
+                    for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
+                        if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
+                                dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {
+                            client.setCheckTime(dft.format(start.getTime()));
+                            resultMapper.insertEmptyResultBySchedule(client);
+                        }
+                    }
+                }
             }
 
         } else if (requestPeriodDateVO.getNew_data().getPeriod() == 2) { // 매주
@@ -211,6 +233,18 @@ public class ConfigurationService {
             if (count > 0) { // 같은 주기에 스케줄 결과가 있는지 체크
                 next_start.add(Calendar.DATE, 7);
                 next_end.add(Calendar.DATE, 7);
+            }
+            if(dft.format(start.getTime()).compareTo(dft.format(now.getTime())) <= 0 &&
+                    dft.format(end.getTime()).compareTo(dft.format(now.getTime())) >= 0) {
+                dashboardMapper.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()),dft.format(end.getTime())));
+                List<ClientVO> temp = clientMapper.selectClientAll();
+                for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
+                    if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
+                            dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {
+                        client.setCheckTime(dft.format(start.getTime()));
+                        resultMapper.insertEmptyResultBySchedule(client);
+                    }
+                }
             }
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);

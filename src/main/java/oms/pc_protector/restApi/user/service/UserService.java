@@ -1,23 +1,25 @@
 package oms.pc_protector.restApi.user.service;
 
-        import oms.pc_protector.restApi.client.service.ClientService;
-        import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
-        import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
-        import oms.pc_protector.restApi.department.model.DepartmentVO;
-        import oms.pc_protector.restApi.department.service.DepartmentService;
-        import oms.pc_protector.restApi.policy.model.PeriodDateVO;
-        import oms.pc_protector.restApi.policy.service.ConfigurationService;
-        import oms.pc_protector.restApi.result.mapper.ResultMapper;
-        import oms.pc_protector.restApi.user.mapper.UserMapper;
         import lombok.extern.log4j.Log4j2;
-        import oms.pc_protector.restApi.client.model.ClientVO;
-        import oms.pc_protector.restApi.client.mapper.ClientMapper;
-        import oms.pc_protector.restApi.user.model.*;
-        import org.springframework.stereotype.Service;
-        import org.springframework.transaction.annotation.Transactional;
+import oms.pc_protector.restApi.client.mapper.ClientMapper;
+import oms.pc_protector.restApi.client.model.ClientVO;
+import oms.pc_protector.restApi.client.service.ClientService;
+import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
+import oms.pc_protector.restApi.department.model.DepartmentVO;
+import oms.pc_protector.restApi.department.service.DepartmentService;
+import oms.pc_protector.restApi.policy.service.ConfigurationService;
+import oms.pc_protector.restApi.result.mapper.ResultMapper;
+import oms.pc_protector.restApi.user.mapper.UserMapper;
+import oms.pc_protector.restApi.user.model.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-        import java.text.SimpleDateFormat;
-        import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -203,8 +205,10 @@ public class UserService {
 
             clientVO.setCheckTime(df.format(Calendar.getInstance().getTime()));
 
-            if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate(),
-                    dashboardPeriodVO.getEndDate(), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
+            log.info("start : " + dashboardPeriodVO.getStartDate().substring(0,dashboardPeriodVO.getStartDate().length()-2));
+            log.info("end : " + dashboardPeriodVO.getEndDate().substring(0,dashboardPeriodVO.getEndDate().length()-2));
+            if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate().substring(0,dashboardPeriodVO.getStartDate().length()-2),
+                    dashboardPeriodVO.getEndDate().substring(0,dashboardPeriodVO.getEndDate().length()-2), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }
             clientService.First_update(clientVO);
