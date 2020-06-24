@@ -112,6 +112,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Grab principal
         String token = null;
+        String refresh_token = null;
         if (authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
             ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
             this.managerService.initManagerLock(principal.getUsername());
@@ -120,6 +121,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .withClaim("role", "MANAGER")
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
                     .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE", principal.getPassword())))
+                    .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+            refresh_token = JWT.create()
+                    .withSubject(principal.getUsername())
+                    .withClaim("role", "MANAGER")
+                    .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_TIME))
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
         } else {
             ClientPrincipal principal = (ClientPrincipal) authResult.getPrincipal();
@@ -135,5 +141,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // Add token in response
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
+        response.addHeader(JwtProperties.REFRESH_STRING, JwtProperties.TOKEN_PREFIX + refresh_token);
     }
 }

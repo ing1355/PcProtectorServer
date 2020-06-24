@@ -15,4 +15,6 @@ public class JwtProperties {
 
     //  HEADER_STRING : JWT Token은 Authorization header로 전달됩니다.
     public static final String HEADER_STRING = "Authorization";
+
+    public static final String REFRESH_STRING = "Refresh_Token";
 }
