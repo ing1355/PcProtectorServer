@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +36,12 @@ public class ClientFileService {
     @Transactional
     public ClientFileVO findClientFileRecent() {
         return Optional.ofNullable(clientFileMapper.selectClientFileRecent())
+                .orElse(null);
+    }
+
+    @Transactional
+    public ArrayList<String> selectVersionList() {
+        return Optional.ofNullable(clientFileMapper.selectVersionList())
                 .orElse(null);
     }
 

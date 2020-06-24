@@ -4,6 +4,7 @@ import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -12,6 +13,8 @@ public interface ClientFileMapper {
     public List<ClientFileVO> selectClientFile();
 
     public ClientFileVO selectClientFileRecent();
+
+    public ArrayList<String> selectVersionList();
 
     public int selectExistFile(@Param(value = "version") String version);
     public int selectExistMd5(@Param(value = "md5") String md5);

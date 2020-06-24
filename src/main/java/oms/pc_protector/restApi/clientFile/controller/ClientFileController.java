@@ -17,6 +17,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -72,6 +73,19 @@ public class ClientFileController {
         if (!SUtil.fileTypeCheck(file.getInputStream())) {
             httpServletResponse.sendError(400, "형식 에러!");
             return null;
+        }
+        ArrayList<String> version_list = clientFileService.selectVersionList();
+        String[] req_version = version.split("[.]");
+        for(String res_version : version_list) {
+            String[] temp = res_version.split("[.]");
+            int count = 0;
+            for(int i=0;i<temp.length;i++) {
+                if(Integer.parseInt(req_version[i]) <= Integer.parseInt(temp[i])) count++;
+            }
+            if(count == 4) {
+                httpServletResponse.sendError(400,res_version + "보다 높은 버전을 입력해주세요.");
+                return null;
+            }
         }
 
         String fileName = file.getOriginalFilename();

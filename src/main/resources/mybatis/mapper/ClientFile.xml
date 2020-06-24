@@ -17,6 +17,11 @@
         WHERE t1.version = t2.lastest_version
     </select>
 
+    <select id="selectVersionList" resultType="String">
+        SELECT version
+        FROM client_file
+    </select>
+
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         INSERT INTO client_file (file_name, file_size, md5, version)
         VALUES (#{fileName}, #{fileSize}, #{md5}, #{version})
