@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.InputMismatchException;
 
 @Log4j2
 @RestControllerAdvice
@@ -37,5 +38,16 @@ public class MultipartExceptionHandler {
     {
         log.error(e);
         return "testtest";
+    }
+
+    @ExceptionHandler(InputMismatchException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    protected String TimeException(final HttpServletRequest request,
+                                                     final HttpServletResponse response, final Throwable e)
+            throws IOException
+    {
+        log.error(e);
+        return "날짜가 잘못 설정되어있습니다.";
     }
 }

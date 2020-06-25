@@ -18,10 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 @Service
 public class ResultService {
+
+
+    AtomicInteger count_3 = new AtomicInteger();
+    AtomicInteger count_4 = new AtomicInteger();
+    AtomicInteger count_5 = new AtomicInteger();
+
+    HashMap<String, Object> temp = new HashMap<>();
 
     private final ResultMapper resultMapper;
     private final DepartmentService departmentService;
@@ -311,6 +319,7 @@ public class ResultService {
                 clientVO.getUserId(),
                 clientVO.getIpAddress(),
                 resultVO.getCheckTime());
+        count_4.incrementAndGet();
     }
 
     /* 아이템별 결과값을 등록한다. */
@@ -329,35 +338,41 @@ public class ResultService {
         start.setTime(d1);
         end.setTime(d2);
         now.setTime(d3);
-//        if(df.format(now.getTime()).compareTo(df.format(Calendar.getInstance().getTime())) < 0) {
-//            response.sendError(400, "올바르지 않은 점검일입니다.");
-//            return;
-//        }
-        int Miss = resultMapper.selectClientForMiss(resultVO);
-        resultVO.setStartTime(dashboardPeriodVO.getStartDate());
-        resultVO.setEndTime(dashboardPeriodVO.getEndDate());
-        log.info("start : " + df.format(start.getTime()));
-        log.info("end : " + df.format(end.getTime()));
-        log.info("now : " + df.format(now.getTime()));
-        if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
-                df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
-            if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
-                log.info("-------------------case 1------------------");
-                Optional.ofNullable(resultVO)
-                        .ifPresent(resultMapper::updateResultClientNotInSchedule);
-            } else {
-                log.info("-------------------case 2------------------");
-                Optional.ofNullable(resultVO)
-                        .ifPresent(resultMapper::insertResult);
-            }
 
-        } else {
-            if (Miss == 0) {
-                log.info("-------------------case 3------------------");
-                Optional.ofNullable(resultVO)
-                        .ifPresent(resultMapper::updateResultClient);
+        int Miss = resultMapper.selectClientForMiss(resultVO);
+        resultVO.setStartTime(dashboardPeriodVO.getStartDate().split("[.]")[0]);
+        resultVO.setEndTime(dashboardPeriodVO.getEndDate().split("[.]")[0]);
+
+        if (!(df.format(now.getTime()).compareTo(df.format(Calendar.getInstance().getTime())) > 0)) {
+            if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
+                    df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
+                if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
+//                    log.info("-------------------case 1------------------");
+                    Optional.ofNullable(resultVO)
+                            .ifPresent(resultMapper::updateResultClientNotInSchedule);
+                } else {
+//                    log.info("-------------------case 2------------------");
+                    Optional.ofNullable(resultVO)
+                            .ifPresent(resultMapper::insertResult);
+                }
+
+            } else {
+                if (Miss == 0) {
+//                    log.info("-------------------case 3------------------");
+                    Optional.ofNullable(resultVO)
+                            .ifPresent(resultMapper::updateResultClient);
+                }
             }
         }
+        else {
+            throw new InputMismatchException("날짜가 잘못 설정되어있습니다.");
+        }
+        temp.put(resultVO.getUserId(), count_5.get());
+        log.info("-----------id, temp size-------------");
+        log.info("idididid : " + resultVO.getUserId());
+        log.info("tempsizetempsizetempsize : " + temp.size());
+        log.info("-------------------------------------");
+        count_3.incrementAndGet();
     }
 
 

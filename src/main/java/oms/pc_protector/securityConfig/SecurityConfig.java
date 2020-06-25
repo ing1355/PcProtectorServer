@@ -5,11 +5,8 @@ import oms.pc_protector.jwt.ClientPrincipalDetailService;
 import oms.pc_protector.jwt.JwtAuthenticationFilter;
 import oms.pc_protector.jwt.JwtAuthorizationFilter;
 import oms.pc_protector.jwt.ManagerPrincipalDetailsService;
-import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
-import oms.pc_protector.restApi.login.service.LoginService;
 import oms.pc_protector.restApi.manager.service.ManagerService;
-import org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -71,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/v1/client/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/client/result").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/firstlogin").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/lock").permitAll()
 //                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")

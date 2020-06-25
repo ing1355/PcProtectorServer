@@ -120,6 +120,7 @@ public class ClientController {
     public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO) {
         HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
+
         return responseService.getSingleResult(map);
     }
 

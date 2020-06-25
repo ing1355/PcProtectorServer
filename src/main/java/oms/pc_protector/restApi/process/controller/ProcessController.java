@@ -43,31 +43,23 @@ public class ProcessController {
 
     @PostMapping(value = "/insert")
     public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO) {
-        int resultNum = processService.insertProcessDirect(processVO);
-        return responseService.getSingleResult(resultNum);
-    }
-
-    @PutMapping(value = "")
-    public SingleResult<?> modifyProcess(@RequestBody @Valid ProcessVO processVO) {
-        processService.modifyProcessList(processVO);
-        return responseService.getSingleResult(true);
-    }
-
-    @DeleteMapping(value = "")
-    public SingleResult<?> removeProcess(@RequestBody @Valid ProcessVO processVO) {
-        processService.removeProcessList(processVO);
-        return responseService.getSingleResult(true);
+        processService.insertProcessDirect(processVO);
+        return responseService.getSingleResult(processService.findProcessAll());
     }
 
     @PutMapping(value = "modify-unapproved-process")
-    public void modifyToUnApprovedProcess(@RequestBody @Valid Long idx) {
+    public SingleResult<?> modifyToUnApprovedProcess(@RequestBody @Valid Long idx) {
         processService.modifyToUnApprovedProcess(idx);
+        return responseService.getSingleResult(processService.findProcessAll());
     }
 
     @PutMapping(value = "modify-required-process")
-    public void modifyToRequiredProcess(@RequestBody @Valid Long idx) {
+    public SingleResult<?> modifyToRequiredProcess(@RequestBody @Valid Long idx) {
         processService.modifyToRequiredProcess(idx);
+        return responseService.getSingleResult(processService.findProcessAll());
     }
+
+    //////////////////////////////// 비인가 프로그램 ////////////////////////////////////////
 
     @GetMapping(value = "/unapproved-process")
     public SingleResult<?> findUnApprovedProcess() {
@@ -81,19 +73,19 @@ public class ProcessController {
         return responseService.getSingleResult(resultNum);
     }
 
-    @PostMapping(value = "/unapproved-process")
-    public SingleResult<?> registerUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
-        int resultNum = processService.registerUnApprovedProcessList(processVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
+    @PutMapping(value = "unapproved-process/modify")
+    public SingleResult<?> modifyUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+        processService.updateProcess(processVO);
+        return responseService.getSingleResult(processService.findUnApprovedProcessList());
     }
 
-    @PutMapping(value = "unapproved-process/delete")
+    @PutMapping(value = "/unapproved-process/delete")
     public SingleResult<?> deleteUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
-        int resultNum = processService.deleteUnApprovedProcess(processVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
+        processService.deleteProcess(processVO);
+        return responseService.getSingleResult(processService.findUnApprovedProcessList());
     }
+
+    //////////////////////////////// 필수 프로그램 ////////////////////////////////////////
 
     @GetMapping(value = "/required-process")
     public SingleResult<?> findRequiredProcess() {
@@ -107,17 +99,15 @@ public class ProcessController {
         return responseService.getSingleResult(resultNum);
     }
 
-    @PostMapping(value = "/required-process")
-    public SingleResult<?> registerRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
-        int resultNum = processService.registerRequiredProcessList(processVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
+    @PutMapping(value = "/required-process/modify")
+    public SingleResult<?> modifyRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+        processService.updateProcess(processVO);
+        return responseService.getSingleResult(processService.findRequiredProcessList());
     }
 
     @PutMapping(value = "/required-process/delete")
     public SingleResult<?> deleteRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
-        int resultNum = processService.deleteRequiredProcess(processVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
+        processService.deleteProcess(processVO);
+        return responseService.getSingleResult(processService.findRequiredProcessList());
     }
 }

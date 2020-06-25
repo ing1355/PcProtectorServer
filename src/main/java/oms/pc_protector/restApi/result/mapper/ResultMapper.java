@@ -53,7 +53,7 @@ public interface ResultMapper {
 
     public void insertEmptyResultBySchedule(ClientVO clientVO);
 
-    public void updateResultClient(ResultVO resultVO);
+    public boolean updateResultClient(ResultVO resultVO);
 
     public void updateResultClientNotInSchedule(ResultVO resultVO);
 

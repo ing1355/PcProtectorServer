@@ -18,7 +18,7 @@
         SELECT *
         FROM user_result
         WHERE ip_address = #{ipAddress}
-          AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
+          AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startCheckTime} AND #{endCheckTime}
           AND in_schedule = 1
     </select>
 
@@ -33,7 +33,7 @@
     <select id="selectCountBySchedule" resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE check_time BETWEEN #{startDate} AND #{endDate}
+        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
           AND in_schedule = 1
     </select>
 
@@ -58,7 +58,7 @@
                  FROM client
              ) AS t0
                  LEFT OUTER JOIN
-             (SELECT * FROM user_result WHERE in_schedule = 1 AND check_time BETWEEN #{startDate} AND #{endDate}) AS t1
+             (SELECT * FROM user_result WHERE in_schedule = 1 AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}) AS t1
              ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
         WHERE (t1.item1_result != 0
             OR t1.item2_result != 0
@@ -92,7 +92,7 @@
              (
                  SELECt *
                  FROM user_result
-                 WHERE check_time BETWEEN #{startDate} AND #{endDate}
+                 WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
@@ -190,7 +190,7 @@
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE check_time BETWEEN #{startChecktime}
+        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startChecktime}
             AND #{endChecktime}
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
@@ -201,7 +201,7 @@
             resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE check_time BETWEEN #{checkTime} AND now()
+        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{checkTime} AND now()
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
           AND in_schedule = 1
@@ -295,7 +295,7 @@
             item3_count                     = #{item3Count},
             item4_count                     = #{item4Count},
             item5_reasons_vulnerability     = #{item5ReasonsVulnerability},
-            item5_password_length= #{item5PasswordLength},
+            item5_password_length           = #{item5PasswordLength},
             item5_detail_reasons            = #{item5DetailReasons},
             item6_pw_last_change_past_date  = #{item6PwLastChangePastDate},
             item7_execution_status_check    = #{item7ExecutionStatusCheck},
@@ -304,7 +304,7 @@
             item10_count                    = #{item10Count}
         WHERE user_id = #{userId}
           AND ip_address = #{ipAddress}
-          AND check_time BETWEEN #{startTime} AND
+          AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startTime} AND
             #{endTime}
           AND in_schedule = 1
     </update>

@@ -109,56 +109,9 @@ public class ProcessService {
         processMapper.modifyToUnApprovedProcess(idx);
     }
 
-
-    @Transactional
-    public int registerUnApprovedProcessList(ProcessVO processVO) {
-        List<ProcessVO> unApprovedProcessList = new ArrayList<>();
-        for (ProcessVO process : processVO.getProcessVOList()) {
-            process.setType("unApproved");
-            unApprovedProcessList.add(process);
-        }
-        return insertProcess(unApprovedProcessList);
-    }
-
-
-    @Transactional
-    public int deleteUnApprovedProcess(ProcessVO processVO) {
-        return processMapper.deleteUnApprovedProcess(processVO);
-    }
-
     @Transactional
     public List<ProcessVO> findRequiredProcessList() {
         return Optional.ofNullable(findRegistryItem("required"))
                 .orElseGet(ArrayList::new);
-    }
-
-
-    @Transactional
-    public int registerRequiredProcessList(ProcessVO processVO) {
-        List<ProcessVO> requiredProcessList = new ArrayList<>();
-        for (ProcessVO process : processVO.getProcessVOList()) {
-            process.setType("required");
-            requiredProcessList.add(process);
-        }
-        return insertProcess(requiredProcessList);
-    }
-
-    @Transactional
-    public int deleteRequiredProcess(ProcessVO processVO) {
-        return processMapper.deleteRequiredProcess(processVO);
-    }
-
-    @Transactional
-    public void modifyProcessList(ProcessVO processVO) {
-        for (ProcessVO process : processVO.getProcessVOList()) {
-            updateProcess(process);
-        }
-    }
-
-    @Transactional
-    public void removeProcessList(ProcessVO processVO) {
-        for (ProcessVO process : processVO.getProcessVOList()) {
-            deleteProcess(process);
-        }
     }
 }

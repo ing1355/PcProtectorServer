@@ -74,22 +74,6 @@
         WHERE idx = #{idx}
     </update>
 
-    <update id="deleteUnApprovedProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        UPDATE process
-        SET type        = 'none',
-            update_time = now()
-        WHERE display_name = #{displayName}
-          AND registry_item = #{registryItem}
-    </update>
-
-    <update id="deleteRequiredProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        UPDATE process
-        SET update_time = now(),
-            type        = 'none'
-        WHERE display_name = #{displayName}
-          AND registry_item = #{registryItem}
-    </update>
-
     <update id="modifyToRequiredProcess" parameterType="Long">
         UPDATE process
         SET update_time = now(),
@@ -107,7 +91,8 @@
     <delete id="processDelete" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
         DELETE
         FROM process
-        WHERE idx = #{idx}
+        WHERE display_name = #{displayName}
+          AND registry_item = #{registryItem}
     </delete>
 
 

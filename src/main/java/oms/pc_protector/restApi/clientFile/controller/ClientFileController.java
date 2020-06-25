@@ -74,19 +74,6 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "형식 에러!");
             return null;
         }
-        ArrayList<String> version_list = clientFileService.selectVersionList();
-        String[] req_version = version.split("[.]");
-        for(String res_version : version_list) {
-            String[] temp = res_version.split("[.]");
-            int count = 0;
-            for(int i=0;i<temp.length;i++) {
-                if(Integer.parseInt(req_version[i]) <= Integer.parseInt(temp[i])) count++;
-            }
-            if(count == 4) {
-                httpServletResponse.sendError(400,res_version + "보다 높은 버전을 입력해주세요.");
-                return null;
-            }
-        }
 
         String fileName = file.getOriginalFilename();
         String fileMd5 = clientFileService.makeMd5(file.getInputStream());
@@ -114,6 +101,19 @@ public class ClientFileController {
                 clientFileService.update(clientFileVO);
             } else {
                 log.info("FILE 등록");
+                ArrayList<String> version_list = clientFileService.selectVersionList();
+                String[] req_version = version.split("[.]");
+                for(String res_version : version_list) {
+                    String[] temp = res_version.split("[.]");
+                    int count = 0;
+                    for(int i=0;i<temp.length;i++) {
+                        if(Integer.parseInt(req_version[i]) <= Integer.parseInt(temp[i])) count++;
+                    }
+                    if(count == 4) {
+                        httpServletResponse.sendError(400,res_version + "보다 높은 버전을 입력해주세요.");
+                        return null;
+                    }
+                }
                 clientFileService.registerClientFile(clientFileVO);
             }
         }

@@ -345,8 +345,15 @@ public class ConfigurationService {
         dash_start.setTime(dash_1);
         dash_end.setTime(dash_2);
 
+        log.info("start : " + dft.format(start.getTime()));
+        log.info("next_start : " + df.format(next_start.getTime()));
+        log.info("end : " + dft.format(end.getTime()));
+        log.info("next_end : " + df.format(next_end.getTime()));
+        log.info("now : " + dft.format(now.getTime()));
+
         if ((start.getTime().compareTo(dash_start.getTime()) >= 0 && start.getTime().compareTo(dash_end.getTime()) <= 0) ||
-                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0)) {
+                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0) ||
+                now.getTime().compareTo(start.getTime()) > 0) {
             configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
         } else {
             configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime())));
@@ -434,7 +441,7 @@ public class ConfigurationService {
 
         periodDateMap.put("periodDateCheck", hasAppliedFlag());
         periodDateMap.put("periodDateArray", findAppliedSchedule());
-        periodDateMap.put("nextPeriodDateArray",findNextSchedule());
+        periodDateMap.put("nextPeriodDateArray", findNextSchedule());
 
         boolean forceRun = (boolean) Optional.ofNullable(findConfiguration()
                 .get("forceRun")).orElse(false);

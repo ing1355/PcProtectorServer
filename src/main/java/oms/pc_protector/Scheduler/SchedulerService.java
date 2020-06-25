@@ -198,12 +198,15 @@ public class SchedulerService {
             c1.setTime(d1);
             if (df.format(c1.getTime()).compareTo(df.format(now.getTime())) < 0) { // 현재 저장된 점검 기간이 지나야 새로운 점검 기간 업데이트
                 dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()), dft.format(end.getTime())));
-                for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
-                    if (resultMapper.selectByScheduleIsExist((dft.format(start.getTime())),
-                            dft.format(end.getTime()), client.getUserId(), client.getIpAddress()) == 0) {
-                        client.setCheckTime(dft.format(start.getTime()));
-                        resultMapper.insertEmptyResultBySchedule(client);
-                    }
+            }
+        }
+        if (dashboardPeriodVO.getStartDate().compareTo(dft.format(now.getTime())) <= 0 &&
+                dashboardPeriodVO.getEndDate().compareTo(dft.format(now.getTime())) >= 0) {
+            for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
+                if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate(),
+                        dashboardPeriodVO.getEndDate(), client.getUserId(), client.getIpAddress()) == 0) {
+                    client.setCheckTime(dashboardPeriodVO.getStartDate());
+                    resultMapper.insertEmptyResultBySchedule(client);
                 }
             }
         }

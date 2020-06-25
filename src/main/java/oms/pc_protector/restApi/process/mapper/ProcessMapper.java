@@ -26,7 +26,4 @@ public interface ProcessMapper {
     public void processUpdate(ProcessVO processVO);
 
     public void processDelete(ProcessVO processVO);
-
-    public int deleteUnApprovedProcess(ProcessVO processVO);
-    public int deleteRequiredProcess(ProcessVO processVO);
 }

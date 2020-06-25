@@ -20,6 +20,7 @@ import java.util.Set;
 @WebFilter(urlPatterns = {"/v1/*"}, description = "API LOG FILTER")
 public class ApiFilter implements Filter {
 
+
     private LogService logService;
 
     public ApiFilter(LogService logService) {
@@ -43,6 +44,7 @@ public class ApiFilter implements Filter {
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
                          FilterChain filterChain) throws IOException, ServletException {
+
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;

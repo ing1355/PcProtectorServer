@@ -14,7 +14,7 @@
              (SELECT *,
                      ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
               FROM user_result
-              WHERE check_time BETWEEN #{startDate} AND #{endDate}
+              WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
                 AND in_schedule = 1
                 AND (item1_result != 0
                   OR item2_result != 0
