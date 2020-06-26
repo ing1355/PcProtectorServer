@@ -30,6 +30,10 @@
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
     </select>
 
+    <select id="selectClientCount" resultType="Integer">
+        SELECT COUNT(*) FROM CLIENT;
+    </select>
+
     <select id="selectAvgScoreByRecentMonths"
             resultType="Integer"
             parameterType="String">

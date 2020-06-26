@@ -2,7 +2,6 @@ package oms.pc_protector.restApi.dashboard.service;
 
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
@@ -21,7 +20,6 @@ import java.util.*;
 @Service
 public class DashboardService {
 
-    private ClientService clientService;
     private ResultService resultService;
     private DepartmentService departmentService;
     private DashboardMapper dashboardMapper;
@@ -32,15 +30,13 @@ public class DashboardService {
     private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
     private String currentTime = format.format(System.currentTimeMillis());
 
-    public DashboardService(ClientService clientService,
-                            ResultService resultService,
+    public DashboardService(ResultService resultService,
                             DepartmentService departmentService,
                             DashboardMapper dashboardMapper,
                             ConfigurationService configurationService,
                             ConfigurationMapper configurationMapper,
                             ResultMapper resultMapper) {
         this.configurationMapper = configurationMapper;
-        this.clientService = clientService;
         this.resultService = resultService;
         this.departmentService = departmentService;
         this.dashboardMapper = dashboardMapper;
@@ -50,10 +46,9 @@ public class DashboardService {
 
     @Transactional
     public HashMap<String, Object> dashboardTop() {
-
         double beforeTime = System.currentTimeMillis();
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
-        int totalPc = clientService.count();
+        int totalPc = dashboardMapper.selectClientCount();
         int runPc = resultService.countByMonth();
         String resultRate = String.valueOf((int) (((double) runPc / (double) totalPc) * 100)) + "%";
 
@@ -69,6 +64,7 @@ public class DashboardService {
         double afterTime = System.currentTimeMillis();
         double secDiffTime = (afterTime - beforeTime) / 1000;
         log.info("Top 걸린시간 : " + secDiffTime + "초");
+        log.info("Top : " + dashboardTopMap.get("totalPc"));
         return dashboardTopMap;
     }
 
