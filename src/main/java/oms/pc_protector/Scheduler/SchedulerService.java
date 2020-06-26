@@ -181,7 +181,8 @@ public class SchedulerService {
         dash_end.setTime(dash_2);
 
         if ((start.getTime().compareTo(dash_start.getTime()) >= 0 && start.getTime().compareTo(dash_end.getTime()) <= 0) ||
-                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0)) {
+                (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0) ||
+                now.getTime().compareTo(start.getTime()) > 0) {
             configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
         } else {
             configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime())));
@@ -192,19 +193,13 @@ public class SchedulerService {
         log.info("end : " + dft.format(end.getTime()));
         log.info("next_end : " + df.format(next_end.getTime()));
         log.info("now : " + dft.format(now.getTime()));
-        if (df.format(start.getTime()).equals(df.format(now.getTime()))) { // 오늘이 현재 정책 점검 기간 시작 날인지 체크
-            Date d1 = df.parse(dashboardPeriodVO.getEndDate());
-            Calendar c1 = Calendar.getInstance();
-            c1.setTime(d1);
-            if (df.format(c1.getTime()).compareTo(df.format(now.getTime())) < 0) { // 현재 저장된 점검 기간이 지나야 새로운 점검 기간 업데이트
-                dashboardService.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()), dft.format(end.getTime())));
-            }
-        }
+        log.info("dash_start : " + df.format(dash_start.getTime()));
+        log.info("dash_end : " + df.format(dash_end.getTime()));
+
         if (dashboardPeriodVO.getStartDate().compareTo(dft.format(now.getTime())) <= 0 &&
                 dashboardPeriodVO.getEndDate().compareTo(dft.format(now.getTime())) >= 0) {
             for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
-                if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate(),
-                        dashboardPeriodVO.getEndDate(), client.getUserId(), client.getIpAddress()) == 0) {
+                if (resultMapper.selectByScheduleIsExist(client.getUserId(), client.getIpAddress()) == 0) {
                     client.setCheckTime(dashboardPeriodVO.getStartDate());
                     resultMapper.insertEmptyResultBySchedule(client);
                 }

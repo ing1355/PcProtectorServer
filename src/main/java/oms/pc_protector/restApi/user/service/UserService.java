@@ -5,7 +5,6 @@ import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
-import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
@@ -201,14 +200,9 @@ public class UserService {
 //                resultMapper.updateResultByUpdateClient(clientVO);
 //            }
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
 
             clientVO.setCheckTime(df.format(Calendar.getInstance().getTime()));
-
-            log.info("start : " + dashboardPeriodVO.getStartDate().substring(0,dashboardPeriodVO.getStartDate().length()-2));
-            log.info("end : " + dashboardPeriodVO.getEndDate().substring(0,dashboardPeriodVO.getEndDate().length()-2));
-            if (resultMapper.selectByScheduleIsExist(dashboardPeriodVO.getStartDate().substring(0,dashboardPeriodVO.getStartDate().length()-2),
-                    dashboardPeriodVO.getEndDate().substring(0,dashboardPeriodVO.getEndDate().length()-2), clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
+            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }
             clientService.First_update(clientVO);

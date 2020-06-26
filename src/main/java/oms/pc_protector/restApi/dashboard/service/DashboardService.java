@@ -4,24 +4,17 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
-import oms.pc_protector.restApi.dashboard.model.ChartVO;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
-import oms.pc_protector.restApi.policy.model.NowScheduleVO;
-import oms.pc_protector.restApi.policy.model.PeriodDateVO;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.result.service.ResultService;
-import oms.pc_protector.restApi.statistics.mapper.StatisticsMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 @Log4j2
@@ -57,8 +50,9 @@ public class DashboardService {
 
     @Transactional
     public HashMap<String, Object> dashboardTop() {
+
+        double beforeTime = System.currentTimeMillis();
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         int totalPc = clientService.count();
         int runPc = resultService.countByMonth();
         String resultRate = String.valueOf((int) (((double) runPc / (double) totalPc) * 100)) + "%";
@@ -71,20 +65,33 @@ public class DashboardService {
         dashboardTopMap.put("runPc", runPc);
         dashboardTopMap.put("resultRate", resultRate);
         dashboardTopMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
+
+        double afterTime = System.currentTimeMillis();
+        double secDiffTime = (afterTime - beforeTime) / 1000;
+        log.info("Top 걸린시간 : " + secDiffTime + "초");
         return dashboardTopMap;
     }
 
     @Transactional
     public HashMap<String, Object> dashboardMiddle() {
+
+        double beforeTime = System.currentTimeMillis();
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         dashboardResultMap.put("resultTop5", ResultTop5());
         dashboardResultMap.put("resultLowTop5", ResultLowTop5());
         dashboardResultMap.put("userCountByScore", userCountByScore());
+
+
+        double afterTime = System.currentTimeMillis();
+        double secDiffTime = (afterTime - beforeTime) / 1000;
+        log.info("Middle 걸린시간 : " + secDiffTime + "초");
         return dashboardResultMap;
     }
 
     @Transactional
     public HashMap<String, Object> dashboardBottom(String term) {
+
+        double beforeTime = System.currentTimeMillis();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         HashMap<String, Object> resultChart = new HashMap<>();
@@ -109,6 +116,11 @@ public class DashboardService {
                 c.setTime(date);
             }
         }
+
+
+        double afterTime = System.currentTimeMillis();
+        double secDiffTime = (afterTime - beforeTime) / 1000;
+        log.info("Bottom 걸린시간 : " + secDiffTime + "초");
         return dashboardResultMap;
     }
 

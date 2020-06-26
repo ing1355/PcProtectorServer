@@ -18,18 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 @Service
 public class ResultService {
-
-
-    AtomicInteger count_3 = new AtomicInteger();
-    AtomicInteger count_4 = new AtomicInteger();
-    AtomicInteger count_5 = new AtomicInteger();
-
-    HashMap<String, Object> temp = new HashMap<>();
 
     private final ResultMapper resultMapper;
     private final DepartmentService departmentService;
@@ -116,15 +108,13 @@ public class ResultService {
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
     public int countByMonth() {
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
-        return resultMapper.selectCountRunByMonth(dashboardPeriodVO.getStartDate(), dashboardPeriodVO.getEndDate());
+        return resultMapper.selectCountRunByMonth();
     }
 
     @SneakyThrows
     @Transactional
     public List<Integer> findScoreByDepartmentWithMonth(String department) {
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
-        return resultMapper.selectScoreByDepartmentWithMonth(department, dashboardPeriodVO.getStartDate(), dashboardPeriodVO.getEndDate());
+        return resultMapper.selectScoreByDepartmentWithMonth(department);
     }
 
 
@@ -319,7 +309,6 @@ public class ResultService {
                 clientVO.getUserId(),
                 clientVO.getIpAddress(),
                 resultVO.getCheckTime());
-        count_4.incrementAndGet();
     }
 
     /* 아이템별 결과값을 등록한다. */
@@ -335,6 +324,8 @@ public class ResultService {
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
+        Calendar real_now = Calendar.getInstance();
+        real_now.add(Calendar.HOUR_OF_DAY,6);
         start.setTime(d1);
         end.setTime(d2);
         now.setTime(d3);
@@ -343,7 +334,7 @@ public class ResultService {
         resultVO.setStartTime(dashboardPeriodVO.getStartDate().split("[.]")[0]);
         resultVO.setEndTime(dashboardPeriodVO.getEndDate().split("[.]")[0]);
 
-        if (!(df.format(now.getTime()).compareTo(df.format(Calendar.getInstance().getTime())) > 0)) {
+        if (!(df.format(now.getTime()).compareTo(df.format(real_now.getTime())) > 0)) {
             if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
                     df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
                 if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
@@ -367,12 +358,6 @@ public class ResultService {
         else {
             throw new InputMismatchException("날짜가 잘못 설정되어있습니다.");
         }
-        temp.put(resultVO.getUserId(), count_5.get());
-        log.info("-----------id, temp size-------------");
-        log.info("idididid : " + resultVO.getUserId());
-        log.info("tempsizetempsizetempsize : " + temp.size());
-        log.info("-------------------------------------");
-        count_3.incrementAndGet();
     }
 
 

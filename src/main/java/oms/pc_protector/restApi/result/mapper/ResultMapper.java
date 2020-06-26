@@ -30,21 +30,16 @@ public interface ResultMapper {
 
     public int selectExistByDay(String day);
 
-    public int selectCountRunByMonth(@Param(value = "startDate") String startDate,
-                                     @Param(value = "endDate") String endDate);
+    public int selectCountRunByMonth();
 
     public int selectCountBySchedule(NowScheduleVO nowScheduleVO);
 
     public int selectCountByNowScheduleMonth(@Param(value = "month") String month);
 
     public List<Integer> selectScoreByDepartmentWithMonth(
-            @Param("department") String department,
-            @Param(value = "startDate") String startDate,
-            @Param(value = "endDate") String endDate);
+            @Param("department") String department);
 
-    public int selectByScheduleIsExist(@Param(value = "startChecktime") String startChecktime,
-                                       @Param(value = "endChecktime") String endChecktime,
-                                       @Param(value = "userId") String userId,
+    public int selectByScheduleIsExist(@Param(value = "userId") String userId,
                                        @Param(value = "ipAddress") String IpAddress);
 
     public void insertResult(ResultVO resultVO);

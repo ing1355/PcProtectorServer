@@ -5,63 +5,61 @@
     <select id="selectAvgScoreByMonth" resultType="Integer"
             parameterType="String">
 
-        SELECT NVL(AVG(score), 0)
-        FROM (
-                 SELECT user_id
-                 FROM client
-             ) AS t1
-                 LEFT OUTER join
-             (SELECT *,
-                     ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
-              FROM user_result
-              WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
-                AND in_schedule = 1
-                AND (item1_result != 0
-                  OR item2_result != 0
-                  OR item3_result != 0
-                  OR item4_result != 0
-                  OR item5_result != 0
-                  OR item6_result != 0
-                  OR item7_result != 0
-                  OR item8_result != 0
-                  OR item9_result != 0
-                  OR item10_result != 0
-                  OR item11_result != 0
-                  OR item12_result != 0
-                  OR item13_result != 0
-                  OR item14_result != 0
-                  OR item15_result != 0
-                  OR item16_result != 0)) AS t2 ON
-                 t1.user_id = t2.user_id
-        WHERE idx IS NOT NULL AND t2.r0 = 1
+        SELECT NVL(AVG(u.score), 0)
+        FROM user_result u,
+             dashboard_period da,
+             client c
+        WHERE u.user_id = c.user_id
+          AND u.user_id = c.user_id
+          AND (u.item1_result +
+               u.item2_result +
+               u.item3_result +
+               u.item4_result +
+               u.item5_result +
+               u.item6_result +
+               u.item7_result +
+               u.item8_result +
+               u.item9_result +
+               u.item10_result +
+               u.item11_result +
+               u.item12_result +
+               u.item13_result +
+               u.item14_result +
+               u.item15_result +
+               u.item16_result) > 0
+          AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
     </select>
 
     <select id="selectAvgScoreByRecentMonths"
             resultType="Integer"
             parameterType="String">
-        SELECT NVL(AVG(t2.score), 0) FROM
-            (SELECT c.user_id, c.ip_address FROM user u, client c
-             WHERE u.user_id = c.user_id) AS t1 LEFT OUTER JOIN
-            (SELECT *,
-                    ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
-             FROM user_result WHERE DATE_FORMAT(check_time,'%Y-%m') = #{month}
-                                AND in_schedule = 1
-                                AND (item1_result != 0
-                    OR item2_result != 0
-                    OR item3_result != 0
-                    OR item4_result != 0
-                    OR item5_result != 0
-                    OR item6_result != 0
-                    OR item7_result != 0
-                    OR item8_result != 0
-                    OR item9_result != 0
-                    OR item10_result != 0
-                    OR item11_result != 0
-                    OR item12_result != 0
-                    OR item13_result != 0
-                    OR item14_result != 0
-                    OR item15_result != 0
-                    OR item16_result != 0)) AS t2 ON t1.user_id = t2.user_id
+        SELECT NVL(AVG(t2.score), 0)
+        FROM (SELECT c.user_id, c.ip_address
+              FROM user u,
+                   client c
+              WHERE u.user_id = c.user_id) AS t1
+                 LEFT OUTER JOIN
+             (SELECT *,
+                     ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
+              FROM user_result
+              WHERE DATE_FORMAT(check_time, '%Y-%m') = #{month}
+                AND in_schedule = 1
+                AND (item1_result +
+                     item2_result +
+                     item3_result +
+                     item4_result +
+                     item5_result +
+                     item6_result +
+                     item7_result +
+                     item8_result +
+                     item9_result +
+                     item10_result +
+                     item11_result +
+                     item12_result +
+                     item13_result +
+                     item14_result +
+                     item15_result +
+                     item16_result) > 0) AS t2 ON t1.user_id = t2.user_id
         WHERE t2.r0 = 1
     </select>
 
@@ -96,22 +94,22 @@
         WHERE in_schedule = 1
           AND t1.check_time BETWEEN #{startDate} AND #{endDate}
           AND score BETWEEN #{startScore} AND #{endScore}
-          AND (t1.item1_result != 0
-            OR t1.item2_result != 0
-            OR t1.item3_result != 0
-            OR t1.item4_result != 0
-            OR t1.item5_result != 0
-            OR t1.item6_result != 0
-            OR t1.item7_result != 0
-            OR t1.item8_result != 0
-            OR t1.item9_result != 0
-            OR t1.item10_result != 0
-            OR t1.item11_result != 0
-            OR t1.item12_result != 0
-            OR t1.item13_result != 0
-            OR t1.item14_result != 0
-            OR t1.item15_result != 0
-            OR t1.item16_result != 0)
+          AND (t1.item1_result +
+               t1.item2_result +
+               t1.item3_result +
+               t1.item4_result +
+               t1.item5_result +
+               t1.item6_result +
+               t1.item7_result +
+               t1.item8_result +
+               t1.item9_result +
+               t1.item10_result +
+               t1.item11_result +
+               t1.item12_result +
+               t1.item13_result +
+               t1.item14_result +
+               t1.item15_result +
+               t1.item16_result) > 0
     </select>
 
     <select id="selectDashboardPeriod" resultType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">

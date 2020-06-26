@@ -18,7 +18,7 @@
         SELECT *
         FROM user_result
         WHERE ip_address = #{ipAddress}
-          AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startCheckTime} AND #{endCheckTime}
+          AND DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{startCheckTime} AND #{endCheckTime}
           AND in_schedule = 1
     </select>
 
@@ -33,7 +33,7 @@
     <select id="selectCountBySchedule" resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
+        WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
           AND in_schedule = 1
     </select>
 
@@ -51,31 +51,29 @@
           AND DATE_FORMAT(check_time, '%Y-%m-%d') = #{value}
     </select>
 
-    <select id="selectCountRunByMonth" resultType="int" parameterType="String">
-        SELECT COUNT(*)
-        FROM (
-                 SELECT user_id, ip_address
-                 FROM client
-             ) AS t0
-                 LEFT OUTER JOIN
-             (SELECT * FROM user_result WHERE in_schedule = 1 AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}) AS t1
-             ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
-        WHERE (t1.item1_result != 0
-            OR t1.item2_result != 0
-            OR t1.item3_result != 0
-            OR t1.item4_result != 0
-            OR t1.item5_result != 0
-            OR t1.item6_result != 0
-            OR t1.item7_result != 0
-            OR t1.item8_result != 0
-            OR t1.item9_result != 0
-            OR t1.item10_result != 0
-            OR t1.item11_result != 0
-            OR t1.item12_result != 0
-            OR t1.item13_result != 0
-            OR t1.item14_result != 0
-            OR t1.item15_result != 0
-            OR t1.item16_result != 0)
+    <select id="selectCountRunByMonth" resultType="int">
+        SELECT COUNT(DISTINCT (u.ip_address))
+        FROM user_result u,
+             dashboard_period da,
+             client c
+        WHERE u.user_id = c.user_id
+          AND (u.item1_result +
+               u.item2_result +
+               u.item3_result +
+               u.item4_result +
+               u.item5_result +
+               u.item6_result +
+               u.item7_result +
+               u.item8_result +
+               u.item9_result +
+               u.item10_result +
+               u.item11_result +
+               u.item12_result +
+               u.item13_result +
+               u.item14_result +
+               u.item15_result +
+               u.item16_result) > 0
+          AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -91,27 +89,27 @@
                  LEFT OUTER JOIN
              (
                  SELECt *
-                 FROM user_result
-                 WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
+                 FROM user_result, dashboard_period d
+                 WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
-        WHERE (t1.item1_result != 0
-            OR t1.item2_result != 0
-            OR t1.item3_result != 0
-            OR t1.item4_result != 0
-            OR t1.item5_result != 0
-            OR t1.item6_result != 0
-            OR t1.item7_result != 0
-            OR t1.item8_result != 0
-            OR t1.item9_result != 0
-            OR t1.item10_result != 0
-            OR t1.item11_result != 0
-            OR t1.item12_result != 0
-            OR t1.item13_result != 0
-            OR t1.item14_result != 0
-            OR t1.item15_result != 0
-            OR t1.item16_result != 0)
+        WHERE (t1.item1_result +
+               t1.item2_result +
+               t1.item3_result +
+               t1.item4_result +
+               t1.item5_result +
+               t1.item6_result +
+               t1.item7_result +
+               t1.item8_result +
+               t1.item9_result +
+               t1.item10_result +
+               t1.item11_result +
+               t1.item12_result +
+               t1.item13_result +
+               t1.item14_result +
+               t1.item15_result +
+               t1.item16_result) > 0
     </select>
 
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
@@ -189,9 +187,9 @@
 
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
         SELECT COUNT(*)
-        FROM user_result
-        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startChecktime}
-            AND #{endChecktime}
+        FROM user_result,
+             dashboard_period d
+        WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
           AND in_schedule = 1
@@ -201,7 +199,7 @@
             resultType="int">
         SELECT COUNT(*)
         FROM user_result
-        WHERE DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{checkTime} AND now()
+        WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{checkTime} AND now()
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
           AND in_schedule = 1
@@ -304,7 +302,7 @@
             item10_count                    = #{item10Count}
         WHERE user_id = #{userId}
           AND ip_address = #{ipAddress}
-          AND DATE_FORMAT(check_time,'%Y-%m-%d %T') BETWEEN #{startTime} AND
+          AND DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{startTime} AND
             #{endTime}
           AND in_schedule = 1
     </update>
