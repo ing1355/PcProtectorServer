@@ -1,10 +1,11 @@
 package oms.pc_protector.restApi.user.service;
 
-        import lombok.extern.log4j.Log4j2;
+import lombok.extern.log4j.Log4j2;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
+import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
@@ -14,11 +15,9 @@ import oms.pc_protector.restApi.user.model.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -190,19 +189,29 @@ public class UserService {
 
 
     @Transactional
-    public boolean agentLogin(ClientVO clientVO, ConfigurationService configurationService) {
+    public boolean agentLogin(ClientVO clientVO, ConfigurationService configurationService) throws ParseException {
         boolean duplicateId = duplicateCheckId(clientVO.getUserId());
         ClientVO client_prev = clientMapper.selectById(clientVO.getUserId());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        Date d1 = df.parse(dashboardPeriodVO.getStartDate());
+        Date d2 = df.parse(dashboardPeriodVO.getEndDate());
+        Calendar start = Calendar.getInstance();
+        Calendar end = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
+
+        start.setTime(d1);
+        end.setTime(d2);
 
         if (duplicateId) {
             log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
 //            if(client_prev.getIpAddress() != null && !(client_prev.getIpAddress().equals(clientVO.getIpAddress()))) {
 //                resultMapper.updateResultByUpdateClient(clientVO);
 //            }
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            clientVO.setCheckTime(df.format(Calendar.getInstance().getTime()));
-            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress()) == 0) {
+            clientVO.setCheckTime(df.format(now.getTime()));
+            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress()) == 0 &&
+                start.getTime().compareTo(now.getTime()) <= 0 && end.getTime().compareTo(now.getTime()) >= 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }
             clientService.First_update(clientVO);

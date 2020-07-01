@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,16 +28,16 @@ public class MultipartExceptionHandler {
         return "test";
     }
 
-    @ExceptionHandler(MultipartException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    protected String handleGenericMultipartException(final HttpServletRequest request,
-                                                          final HttpServletResponse response, final Throwable e)
-            throws IOException
-    {
-        log.error(e);
-        return "testtest";
-    }
+//    @ExceptionHandler(MultipartException.class)
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ResponseBody
+//    protected String handleGenericMultipartException(final HttpServletRequest request,
+//                                                          final HttpServletResponse response, final Throwable e)
+//            throws IOException
+//    {
+//        log.error(e);
+//        return "testtest";
+//    }
 
     @ExceptionHandler(InputMismatchException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)

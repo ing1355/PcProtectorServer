@@ -47,10 +47,9 @@ public class SchedulerService {
     } // 최초 서버 구동시 1회 실행
 
     @SneakyThrows
-    @Scheduled(cron = "0 0 0 * * *") // 매일 자정
+    @Scheduled(cron = "0 30 0 * * *") // 매일 자정
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -172,11 +171,25 @@ public class SchedulerService {
 //        log.info(df.format(end.getTime()));
 //        log.info(Now_Schedule.getToDay());
 
+
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         Calendar dash_start = Calendar.getInstance();
         Date dash_1 = dft.parse(dashboardPeriodVO.getStartDate());
         Calendar dash_end = Calendar.getInstance();
         Date dash_2 = dft.parse(dashboardPeriodVO.getEndDate());
 
+        dash_start.setTime(dash_1);
+        dash_end.setTime(dash_2);
+
+        if ((df.format(dash_end.getTime()).compareTo(df.format(now.getTime())) < 0 &&
+                start.getTime().compareTo(now.getTime()) <= 0 && end.getTime().compareTo(now.getTime()) >= 0) &&
+                df.format(now.getTime()).equals(df.format(start.getTime()))) {
+            dashboardMapper.dashboardPeriodUpdate(new DashboardPeriodVO(dft.format(start.getTime()), dft.format(end.getTime())));
+        }
+
+        dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        dash_1 = dft.parse(dashboardPeriodVO.getStartDate());
+        dash_2 = dft.parse(dashboardPeriodVO.getEndDate());
         dash_start.setTime(dash_1);
         dash_end.setTime(dash_2);
 
@@ -196,6 +209,8 @@ public class SchedulerService {
         log.info("dash_start : " + df.format(dash_start.getTime()));
         log.info("dash_end : " + df.format(dash_end.getTime()));
 
+
+
         if (dashboardPeriodVO.getStartDate().compareTo(dft.format(now.getTime())) <= 0 &&
                 dashboardPeriodVO.getEndDate().compareTo(dft.format(now.getTime())) >= 0) {
             for (ClientVO client : temp) { // 각 클라이언트의 빈 데이터 셋 존재하는지 체크하여 없으면 생성
@@ -205,6 +220,5 @@ public class SchedulerService {
                 }
             }
         }
-
     }
 }

@@ -10,7 +10,7 @@ spring.profiles.include: real-db
 server:
   ssl:
     enabled: true
-    key-store: keystore.p12
+    key-store: classpath:keystore.p12
     key-store-password: 123123
     key-store-type: PKCS12
     key-alias: bns-ssl
@@ -20,13 +20,13 @@ server:
       enabled: false
 
 # 운영 환경
----
-spring.profiles: set1
-spring.profiles.include: real-db
-
-server:
-
-  port: 8081
+#---
+#spring.profiles: set1
+#spring.profiles.include: real-db
+#
+#server:
+#
+#  port: 8081
 
 
 # MARIA DB

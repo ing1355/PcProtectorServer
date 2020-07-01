@@ -75,6 +75,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new ArrayList<>()
             );
         }
+        log.info("cr : " + new BCryptPasswordEncoder().encode(credentials.getPassword()));
         // Authenticate user
         try {
             Authentication auth = authenticationManager.authenticate(authenticationToken);

@@ -189,12 +189,9 @@ public class DashboardService {
     @Transactional
     public HashMap<String, Object> userCountByScore() {
         LinkedHashMap<String, Object> userCountMap = new LinkedHashMap<>();
-        DashboardPeriodVO temp = selectDashboardPeriod();
-        Calendar start = Calendar.getInstance();
-        Calendar end = Calendar.getInstance();
-        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100, temp.getStartDate(), temp.getEndDate());
-        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89, temp.getStartDate(), temp.getEndDate());
-        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69, temp.getStartDate(), temp.getEndDate());
+        int topScoreUserCount = dashboardMapper.selectUserCountByScore(90, 100);
+        int middleScoreUserCount = dashboardMapper.selectUserCountByScore(70, 89);
+        int lowScoreUserCount = dashboardMapper.selectUserCountByScore(0, 69);
         userCountMap.put("topScoreUserCount", topScoreUserCount);
         userCountMap.put("middleScoreUserCount", middleScoreUserCount);
         userCountMap.put("lowScoreUserCount", lowScoreUserCount);
@@ -204,8 +201,7 @@ public class DashboardService {
     @SneakyThrows
     @Transactional
     public int resultAvgScoreByCurrentMonth() {
-        DashboardPeriodVO temp = selectDashboardPeriod();
-        return dashboardMapper.selectAvgScoreByMonth(temp.getStartDate(),temp.getEndDate());
+        return dashboardMapper.selectAvgScoreByMonth();
     }
 
     @Transactional

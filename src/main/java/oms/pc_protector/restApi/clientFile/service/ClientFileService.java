@@ -65,10 +65,12 @@ public class ClientFileService {
 
 
     @Transactional
-    public void removeClientFile(List<ClientFileVO> clientFileVO) {
+    public int removeClientFile(List<ClientFileVO> clientFileVO) {
+        int temp = 0;
         for(ClientFileVO clientFileVO1 : clientFileVO) {
-            clientFileMapper.deleteClientFile(clientFileVO1);
+            temp = clientFileMapper.deleteClientFile(clientFileVO1);
         }
+        return temp;
     }
 
 

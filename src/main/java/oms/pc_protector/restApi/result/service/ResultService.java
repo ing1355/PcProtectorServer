@@ -331,25 +331,23 @@ public class ResultService {
         now.setTime(d3);
 
         int Miss = resultMapper.selectClientForMiss(resultVO);
-        resultVO.setStartTime(dashboardPeriodVO.getStartDate().split("[.]")[0]);
-        resultVO.setEndTime(dashboardPeriodVO.getEndDate().split("[.]")[0]);
 
         if (!(df.format(now.getTime()).compareTo(df.format(real_now.getTime())) > 0)) {
             if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
                     df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
                 if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
-//                    log.info("-------------------case 1------------------");
+                    log.info("-------------------case 1------------------");
                     Optional.ofNullable(resultVO)
                             .ifPresent(resultMapper::updateResultClientNotInSchedule);
                 } else {
-//                    log.info("-------------------case 2------------------");
+                    log.info("-------------------case 2------------------");
                     Optional.ofNullable(resultVO)
                             .ifPresent(resultMapper::insertResult);
                 }
 
             } else {
                 if (Miss == 0) {
-//                    log.info("-------------------case 3------------------");
+                    log.info("-------------------case 3------------------");
                     Optional.ofNullable(resultVO)
                             .ifPresent(resultMapper::updateResultClient);
                 }

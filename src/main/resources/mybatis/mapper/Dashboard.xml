@@ -2,8 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="oms.pc_protector.restApi.dashboard.mapper.DashboardMapper">
 
-    <select id="selectAvgScoreByMonth" resultType="Integer"
-            parameterType="String">
+    <select id="selectAvgScoreByMonth" resultType="Integer">
 
         SELECT NVL(AVG(u.score), 0)
         FROM user_result u,
@@ -28,6 +27,7 @@
                u.item15_result +
                u.item16_result) > 0
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
+        AND u.in_schedule = 1
     </select>
 
     <select id="selectClientCount" resultType="Integer">
@@ -86,17 +86,10 @@
 
     <select id="selectUserCountByScore" resultType="Integer">
         SELECT COUNT(*)
-        FROM (
-                 SELECT user_id, ip_address
-                 FROM client
-             ) AS t0
-                 LEFT OUTER JOIN (
-            SELECT *
-            FROM user_result
-        ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
-
-        WHERE in_schedule = 1
-          AND t1.check_time BETWEEN #{startDate} AND #{endDate}
+        FROM dashboard_period da, user_result t1, client c
+        WHERE c.user_id = t1.user_id AND c.ip_address = t1.ip_address
+          AND in_schedule = 1
+          AND DATE_FORMAT(t1.check_time,'%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND score BETWEEN #{startScore} AND #{endScore}
           AND (t1.item1_result +
                t1.item2_result +

@@ -135,7 +135,8 @@ public class ClientFileController {
 
     @PutMapping(value = "delete")
     public SingleResult<?> deleteClientFile(@RequestBody List<ClientFileVO> clientFileVO) {
-        clientFileService.removeClientFile(clientFileVO);
+        int row_num = clientFileService.removeClientFile(clientFileVO);
+
         return responseService.getSingleResult(clientFileService.findClientFile());
     }
 

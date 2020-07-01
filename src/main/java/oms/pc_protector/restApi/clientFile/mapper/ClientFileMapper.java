@@ -23,5 +23,5 @@ public interface ClientFileMapper {
 
     public void update(ClientFileVO clientFileVO);
 
-    public void deleteClientFile(ClientFileVO clientFileVO);
+    public int deleteClientFile(ClientFileVO clientFileVO);
 }

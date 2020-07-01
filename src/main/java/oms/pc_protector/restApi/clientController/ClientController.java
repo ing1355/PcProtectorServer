@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
@@ -69,7 +70,7 @@ public class ClientController {
     }
 
     @PostMapping(value = "/first-request")
-    public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) {
+    public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) throws ParseException {
         boolean isLogin = userService.agentLogin(clientVO, configurationService);
         if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
         else clientService.loginUpdateTime(clientVO.getUserId());
