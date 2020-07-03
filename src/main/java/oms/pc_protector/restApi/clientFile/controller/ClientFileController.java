@@ -60,22 +60,7 @@ public class ClientFileController {
 
         long fileSize = file.getSize();
         InputStream inputStream = file.getInputStream();
-        if (fileSize > 104857600) {
-            httpServletResponse.sendError(400, "크기 에러!");
-            return null;
-        }
-        if (!file.getOriginalFilename().contains(".exe")) {
-            httpServletResponse.sendError(400, "타입 에러!");
-            return null;
-        }
-        if (!file.getOriginalFilename().equals("Protector.exe")) {
-            httpServletResponse.sendError(400, "AGENT 파일 아님!");
-            return null;
-        }
-        if (!SUtil.fileTypeCheck(inputStream)) {
-            httpServletResponse.sendError(400, "형식 에러!");
-            return null;
-        }
+        if (fileCheckFunction(file, httpServletResponse, inputStream, fileSize)) return null;
 
         String fileName = file.getOriginalFilename();
         String fileMd5 = clientFileService.makeMd5(inputStream);
@@ -114,7 +99,6 @@ public class ClientFileController {
             clientFileService.registerClientFile(clientFileVO);
         }
 
-        inputStream.close();
         return responseService.getSingleResult(clientFileService.findClientFile());
     }
 
@@ -132,6 +116,9 @@ public class ClientFileController {
         String fileMd5 = clientFileService.makeMd5(inputStream);
         String fileName = file.getOriginalFilename();
         long fileSize = file.getSize();
+
+        if (fileCheckFunction(file, httpServletResponse, inputStream, fileSize)) return null;
+
         ClientFileVO clientFileVO = ClientFileVO.builder()
                 .fileName(fileName)
                 .fileSize(fileSize)
@@ -149,8 +136,27 @@ public class ClientFileController {
             return null;
         }
         clientFileService.update(clientFileVO);
-        inputStream.close();
         return responseService.getSingleResult(clientFileService.findClientFile());
+    }
+
+    public boolean fileCheckFunction(@RequestParam MultipartFile file, HttpServletResponse httpServletResponse, InputStream inputStream, long fileSize) throws IOException {
+        if (fileSize > 104857600) {
+            httpServletResponse.sendError(400, "크기 에러!");
+            return true;
+        }
+        if (!file.getOriginalFilename().contains(".exe")) {
+            httpServletResponse.sendError(400, "타입 에러!");
+            return true;
+        }
+        if (!file.getOriginalFilename().equals("Protector.exe")) {
+            httpServletResponse.sendError(400, "AGENT 파일 아님!");
+            return true;
+        }
+        if (!SUtil.fileTypeCheck(inputStream)) {
+            httpServletResponse.sendError(400, "형식 에러!");
+            return true;
+        }
+        return false;
     }
 
     @PutMapping(value = "delete")
