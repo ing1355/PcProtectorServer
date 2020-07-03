@@ -16,6 +16,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class ClientFileController {
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
         long fileSize = file.getSize();
+        InputStream inputStream = file.getInputStream();
         if (fileSize > 104857600) {
             httpServletResponse.sendError(400, "크기 에러!");
             return null;
@@ -70,14 +72,13 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "AGENT 파일 아님!");
             return null;
         }
-        if (!SUtil.fileTypeCheck(file.getInputStream())) {
+        if (!SUtil.fileTypeCheck(inputStream)) {
             httpServletResponse.sendError(400, "형식 에러!");
             return null;
         }
 
         String fileName = file.getOriginalFilename();
-        String fileMd5 = clientFileService.makeMd5(file.getInputStream());
-        boolean isExistFile = clientFileService.findExistFile(version);
+        String fileMd5 = clientFileService.makeMd5(inputStream);
         boolean isExistMd5 = clientFileService.findExistMd5(fileMd5);
 
         ClientFileVO clientFileVO = ClientFileVO.builder()
@@ -96,29 +97,24 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         } else {
-            if (isExistFile) {
-                log.info("FILE 업데이트");
-                clientFileService.update(clientFileVO);
-            } else {
-                log.info("FILE 등록");
-                ArrayList<String> version_list = clientFileService.selectVersionList();
-                String[] req_version = version.split("[.]");
-                for(String res_version : version_list) {
-                    String[] temp = res_version.split("[.]");
-                    int count = 0;
-                    for(int i=0;i<temp.length;i++) {
-                        if(Integer.parseInt(req_version[i]) <= Integer.parseInt(temp[i])) count++;
-                    }
-                    if(count == 4) {
-                        httpServletResponse.sendError(400,res_version + "보다 높은 버전을 입력해주세요.");
-                        return null;
-                    }
+            log.info("FILE 등록");
+            ArrayList<String> version_list = clientFileService.selectVersionList();
+            String[] req_version = version.split("[.]");
+            for (String res_version : version_list) {
+                String[] temp = res_version.split("[.]");
+                int count = 0;
+                for (int i = 0; i < temp.length; i++) {
+                    if (Integer.parseInt(req_version[i]) <= Integer.parseInt(temp[i])) count++;
                 }
-                clientFileService.registerClientFile(clientFileVO);
+                if (count == 4) {
+                    httpServletResponse.sendError(400, res_version + "보다 높은 버전을 입력해주세요.");
+                    return null;
+                }
             }
+            clientFileService.registerClientFile(clientFileVO);
         }
 
-
+        inputStream.close();
         return responseService.getSingleResult(clientFileService.findClientFile());
     }
 
@@ -129,7 +125,31 @@ public class ClientFileController {
     }
 
     @PutMapping(value = "update")
-    public SingleResult<?> updateClientFile(@RequestBody ClientFileVO clientFileVO) {
+    public SingleResult<?> updateClientFile(@RequestPart("version") String version,
+                                            @RequestParam MultipartFile file,
+                                            HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException {
+        InputStream inputStream = file.getInputStream();
+        String fileMd5 = clientFileService.makeMd5(inputStream);
+        String fileName = file.getOriginalFilename();
+        long fileSize = file.getSize();
+        ClientFileVO clientFileVO = ClientFileVO.builder()
+                .fileName(fileName)
+                .fileSize(fileSize)
+                .md5(fileMd5)
+                .version(version)
+                .build();
+
+        log.info("FILE 이름 : " + fileName);
+        log.info("FILE 크기 : " + fileSize);
+        log.info("FILE 버전 : " + version);
+        log.info("MD5 : " + fileMd5);
+        boolean isExistMd5 = clientFileService.findExistMd5(fileMd5);
+        if (isExistMd5) {
+            httpServletResponse.sendError(400, "Md5 중복!");
+            return null;
+        }
+        clientFileService.update(clientFileVO);
+        inputStream.close();
         return responseService.getSingleResult(clientFileService.findClientFile());
     }
 

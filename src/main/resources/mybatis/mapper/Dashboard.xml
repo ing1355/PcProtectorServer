@@ -31,7 +31,7 @@
     </select>
 
     <select id="selectClientCount" resultType="Integer">
-        SELECT COUNT(*) FROM CLIENT;
+        SELECT COUNT(*) FROM client;
     </select>
 
     <select id="selectAvgScoreByRecentMonths"

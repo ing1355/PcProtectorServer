@@ -10,7 +10,7 @@
     </parent>
     <groupId>oms</groupId>
     <artifactId>pc_protector</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v4.0</version>
     <packaging>jar</packaging>
     <name>pc_protector</name>
     <description>PC_PROTECTOR SERVER</description>

@@ -73,15 +73,18 @@ public class UserController {
     @PostMapping(value = "/registerList")
     public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList) {
         userService.registryFromAdminList(userVOList);
-        return responseService.getSingleResult(true);
+        List<UserVO> list = Optional.ofNullable(userService.findAll())
+                .orElseGet(ArrayList::new);
+        return responseService.getSingleResult(list);
     }
 
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
-        HashMap<String, Object> map = new HashMap<>();
         userService.registryFromAdmin(userRequestVO);
-        return responseService.getSingleResult(map);
+        List<UserVO> list = Optional.ofNullable(userService.findAll())
+                .orElseGet(ArrayList::new);
+        return responseService.getSingleResult(list);
     }
 
 
@@ -96,17 +99,19 @@ public class UserController {
         requestUserVO.setPhone(userVO.getPhone());
         requestUserVO.setEmail(userVO.getEmail());
         boolean update = userService.updateUserInfo(requestUserVO);
-        return responseService.getSingleResult(update);
+        List<UserVO> list = Optional.ofNullable(userService.findAll())
+                .orElseGet(ArrayList::new);
+        return responseService.getSingleResult(list);
     }
 
-    @PutMapping(value = "/update/{id}")
-    public SingleResult<?> modify(
-            @PathVariable(value = "id") String id,
-            @RequestBody UserRequestVO userRequestVO) {
-        HashMap<String, Object> map = new HashMap<>();
-        boolean modify = userService.modifyUserInfo(id, userRequestVO);
-        return responseService.getSingleResult(modify);
-    }
+//    @PutMapping(value = "/update/{id}")
+//    public SingleResult<?> modify(
+//            @PathVariable(value = "id") String id,
+//            @RequestBody UserRequestVO userRequestVO) {
+//        HashMap<String, Object> map = new HashMap<>();
+//        boolean modify = userService.modifyUserInfo(id, userRequestVO);
+//        return responseService.getSingleResult(modify);
+//    }
 
 
     @DeleteMapping(value = "/delete")
@@ -114,7 +119,9 @@ public class UserController {
         for (String ID : id) {
             userService.removeUserInfo(ID);
         }
-        return responseService.getSingleResult(true);
+        List<UserVO> list = Optional.ofNullable(userService.findAll())
+                .orElseGet(ArrayList::new);
+        return responseService.getSingleResult(list);
     }
 
 }
