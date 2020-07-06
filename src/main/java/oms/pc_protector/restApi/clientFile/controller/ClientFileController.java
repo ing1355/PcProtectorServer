@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -58,13 +60,18 @@ public class ClientFileController {
             @RequestParam MultipartFile file,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
-        long fileSize = file.getSize();
-        InputStream inputStream = file.getInputStream();
-        if (fileCheckFunction(file, httpServletResponse, inputStream, fileSize)) return null;
 
+        long fileSize = file.getSize();
+        final InputStream inputStream = file.getInputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        inputStream.transferTo(baos);
+        InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
+        InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
+        if (fileCheckFunction(file, httpServletResponse, secondClone, fileSize)) return null;
         String fileName = file.getOriginalFilename();
-        String fileMd5 = clientFileService.makeMd5(inputStream);
-        boolean isExistMd5 = clientFileService.findExistMd5(fileMd5);
+
+
+        String fileMd5 = clientFileService.makeMd5(firstClone);
 
         ClientFileVO clientFileVO = ClientFileVO.builder()
                 .fileName(fileName)
@@ -78,7 +85,7 @@ public class ClientFileController {
         log.info("FILE 버전 : " + version);
         log.info("MD5 : " + fileMd5);
 
-        if (isExistMd5) {
+        if (clientFileService.findExistMd5(fileMd5)) {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         } else {
@@ -108,16 +115,21 @@ public class ClientFileController {
         return responseService.getSingleResult(clientFile);
     }
 
-    @PutMapping(value = "update")
+    @PostMapping(value = "update")
     public SingleResult<?> updateClientFile(@RequestPart("version") String version,
                                             @RequestParam MultipartFile file,
                                             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException {
-        InputStream inputStream = file.getInputStream();
-        String fileMd5 = clientFileService.makeMd5(inputStream);
-        String fileName = file.getOriginalFilename();
         long fileSize = file.getSize();
+        final InputStream inputStream = file.getInputStream();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        inputStream.transferTo(baos);
+        InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
+        InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
+        String fileMd5 = clientFileService.makeMd5(firstClone);
+        if (fileCheckFunction(file, httpServletResponse, secondClone, fileSize)) return null;
+        String fileName = file.getOriginalFilename();
 
-        if (fileCheckFunction(file, httpServletResponse, inputStream, fileSize)) return null;
+
 
         ClientFileVO clientFileVO = ClientFileVO.builder()
                 .fileName(fileName)
@@ -130,8 +142,8 @@ public class ClientFileController {
         log.info("FILE 크기 : " + fileSize);
         log.info("FILE 버전 : " + version);
         log.info("MD5 : " + fileMd5);
-        boolean isExistMd5 = clientFileService.findExistMd5(fileMd5);
-        if (isExistMd5) {
+
+        if (clientFileService.findExistMd5(fileMd5)) {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         }
@@ -152,6 +164,7 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "AGENT 파일 아님!");
             return true;
         }
+
         if (!SUtil.fileTypeCheck(inputStream)) {
             httpServletResponse.sendError(400, "형식 에러!");
             return true;

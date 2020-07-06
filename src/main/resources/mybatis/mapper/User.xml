@@ -95,7 +95,6 @@
     <update id="departmentModified" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE user
         SET department = REPLACE(department, #{old_name}, #{new_name})
-        WHERE department LIKE CONCAT('%', #{old_name}, '%')
     </update>
 
     <insert id="insertUserInfo" parameterType="String">
