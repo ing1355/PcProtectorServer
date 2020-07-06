@@ -94,7 +94,8 @@
 
     <update id="departmentModified" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE user
-        SET department = REPLACE(department, #{old_name}, #{new_name})
+        SET department = #{new_name}
+        WHERE department = #{old_name}
     </update>
 
     <insert id="insertUserInfo" parameterType="String">
