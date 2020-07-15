@@ -9,19 +9,18 @@ import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Log4j2
 @RestController
@@ -39,13 +38,6 @@ public class ClientFileController {
         this.clientFileService = clientFileService;
     }
 
-    @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<?> fileEx(Exception e, HttpServletResponse response) throws IOException {
-        System.err.println("file Missing");
-        response.sendError(400, "파일 없음!");
-        return null;
-    }
-
 //    @ExceptionHandler(MultipartException.class)
 //    public ResponseEntity<?> fileEx(Exception e, HttpServletResponse response) throws IOException {
 //        System.err.println("file Missing");
@@ -56,33 +48,39 @@ public class ClientFileController {
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(
-            @RequestPart("version") String version,
-            @RequestParam MultipartFile file,
+            @RequestBody @Valid ClientFileVO inputFile,
+//            @RequestPart("version") String version,
+////            @RequestParam MultipartFile file,
+//            @RequestPart("file") String test,
+//            @RequestPart("size") Long size,
+//            @RequestPart("name") String name,
+            HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
-
-        long fileSize = file.getSize();
-        final InputStream inputStream = file.getInputStream();
+            byte[] bt = Base64.getDecoder().decode(new String(inputFile.getMd5()).getBytes("UTF-8"));
+            InputStream inputStream = new ByteArrayInputStream(bt);
+//        long fileSize = file.getSize();
+//        final InputStream inputStream = file.getInputStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         inputStream.transferTo(baos);
         InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
         InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
-        if (fileCheckFunction(file, httpServletResponse, secondClone, fileSize)) return null;
-        String fileName = file.getOriginalFilename();
+//        if (fileCheckFunction(file, httpServletResponse, secondClone, fileSize)) return null;
+//        String fileName = inputFile.getFileName();
 
 
         String fileMd5 = clientFileService.makeMd5(firstClone);
 
         ClientFileVO clientFileVO = ClientFileVO.builder()
-                .fileName(fileName)
-                .fileSize(fileSize)
+                .fileName(inputFile.getFileName())
+                .fileSize(inputFile.getFileSize())
                 .md5(fileMd5)
-                .version(version)
+                .version(inputFile.getVersion())
                 .build();
 
-        log.info("FILE 이름 : " + fileName);
-        log.info("FILE 크기 : " + fileSize);
-        log.info("FILE 버전 : " + version);
+//        log.info("FILE 이름 : " + name);
+//        log.info("FILE 크기 : " + size);
+//        log.info("FILE 버전 : " + version);
         log.info("MD5 : " + fileMd5);
 
         if (clientFileService.findExistMd5(fileMd5)) {
@@ -91,7 +89,7 @@ public class ClientFileController {
         } else {
             log.info("FILE 등록");
             ArrayList<String> version_list = clientFileService.selectVersionList();
-            String[] req_version = version.split("[.]");
+            String[] req_version = inputFile.getVersion().split("[.]");
             for (String res_version : version_list) {
                 String[] temp = res_version.split("[.]");
                 int count = 0;

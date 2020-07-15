@@ -1,6 +1,9 @@
 package oms.pc_protector.filter;
 
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.apiConfig.RereadableRequestWrapper;
+import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.log.model.LogVO;
 import oms.pc_protector.restApi.log.service.LogService;
 import org.springframework.stereotype.Component;
@@ -22,9 +25,11 @@ public class ApiFilter implements Filter {
 
 
     private LogService logService;
+    private ClientFileService clientFileService;
 
-    public ApiFilter(LogService logService) {
+    public ApiFilter(LogService logService, ClientFileService clientFileService) {
         this.logService = logService;
+        this.clientFileService = clientFileService;
     }
 
     @Override
@@ -40,6 +45,7 @@ public class ApiFilter implements Filter {
 //        return principal.getName();
     }
 
+    @SneakyThrows
     @Override
     public void doFilter(ServletRequest servletRequest,
                          ServletResponse servletResponse,
@@ -61,8 +67,8 @@ public class ApiFilter implements Filter {
         boolean hasClientURI = excludeURI(request);
 
         if (!(logVO.getUri().contains("chunk")) && !(logVO.getUri().contains(".svg"))
-         && !(logVO.getUri().contains(".json")) && !(logVO.getUri().contains(".png"))
-         && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
+                && !(logVO.getUri().contains(".json")) && !(logVO.getUri().contains(".png"))
+                && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
             if (hasClientURI) {
                 log.info("=============CLIENT API=============");
             } else {
@@ -82,6 +88,7 @@ public class ApiFilter implements Filter {
                 log.info("ParameterKey : " + parameterKey + " , ParameterValue : " + Arrays.toString(parameterValueArray));
             }
 
+
             log.info("Request Method: {}", request.getMethod());
             log.info("Request IpAddress : {}", request.getRemoteAddr());
             log.info("Local IpAddress : {}", request.getLocalAddr());
@@ -90,9 +97,8 @@ public class ApiFilter implements Filter {
             log.info("");
 
         }
-        filterChain.doFilter(request, response);
-
-
+        RereadableRequestWrapper rereadableRequestWrapper = new RereadableRequestWrapper((HttpServletRequest) request);
+        filterChain.doFilter(rereadableRequestWrapper, response);
     }
 
     @Override

@@ -1,20 +1,22 @@
 package oms.pc_protector.restApi.user.controller;
 
+import lombok.extern.log4j.Log4j2;
+import oms.pc_protector.apiConfig.model.SingleResult;
+import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.user.model.RequestUserVO;
+import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserSearchInputVO;
 import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
-import lombok.extern.log4j.Log4j2;
-import oms.pc_protector.apiConfig.model.SingleResult;
-import oms.pc_protector.apiConfig.service.ResponseService;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @CrossOrigin
@@ -81,6 +83,7 @@ public class UserController {
 
     @PostMapping(value = "/register")
     public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
+
         userService.registryFromAdmin(userRequestVO);
         List<UserVO> list = Optional.ofNullable(userService.findAll())
                 .orElseGet(ArrayList::new);

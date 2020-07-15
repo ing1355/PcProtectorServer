@@ -9,7 +9,6 @@
              dashboard_period da,
              client c
         WHERE u.user_id = c.user_id
-          AND u.user_id = c.user_id
           AND (u.item1_result +
                u.item2_result +
                u.item3_result +
