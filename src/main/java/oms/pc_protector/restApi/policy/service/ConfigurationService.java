@@ -78,7 +78,12 @@ public class ConfigurationService {
 
     @Transactional
     public void updateSecurityUsbDetails_service(SecurityUsbDetailsVO securityUsbDetailsVO) {
-        configurationMapper.updateSecurityUsbDetails(securityUsbDetailsVO);
+        if(configurationMapper.countSecurityUsbDetails() == 0) {
+            configurationMapper.insertSecurityUsbDetails(securityUsbDetailsVO);
+        }
+        else {
+            configurationMapper.updateSecurityUsbDetails(securityUsbDetailsVO);
+        }
     }
 
     @Transactional

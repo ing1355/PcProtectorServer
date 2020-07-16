@@ -4,7 +4,6 @@ import oms.pc_protector.restApi.policy.model.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -17,6 +16,8 @@ public interface ConfigurationMapper {
     public List<PeriodDateVO> selectScheduleAll();
 
     public PeriodDateVO selectAppliedSchedule();
+
+    public int countSecurityUsbDetails();
 
     public boolean selectAppliedFlag();
 

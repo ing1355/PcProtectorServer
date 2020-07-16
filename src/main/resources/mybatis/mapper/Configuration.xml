@@ -12,6 +12,10 @@
         SELECT * FROM security_usb_details
     </select>
 
+    <select id="countSecurityUsbDetails" resultType="int">
+        SELECT COUNT(*) FROM security_usb_details
+    </select>
+
     <select id="selectScheduleAll" resultType="oms.pc_protector.restApi.policy.model.PeriodDateVO">
         SELECT * FROM period_date_configuration
     </select>
