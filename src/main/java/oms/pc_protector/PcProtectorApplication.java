@@ -1,8 +1,14 @@
 package oms.pc_protector;
 
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
 @SpringBootApplication
@@ -21,6 +27,5 @@ public class PcProtectorApplication {
 //            System.exit(0);
 //        }
     }
-
 
 }

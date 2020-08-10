@@ -18,9 +18,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-@CrossOrigin
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    DaoAuthenticationProvider authenticationProvider(){
+    DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setUserDetailsService(this.clientPrincipalDetailService);
@@ -57,13 +59,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 // remove csrf and state in session because in jwt we do not need them
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 // add jwt filters (1. authentication, 2. authorization)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService, this.loginMapper))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(),  this.managerService, this.loginMapper))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.managerService, this.loginMapper))
                 .authorizeRequests()
                 // configure access rules
                 .antMatchers(HttpMethod.POST, "/login").permitAll()
@@ -72,18 +76,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/v1/client/result").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/firstlogin").permitAll()
                 .antMatchers(HttpMethod.PUT, "/v1/manager/lock").permitAll()
-//                .antMatchers(HttpMethod.GET,"/v1/client").hasRole("MANAGER")
                 .antMatchers("/v1/client/**").hasRole("CLIENT")
-//                .antMatchers("/v1/client/**").permitAll()
                 .antMatchers("/v1/**").hasRole("MANAGER")
                 .antMatchers("/v1/**").authenticated();
-//                .antMatchers("/api/public/admin/*").hasRole("ADMIN")
-//                .anyRequest().authenticated();
-//                .anyRequest().permitAll();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("Refresh_Token");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

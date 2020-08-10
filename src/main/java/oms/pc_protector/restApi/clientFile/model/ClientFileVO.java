@@ -1,9 +1,9 @@
 package oms.pc_protector.restApi.clientFile.model;
 
-import lombok.*;
-
-import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +16,5 @@ public class ClientFileVO {
     private String md5;
     private String updateTime;
     private String version;
+    private String[] b64temp;
 }

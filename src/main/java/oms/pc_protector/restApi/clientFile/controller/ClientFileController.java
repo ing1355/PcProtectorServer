@@ -57,6 +57,11 @@ public class ClientFileController {
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
+        String b64 = "";
+        for(int i=0;i<inputFile.getB64temp().length;i++) {
+            b64 += inputFile.getB64temp()[i];
+        }
+        inputFile.setMd5(b64);
             byte[] bt = Base64.getDecoder().decode(new String(inputFile.getMd5()).getBytes("UTF-8"));
             InputStream inputStream = new ByteArrayInputStream(bt);
 //        long fileSize = file.getSize();

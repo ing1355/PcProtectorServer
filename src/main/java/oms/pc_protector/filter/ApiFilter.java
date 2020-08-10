@@ -7,6 +7,7 @@ import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.log.model.LogVO;
 import oms.pc_protector.restApi.log.service.LogService;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 @Log4j2
 @Component
+@CrossOrigin
 @WebFilter(urlPatterns = {"/v1/*"}, description = "API LOG FILTER")
 public class ApiFilter implements Filter {
 

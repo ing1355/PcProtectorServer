@@ -1,6 +1,7 @@
 package oms.pc_protector.apiConfig;
 
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,7 @@ public class JsonUtils {
     public JsonUtils() {
     }
     // json 형식으로 유입된 HttpServletRequest를 string 형태로 return
-    public  JSONObject readJSONStringFromRequestBody(HttpServletRequest request){
+    public  JSONObject readJSONStringFromRequestBody(HttpServletRequest request) throws JSONException {
         StringBuffer json = new StringBuffer();
         String line = null;
 

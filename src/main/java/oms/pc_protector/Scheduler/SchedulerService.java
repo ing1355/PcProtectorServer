@@ -47,7 +47,7 @@ public class SchedulerService {
     } // 최초 서버 구동시 1회 실행
 
     @SneakyThrows
-    @Scheduled(cron = "0 30 0 * * *") // 매일 자정
+    @Scheduled(cron = "0 0 8 * * *") // 매일 자정
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
         SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");

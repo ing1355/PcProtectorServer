@@ -75,7 +75,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new ArrayList<>()
             );
         }
-        log.info("cr : " + new BCryptPasswordEncoder().encode(credentials.getPassword()));
         // Authenticate user
         try {
             Authentication auth = authenticationManager.authenticate(authenticationToken);
@@ -107,7 +106,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
         return null;
     }
-
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {

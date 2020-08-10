@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.InputMismatchException;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RestControllerAdvice
@@ -43,8 +44,8 @@ public class MultipartExceptionHandler {
     protected String httpMessageConversionException(final HttpServletRequest request,
                                       final HttpServletResponse response, final Throwable e)
             throws IOException {
-//        String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-//        log.info("error file body : " + test);
+        String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        log.info("error file body : " + test);
         return "멀티파트 에러!";
     }
 

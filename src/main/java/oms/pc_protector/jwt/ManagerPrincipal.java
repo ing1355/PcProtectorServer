@@ -48,7 +48,6 @@ public class ManagerPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        log.info("getPassword : " + managerVO.getPassword());
         return this.managerVO.getPassword();
     }
 
