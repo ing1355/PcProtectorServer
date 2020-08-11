@@ -94,11 +94,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             if (managerVO.getLocked() > 4) {
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             } else {
-                if(managerVO.getLocked() > 0) {
-                    response.sendError(HttpStatus.NOT_ACCEPTABLE.value(),"비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
-                } else {
-                    response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다.");
-                }
+                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
             }
         } catch (InternalAuthenticationServiceException ia) {
             ia.printStackTrace();

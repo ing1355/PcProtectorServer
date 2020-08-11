@@ -19,16 +19,6 @@ server:
     whitelabel:
       enabled: false
 
-# 운영 환경
-#---
-#spring.profiles: set1
-#spring.profiles.include: real-db
-#
-#server:
-#
-#  port: 8081
-
-
 # MARIA DB
 ---
 spring:
@@ -51,5 +41,10 @@ mybatis:
 spring:
   servlet:
     multipart:
-      max-file-size: -1
-      max-request-size: -1
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 4MB
+      enabled: true
+
+logging:
+  config: classpath:logging-config.xml
