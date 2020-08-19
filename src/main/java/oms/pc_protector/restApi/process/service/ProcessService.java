@@ -1,7 +1,7 @@
 package oms.pc_protector.restApi.process.service;
 
 import oms.pc_protector.restApi.process.mapper.ProcessMapper;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.process.model.ProcessVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 public class ProcessService {
 

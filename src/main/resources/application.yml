@@ -14,6 +14,7 @@ server:
     key-store-password: 123123
     key-store-type: PKCS12
     key-alias: bns-ssl
+    enabled-Protocols: TLSv1.2
   port: 3000
   error:
     whitelabel:
@@ -24,6 +25,7 @@ server:
 spring:
   profiles: real-db
   datasource:
+
     url: jdbc:mariadb://localhost:3306/pc_protector?allowMultiQueries=true
     username: pcprotector
     password: asdasd
@@ -45,6 +47,3 @@ spring:
       max-request-size: 50MB
       file-size-threshold: 4MB
       enabled: true
-
-logging:
-  config: classpath:logging-config.xml

@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.dashboard.controller;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.dashboard.service.DashboardService;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
-@Log4j2
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/dashboard")

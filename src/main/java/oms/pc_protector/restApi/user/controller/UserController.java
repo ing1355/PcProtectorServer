@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.user.controller;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.client.model.ClientVO;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/users")  // 사용자 API

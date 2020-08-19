@@ -1,13 +1,13 @@
 package oms.pc_protector.apiConfig;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 
-@Log4j2
+@Slf4j
 public class JsonUtils {
 
     public JsonUtils() {

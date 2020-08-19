@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.policy.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @Service
 public class ConfigurationService {
 

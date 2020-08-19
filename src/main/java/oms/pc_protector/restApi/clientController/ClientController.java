@@ -2,7 +2,7 @@ package oms.pc_protector.restApi.clientController;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.jwt.JwtProperties;
@@ -34,7 +34,7 @@ import java.util.Optional;
 /* 해당 클래스는 AGENT와의 통신을 위한 API만 존재. */
 
 
-@Log4j2
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/client")
@@ -119,10 +119,9 @@ public class ClientController {
 
     @PostMapping(value = "/result")
     public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO) {
-        HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
 
-        return responseService.getSingleResult(map);
+        return responseService.getSingleResult(true);
     }
 
 

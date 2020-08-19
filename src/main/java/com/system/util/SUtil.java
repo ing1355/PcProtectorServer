@@ -95,7 +95,6 @@ public class SUtil {
                     break;
                 }
                 dataFull += str + "\n";
-                System.out.println(str);
             }
         } catch(Exception e) {
             e.printStackTrace();

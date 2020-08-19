@@ -2,7 +2,7 @@ package oms.pc_protector.restApi.clientFile.controller;
 
 
 import com.system.util.SUtil;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/v1/client-file")
@@ -38,22 +38,10 @@ public class ClientFileController {
         this.clientFileService = clientFileService;
     }
 
-//    @ExceptionHandler(MultipartException.class)
-//    public ResponseEntity<?> fileEx(Exception e, HttpServletResponse response) throws IOException {
-//        System.err.println("file Missing");
-//        response.sendError(400, "파일 없음!");
-//        return null;
-//    }
-
     @PostMapping(value = "")
     @ResponseStatus(HttpStatus.CREATED)
     public SingleResult<?> agentFileUpload(
             @RequestBody @Valid ClientFileVO inputFile,
-//            @RequestPart("version") String version,
-////            @RequestParam MultipartFile file,
-//            @RequestPart("file") String test,
-//            @RequestPart("size") Long size,
-//            @RequestPart("name") String name,
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
@@ -64,15 +52,10 @@ public class ClientFileController {
         inputFile.setMd5(b64);
             byte[] bt = Base64.getDecoder().decode(new String(inputFile.getMd5()).getBytes("UTF-8"));
             InputStream inputStream = new ByteArrayInputStream(bt);
-//        long fileSize = file.getSize();
-//        final InputStream inputStream = file.getInputStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         inputStream.transferTo(baos);
         InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
         InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
-//        if (fileCheckFunction(file, httpServletResponse, secondClone, fileSize)) return null;
-//        String fileName = inputFile.getFileName();
-
 
         String fileMd5 = clientFileService.makeMd5(firstClone);
 
@@ -82,12 +65,6 @@ public class ClientFileController {
                 .md5(fileMd5)
                 .version(inputFile.getVersion())
                 .build();
-
-//        log.info("FILE 이름 : " + name);
-//        log.info("FILE 크기 : " + size);
-//        log.info("FILE 버전 : " + version);
-        log.info("MD5 : " + fileMd5);
-
         if (clientFileService.findExistMd5(fileMd5)) {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;

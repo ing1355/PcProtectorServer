@@ -21,6 +21,7 @@
         <frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
         <node.version>v12.13.1</node.version>
         <yarn.version>v1.22.4</yarn.version>
+        <tomcat.version>9.0.37</tomcat.version>
         <frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
     </properties>
 
@@ -52,12 +53,6 @@
             <groupId>com.j256.simplemagic</groupId>
             <artifactId>simplemagic</artifactId>
             <version>1.15</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
         </dependency>
 
         <dependency>
@@ -171,16 +166,6 @@
                         <goals>
                             <goal>install-node-and-yarn</goal>
                         </goals>
-                    </execution>
-
-                    <execution>
-                        <id>yarn-install</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
                     </execution>
 
                     <execution>

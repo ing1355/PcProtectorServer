@@ -1,7 +1,7 @@
 package oms.pc_protector.restApi.process.controller;
 
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.process.model.ProcessVO;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping(value = "v1/process")

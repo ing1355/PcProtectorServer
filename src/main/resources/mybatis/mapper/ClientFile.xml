@@ -45,6 +45,7 @@
             file_size   = #{fileSize},
             md5         = #{md5},
             update_time = now()
+        WHERE version=#{version}
     </update>
 
     <delete id="deleteClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">

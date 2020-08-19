@@ -8,14 +8,14 @@ import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.result.service.ResultService;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @CrossOrigin
 @RestController
 @RequestMapping("/v1/results")  // 진단상세조회 API

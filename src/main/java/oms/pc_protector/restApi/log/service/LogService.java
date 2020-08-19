@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.log.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.log.mapper.LogMapper;
 import oms.pc_protector.restApi.log.model.LogRequestVO;
 import oms.pc_protector.restApi.log.model.LogVO;
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @Service
 public class LogService {
 

@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.manager.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
 import oms.pc_protector.restApi.manager.model.ManagerLockVO;
@@ -11,9 +11,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 public class ManagerService {
 
@@ -52,7 +54,6 @@ public class ManagerService {
     @Transactional
     public void insertManager(ManagerVO managerVO) {
         String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
-        System.out.println(encodedPassword);
         managerVO.setPassword(encodedPassword);
         managerVO.setRoles("MANAGER");
         managerMapper.insertManager(managerVO);
@@ -62,9 +63,6 @@ public class ManagerService {
     @Transactional
     public void updateManager(ManagerVO managerVO) {
         String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
-        log.info("암호화 전 비밀번호 : {}", managerVO.getPassword());
-        log.info("암호화 후 비밀번호 : {}", encodedPassword);
-        System.out.println(passwordEncoder.matches(managerVO.getPassword(), encodedPassword));
         managerVO.setPassword(encodedPassword);
         managerMapper.updateManagerInfo(managerVO);
     }
@@ -72,7 +70,6 @@ public class ManagerService {
     @Transactional
     public void updateManagerFirstLogin(FirstLoginRequestManagerVO firstLoginRequestManagerVO) {
         String encodedPassword = new BCryptPasswordEncoder().encode(firstLoginRequestManagerVO.getPassword());
-        log.info("암호화 후 비밀번호 : {}", encodedPassword);
         firstLoginRequestManagerVO.setPassword(encodedPassword);
         managerMapper.updateManagerInfoFirstLogin(firstLoginRequestManagerVO);
     }

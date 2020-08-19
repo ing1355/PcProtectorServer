@@ -1,6 +1,6 @@
 package oms.pc_protector.jwt;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 @CrossOrigin
-@Log4j2
+@Slf4j
 public class ClientPrincipal implements UserDetails {
     private ClientVO clientVO;
 

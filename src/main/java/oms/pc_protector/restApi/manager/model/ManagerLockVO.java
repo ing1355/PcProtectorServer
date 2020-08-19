@@ -2,7 +2,6 @@ package oms.pc_protector.restApi.manager.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Getter
 @Setter

@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.clientFile.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.clientFile.mapper.ClientFileMapper;
 import oms.pc_protector.restApi.clientFile.model.ClientFileVO;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Optional;
 
-@Log4j2
+@Slf4j
 @Service
 public class ClientFileService {
 

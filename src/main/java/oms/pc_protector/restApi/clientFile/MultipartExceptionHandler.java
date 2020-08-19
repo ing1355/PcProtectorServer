@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.clientFile;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @RestControllerAdvice
 public class MultipartExceptionHandler {
 
@@ -27,7 +27,7 @@ public class MultipartExceptionHandler {
     protected String handleMaxUploadSizeExceededException(final HttpServletRequest request,
                                                           final HttpServletResponse response, final Throwable e)
             throws IOException {
-        log.error(e);
+        e.printStackTrace();
         return "test";
     }
 
@@ -64,7 +64,7 @@ public class MultipartExceptionHandler {
     protected String TimeException(final HttpServletRequest request,
                                    final HttpServletResponse response, final Throwable e)
             throws IOException {
-        log.error(e);
+        e.printStackTrace();
         return "날짜가 잘못 설정되어있습니다.";
     }
 }

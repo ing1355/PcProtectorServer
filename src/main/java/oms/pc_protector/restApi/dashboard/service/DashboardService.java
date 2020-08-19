@@ -1,7 +1,7 @@
 package oms.pc_protector.restApi.dashboard.service;
 
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Log4j2
+@Slf4j
 @Service
 public class DashboardService {
 

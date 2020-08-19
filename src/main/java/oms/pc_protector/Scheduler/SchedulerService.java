@@ -1,7 +1,7 @@
 package oms.pc_protector.Scheduler;
 
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
@@ -20,7 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-@Log4j2
+@Slf4j
 @Component
 public class SchedulerService {
     private final ConfigurationMapper configurationMapper;
@@ -47,7 +47,7 @@ public class SchedulerService {
     } // 최초 서버 구동시 1회 실행
 
     @SneakyThrows
-    @Scheduled(cron = "0 0 8 * * *") // 매일 자정
+    @Scheduled(cron = "0 0 8 * * *") // 매일 8시
     public void cronJobSch() {
         PeriodDateVO Now_Schedule = configurationMapper.selectAppliedSchedule();
         SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
@@ -71,31 +71,6 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-//            if (Now_Schedule.getFromWeek() == 1) {
-//                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
-//                    start.add(Calendar.MONTH, 1);
-//                    start.set(Calendar.DAY_OF_MONTH, 1);
-//                } else if (start.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1 && end.get(Calendar.MONTH) == now.get(Calendar.MONTH) - 1) {
-//                    start.add(Calendar.DATE, 7);
-//                    end.add(Calendar.DATE, 7);
-//                }
-//            } else if (Now_Schedule.getFromWeek() == 5) {
-//                if (start.get(Calendar.MONTH) != end.get(Calendar.MONTH)) {
-//                    end.set(Calendar.MONTH, start.get(Calendar.MONTH));
-//                    end.set(Calendar.DAY_OF_WEEK, start.getActualMaximum(Calendar.DAY_OF_MONTH));
-//                } else if (start.get(Calendar.MONTH) != now.get(Calendar.MONTH) && end.get(Calendar.MONTH) != now.get(Calendar.MONTH)) {
-//                    start.add(Calendar.DATE, -7);
-//                    end.add(Calendar.DATE, -7);
-//                }
-//
-//            } else {
-//                next_start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
-//                next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
-//                next_end.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getToWeek());
-//                next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
-//            }
-//            int count = resultMapper.selectCountByNowScheduleMonth(dfm.format(start.getTime()));
-//            if (count > 0) {
             next_start.add(Calendar.MONTH, 1);
             next_end.add(Calendar.MONTH, 1);
             int next_month = next_start.get(Calendar.MONTH);
@@ -121,12 +96,6 @@ public class SchedulerService {
                 }
 
             }
-//            } else {
-//                next_start.set(Calendar.WEEK_OF_MONTH, start.get(Calendar.WEEK_OF_MONTH));
-//                next_start.set(Calendar.DAY_OF_WEEK, start.get(Calendar.DAY_OF_WEEK));
-//                next_end.set(Calendar.WEEK_OF_MONTH, end.get(Calendar.WEEK_OF_MONTH));
-//                next_end.set(Calendar.DAY_OF_WEEK, end.get(Calendar.DAY_OF_WEEK));
-//            }
         } else if (Now_Schedule.getPeriod() == 2) { // 매주
             start.set(Calendar.DAY_OF_WEEK, now.getMinimum((Calendar.DAY_OF_WEEK)));
             start.set(Calendar.HOUR_OF_DAY, 0);
@@ -135,9 +104,6 @@ public class SchedulerService {
             end.set(Calendar.HOUR_OF_DAY, 23);
             end.set(Calendar.MINUTE, 59);
             end.set(Calendar.SECOND, 59);
-
-//            int count = resultMapper.selectCountBySchedule(new NowScheduleVO(dft.format(start.getTime()), dft.format(end.getTime())));
-            // 같은 주기에 스케줄 결과가 있는지 체크
 
             start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
             start.set(Calendar.HOUR_OF_DAY, 0);
@@ -150,10 +116,8 @@ public class SchedulerService {
 
             next_start.set(Calendar.DAY_OF_WEEK, Now_Schedule.getFromDay() + 1);
             next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
-//            if (count > 0) { // 같은 주기에 스케줄 결과가 있는지 체크
             next_start.add(Calendar.DATE, 7);
             next_end.add(Calendar.DATE, 7);
-//            }
         } else { // 매일
             start.set(Calendar.HOUR_OF_DAY, 0);
             start.set(Calendar.MINUTE, 0);
@@ -164,13 +128,6 @@ public class SchedulerService {
             next_start.add(Calendar.DATE, 1);
             next_end.add(Calendar.DATE, 1);
         }
-
-//        log.info(df.format(start.getTime()));
-//        log.info(df.format(now.getTime()));
-//        log.info(Now_Schedule.getFromDay());
-//        log.info(df.format(end.getTime()));
-//        log.info(Now_Schedule.getToDay());
-
 
         DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
         Calendar dash_start = Calendar.getInstance();

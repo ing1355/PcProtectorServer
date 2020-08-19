@@ -1,6 +1,6 @@
 package oms.pc_protector.restApi.statistics.service;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
@@ -16,7 +16,7 @@ import java.util.*;
 
 /* 점검결과통계 서비스 클래스 */
 
-@Log4j2
+@Slf4j
 @Service
 public class StatisticsService {
 

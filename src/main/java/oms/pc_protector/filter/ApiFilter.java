@@ -1,7 +1,7 @@
 package oms.pc_protector.filter;
 
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.RereadableRequestWrapper;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.log.model.LogVO;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-@Log4j2
+@Slf4j
 @Component
 @CrossOrigin
 @WebFilter(urlPatterns = {"/v1/*"}, description = "API LOG FILTER")

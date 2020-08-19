@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
 import oms.pc_protector.restApi.login.model.TokenLoginVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 @CrossOrigin
-@Log4j2
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
