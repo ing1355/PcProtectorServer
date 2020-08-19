@@ -205,9 +205,6 @@ public class UserService {
 
         if (duplicateId) {
             log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
-//            if(client_prev.getIpAddress() != null && !(client_prev.getIpAddress().equals(clientVO.getIpAddress()))) {
-//                resultMapper.updateResultByUpdateClient(clientVO);
-//            }
 
             clientVO.setCheckTime(df.format(now.getTime()));
             if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress()) == 0 &&

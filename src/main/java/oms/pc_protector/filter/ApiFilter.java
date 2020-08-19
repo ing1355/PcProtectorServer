@@ -42,6 +42,7 @@ public class ApiFilter implements Filter {
         try {
             return principal.getName();
         } catch (NullPointerException e) {
+            log.error("정보 없음");
             return "정보 없음";
         }
 //        return principal.getName();

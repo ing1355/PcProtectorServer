@@ -84,6 +84,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             log.info("토큰 만료입니다!!!!!!!");
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "토큰 만료!");
             return;
+        } catch (Exception e) {
+            log.error(String.valueOf(e));
+        } catch (Throwable throwable) {
+            log.error(String.valueOf(throwable));
+            throwable.printStackTrace();
         }
 
 

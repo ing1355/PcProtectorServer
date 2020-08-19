@@ -67,25 +67,6 @@ public class LoginController {
             return null;
         }
         return responseService.getSingleResult(JwtProperties.TOKEN_PREFIX + new_token);
-//        String token = JWT.create()
-//                .withSubject(client.getUserId())
-//                .withClaim("role", "CLIENT")
-//                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_TIME))
-//                .withAudience(client.getMacAddress())
-//                .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
-//        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
     }
-
-//    @PostMapping(value = "login")
-//    public SingleResult<?> login(@RequestBody @Valid LoginVO login){
-//        ManagerVO manager = new ManagerVO();
-//        boolean isLogin = loginService.login(login);
-//        if(isLogin) manager =  managerService.findById(login.getId());
-//        HashMap<String, Object> map = new HashMap<>();
-//
-//        map.put("info",manager);
-//        map.put("FirstLogged",login.getPassword().equals("oms20190211"));
-//        return responseService.getSingleResult(manager);
-//    }
 
 }

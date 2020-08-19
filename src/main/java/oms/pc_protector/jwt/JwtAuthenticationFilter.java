@@ -57,6 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             credentials = new ObjectMapper().readValue(temp.getInputStream(), TokenLoginVO.class);
         } catch (IOException e) {
+            log.error(String.valueOf(e));
             e.printStackTrace();
         }
 
@@ -84,6 +85,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 ManagerPrincipal managerPrincipal = (ManagerPrincipal) auth.getPrincipal();
                 ManagerVO manager_info = managerPrincipal.getManagerVO();
                 if (manager_info.getLocked() > 4) {
+                    log.error("계정 잠금");
                     response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
                     return null;
                 }
@@ -92,11 +94,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         } catch (BadCredentialsException ex) {
             ManagerVO managerVO = this.managerService.findById(credentials.getId());
             if (managerVO.getLocked() > 4) {
+                log.error("계정 잠금");
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             } else {
+                log.error("비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
             }
         } catch (InternalAuthenticationServiceException ia) {
+            log.error("아이디가 존재하지 않습니다.");
             ia.printStackTrace();
             response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "아이디가 존재하지 않습니다.");
         }

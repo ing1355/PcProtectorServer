@@ -49,6 +49,7 @@ public class SUtil {
             }
 
         } catch (IOException e) {
+            log.error(e);
             e.printStackTrace();
         }
 
@@ -68,8 +69,10 @@ public class SUtil {
             try {
                 inputStream = mpf.getInputStream();
             } catch (IllegalStateException e) {
+                log.error(e);
                 e.printStackTrace();
             } catch (IOException e) {
+                log.error(e);
                 e.printStackTrace();
             }
         }
@@ -97,6 +100,7 @@ public class SUtil {
                 dataFull += str + "\n";
             }
         } catch(Exception e) {
+            log.error(e);
             e.printStackTrace();
         }
         return dataFull;

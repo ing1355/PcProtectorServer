@@ -34,13 +34,18 @@ public class ManagerService {
 
 
     @Transactional(readOnly = true)
-    public ManagerVO findById(String id) {
+    public ManagerVO findById(String id) throws Throwable {
         return Optional.ofNullable(managerMapper.findById(id))
-                .orElseThrow(() -> new RuntimeException("운영자 아이디가 존재하지 않습니다."));
+                .orElseThrow(this::NoExistId);
+    }
+
+    public Throwable NoExistId() {
+        log.error("운영자 아이디가 존재하지 않습니다.");
+        return new RuntimeException("운영자 아이디가 존재하지 않습니다.");
     }
 
 
-    @Transactional(readOnly = true)
+   @Transactional(readOnly = true)
     public boolean duplicatedManager(String id) {
         return managerMapper.selectSameId(id) > 0;
     }

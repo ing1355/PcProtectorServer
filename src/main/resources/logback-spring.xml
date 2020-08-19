@@ -35,9 +35,6 @@
     </appender>
 
     <logger name="oms.pc_protector" level="INFO"/>
-    <logger name="org.springframework" level="ERROR" >
-        <appender-ref ref="CONSOLE" />
-    </logger>
 
     <root level="INFO"> <!-- DEBUG -->
         <appender-ref ref="CONSOLE"/>

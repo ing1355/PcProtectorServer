@@ -1,5 +1,6 @@
 package oms.pc_protector.jwt;
 
+import lombok.SneakyThrows;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ public class ManagerPrincipalDetailsService implements UserDetailsService {
         this. managerService = managerService;
     }
 
+    @SneakyThrows
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         ManagerVO manager = this.managerService.findById(userId);

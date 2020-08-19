@@ -1,5 +1,6 @@
 package oms.pc_protector.apiConfig;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.commons.io.IOUtils;
@@ -15,6 +16,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@Slf4j
 public class RereadableRequestWrapper extends HttpServletRequestWrapper {
 
     private boolean parametersParsed = false;
@@ -71,6 +73,7 @@ public class RereadableRequestWrapper extends HttpServletRequestWrapper {
             InputStream inputStream = request.getInputStream();
             this.rawData = IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
+            log.error(String.valueOf(e));
             throw e;
         }
     }
@@ -283,6 +286,7 @@ public class RereadableRequestWrapper extends HttpServletRequestWrapper {
                 }
             } catch (DecoderException e) {
                 // ignore invalid chunk
+                log.error(String.valueOf(e));
                 e.printStackTrace();
             }
 
