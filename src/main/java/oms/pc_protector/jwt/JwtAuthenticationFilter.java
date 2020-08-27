@@ -5,6 +5,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import oms.pc_protector.restApi.log.model.LogVO;
+import oms.pc_protector.restApi.log.service.LogService;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
 import oms.pc_protector.restApi.login.model.TokenLoginVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
@@ -38,11 +40,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final ManagerService managerService;
     private final LoginMapper loginMapper;
+    private final LogService logService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, ManagerService managerService, LoginMapper loginMapper) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
+                                   ManagerService managerService,
+                                   LoginMapper loginMapper,
+                                   LogService logService) {
         this.authenticationManager = authenticationManager;
         this.managerService = managerService;
         this.loginMapper = loginMapper;
+        this.logService = logService;
     }
 
     @SneakyThrows
@@ -108,6 +115,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return null;
     }
 
+    private boolean excludeURI(HttpServletRequest request) {
+        String uri = request.getRequestURI().toString().replaceAll("v1/", "");
+        return uri.startsWith("/client/");
+    }
+
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // Grab principal
@@ -127,6 +139,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .withClaim("role", "MANAGER")
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESH_TIME))
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+            LogVO logVO = new LogVO();
+            logVO.setUri(request.getRequestURI());
+            logVO.setMethod(request.getMethod());
+            logVO.setIpAddress(request.getRemoteAddr());
+            if (!(logVO.getUri().contains("chunk")) && !(logVO.getUri().contains(".svg"))
+                    && !(logVO.getUri().contains(".json")) && !(logVO.getUri().contains(".png"))
+                    && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
+                boolean hasClientURI = excludeURI(request);
+                if (!hasClientURI) logVO.setManagerId(principal.getUsername());
+                logService.register(logVO);
+            }
         } else {
             ClientPrincipal principal = (ClientPrincipal) authResult.getPrincipal();
             token = JWT.create()

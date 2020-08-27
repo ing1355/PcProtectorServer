@@ -5,6 +5,7 @@ import oms.pc_protector.jwt.ClientPrincipalDetailService;
 import oms.pc_protector.jwt.JwtAuthenticationFilter;
 import oms.pc_protector.jwt.JwtAuthorizationFilter;
 import oms.pc_protector.jwt.ManagerPrincipalDetailsService;
+import oms.pc_protector.restApi.log.service.LogService;
 import oms.pc_protector.restApi.login.mapper.LoginMapper;
 import oms.pc_protector.restApi.manager.service.ManagerService;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final ManagerPrincipalDetailsService managerPrincipalDetailsService;
     private final ClientPrincipalDetailService clientPrincipalDetailService;
     private final ManagerService managerService;
+    private final LogService logService;
 
    /* public SecurityConfig(ManagerService managerService,
                           ManagerPrincipalDetailsService managerPrincipalDetailsService) {
@@ -66,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 // add jwt filters (1. authentication, 2. authorization)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService, this.loginMapper))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), this.managerService, this.loginMapper, this.logService))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), this.managerService, this.loginMapper))
                 .authorizeRequests()
                 // configure access rules
