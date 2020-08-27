@@ -9,6 +9,7 @@ import oms.pc_protector.restApi.log.service.LogService;
 import oms.pc_protector.restApi.result.service.ResultService;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -37,13 +38,13 @@ public class LogController {
 
     @GetMapping(value = "/search")
     public SingleResult<?> findByItems(
-            @RequestParam(value = "id", required = false) String id,
-            @RequestParam(value = "ip", required = false) String ipAddress,
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "ipAddress", required = false) String ipAddress,
             @RequestParam(value = "startDay", required = false) String startDay,
-            @RequestParam(value = "endDay", required = false) String endDay) {
+            @RequestParam(value = "endDay", required = false) String endDay) throws ParseException {
         HashMap<String, Object> map = new HashMap<>();
         LogRequestVO logRequestVO = new LogRequestVO();
-        Optional.ofNullable(id).ifPresent(logRequestVO::setManagerId);
+        Optional.ofNullable(userId).ifPresent(logRequestVO::setManagerId);
         Optional.ofNullable(ipAddress).ifPresent(logRequestVO::setIpAddress);
         Optional.ofNullable(startDay).ifPresent(logRequestVO::setStartDay);
         Optional.ofNullable(endDay).ifPresent(logRequestVO::setEndDay);

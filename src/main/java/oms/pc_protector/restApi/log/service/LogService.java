@@ -1,13 +1,16 @@
 package oms.pc_protector.restApi.log.service;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.restApi.log.mapper.LogMapper;
 import oms.pc_protector.restApi.log.model.LogRequestVO;
 import oms.pc_protector.restApi.log.model.LogVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -26,7 +29,7 @@ public class LogService {
     }
 
     @Transactional
-    public List<?> search(LogRequestVO logRequestVO) {
+    public List<?> search(LogRequestVO logRequestVO) throws ParseException {
         return logMapper.search(logRequestVO);
     }
 
