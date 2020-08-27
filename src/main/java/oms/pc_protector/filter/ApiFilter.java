@@ -72,11 +72,16 @@ public class ApiFilter implements Filter {
         if (!(logVO.getUri().contains("chunk")) && !(logVO.getUri().contains(".svg"))
                 && !(logVO.getUri().contains(".json")) && !(logVO.getUri().contains(".png"))
                 && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
+            Set<String> ketSet = parameterMap.keySet();
             if (hasClientURI) {
                 log.info("=============CLIENT API=============");
             } else {
                 log.info("============FRONTEND API============");
-                logVO.setManagerId(GetUserIdByPrincipal(User_info));
+                if(request.getRequestURI().contains("lock") || request.getRequestURI().contains("firstlogin")) {
+                    logVO.setManagerId(parameterMap.get("userId")[0]);
+                } else {
+                    logVO.setManagerId(GetUserIdByPrincipal(User_info));
+                }
                 if (!(logVO.getMethod().equals("GET"))) {
                     logService.register(logVO);
                 }
@@ -84,7 +89,6 @@ public class ApiFilter implements Filter {
 
             log.info("Request Uri: {}", request.getRequestURI());
 
-            Set<String> ketSet = parameterMap.keySet();
 
             for (String parameterKey : ketSet) {
                 String[] parameterValueArray = parameterMap.get(parameterKey);
