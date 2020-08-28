@@ -85,13 +85,13 @@ public class ProcessController {
     }
 
     @PutMapping(value = "unapproved-process/modify")
-    public SingleResult<?> modifyUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> modifyUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) throws UnsupportedEncodingException {
         processService.updateProcess(processVO);
         return responseService.getSingleResult(processService.findUnApprovedProcessList());
     }
 
     @PutMapping(value = "/unapproved-process/delete")
-    public SingleResult<?> deleteUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> deleteUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) throws UnsupportedEncodingException {
         processService.deleteProcess(processVO);
         return responseService.getSingleResult(processService.findUnApprovedProcessList());
     }
@@ -114,13 +114,13 @@ public class ProcessController {
     }
 
     @PutMapping(value = "/required-process/modify")
-    public SingleResult<?> modifyRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> modifyRequiredProcess(@RequestBody @Valid ProcessVO processVO) throws UnsupportedEncodingException {
         processService.updateProcess(processVO);
         return responseService.getSingleResult(processService.findRequiredProcessList());
     }
 
     @PutMapping(value = "/required-process/delete")
-    public SingleResult<?> deleteRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> deleteRequiredProcess(@RequestBody @Valid ProcessVO processVO) throws UnsupportedEncodingException {
         processService.deleteProcess(processVO);
         return responseService.getSingleResult(processService.findRequiredProcessList());
     }

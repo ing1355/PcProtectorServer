@@ -39,15 +39,16 @@ public class MultipartExceptionHandler {
         return "멀티파트 에러!";
     }
 
-//    @ExceptionHandler(HttpMessageConversionException.class)
-//    @ResponseBody
-//    protected String httpMessageConversionException(final HttpServletRequest request,
-//                                      final HttpServletResponse response, final Throwable e)
-//            throws IOException {
-//        String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-//        log.info("error file body : " + test);
-//        return "멀티파트 에러!";
-//    }
+    @ExceptionHandler(HttpMessageConversionException.class)
+    @ResponseBody
+    protected String httpMessageConversionException(final HttpServletRequest request,
+                                      final HttpServletResponse response, final Throwable e)
+            throws IOException {
+        String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        log.info("error file body : " + test);
+        log.info(String.valueOf(e));
+        return "멀티파트 에러!";
+    }
 
 
     @ExceptionHandler(MissingServletRequestPartException.class)

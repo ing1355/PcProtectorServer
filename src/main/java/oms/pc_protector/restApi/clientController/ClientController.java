@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -104,7 +105,13 @@ public class ClientController {
     public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) {
         HashMap<String, Object> map = new HashMap<>();
         Optional.ofNullable(processVO.getProcessVOList())
-                .ifPresent(processService::insertProcess);
+                .ifPresent(processVOList -> {
+                    try {
+                        processService.insertProcess(processVOList);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                });
         return responseService.getSingleResult(map);
     }
 
