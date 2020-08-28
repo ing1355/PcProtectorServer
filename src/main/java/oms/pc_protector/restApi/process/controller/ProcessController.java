@@ -8,7 +8,9 @@ import oms.pc_protector.restApi.process.model.ProcessVO;
 import oms.pc_protector.restApi.process.service.ProcessService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -42,7 +44,11 @@ public class ProcessController {
     }
 
     @PostMapping(value = "/insert")
-    public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
+        if(processService.existProcess(processVO) > 0) {
+            response.sendError(400, "중복된 프로세스입니다.");
+            return null;
+        }
         processService.insertProcessDirect(processVO);
         return responseService.getSingleResult(processService.findProcessAll());
     }
@@ -68,7 +74,11 @@ public class ProcessController {
     }
 
     @PostMapping(value = "unapproved-process/insert")
-    public SingleResult<?> insertUnApprovedProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> insertUnApprovedProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
+        if(processService.existProcess(processVO) > 0) {
+            response.sendError(400, "중복된 프로세스입니다.");
+            return null;
+        }
         int resultNum = processService.insertUnApprovedProcess(processVO);
         return responseService.getSingleResult(resultNum);
     }
@@ -94,7 +104,11 @@ public class ProcessController {
     }
 
     @PostMapping(value = "required-process/insert")
-    public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO) {
+    public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
+        if(processService.existProcess(processVO) > 0) {
+            response.sendError(400, "중복된 프로세스입니다.");
+            return null;
+        }
         int resultNum = processService.insertRequiredProcess(processVO);
         return responseService.getSingleResult(resultNum);
     }
