@@ -102,16 +102,11 @@ public class ClientController {
 
 
     @PostMapping(value = "/process")
-    public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) {
+    public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) throws UnsupportedEncodingException {
         HashMap<String, Object> map = new HashMap<>();
-        Optional.ofNullable(processVO.getProcessVOList())
-                .ifPresent(processVOList -> {
-                    try {
-                        processService.insertProcess(processVOList);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                });
+        if(processVO.getProcessVOList() != null) {
+            processService.insertProcess(processVO.getProcessVOList());
+        }
         return responseService.getSingleResult(map);
     }
 
