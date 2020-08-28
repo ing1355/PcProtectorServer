@@ -38,7 +38,7 @@ public class ProcessService {
             if (processVO.getRegistryItem().contains("%")) {
                 processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
             }
-            if (processMapper.existProcess(processVO) == 0) {
+            if (processMapper.existProcess(processVO) != null) {
                 resultNum += processMapper.insertProcess((ProcessVO) processVO);
             }
         }
@@ -54,7 +54,7 @@ public class ProcessService {
     }
 
     @Transactional(readOnly = true)
-    public int existProcess(ProcessVO processVO) throws UnsupportedEncodingException {
+    public ProcessVO existProcess(ProcessVO processVO) throws UnsupportedEncodingException {
         processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
         processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
         if (processVO.getDisplayName().contains("%")) {

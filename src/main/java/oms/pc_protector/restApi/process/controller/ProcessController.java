@@ -47,7 +47,7 @@ public class ProcessController {
 
     @PostMapping(value = "/insert")
     public SingleResult<?> insertProcessDirect(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
-        if(processService.existProcess(processVO) > 0) {
+        if (processService.existProcess(processVO) != null) {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
         }
@@ -77,9 +77,13 @@ public class ProcessController {
 
     @PostMapping(value = "unapproved-process/insert")
     public SingleResult<?> insertUnApprovedProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
-        if(processService.existProcess(processVO) > 0) {
+        ProcessVO isProcess = processService.existProcess(processVO);
+        if (isProcess.getType().equals("unApproved")) {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
+        } else if (processService.existProcess(processVO) != null) {
+            processService.modifyToUnApprovedProcess(isProcess.getIdx());
+            return responseService.getSingleResult(processService.findUnApprovedProcessList());
         }
         return responseService.getSingleResult(processService.insertUnApprovedProcess(processVO));
     }
@@ -106,9 +110,13 @@ public class ProcessController {
 
     @PostMapping(value = "required-process/insert")
     public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
-        if(processService.existProcess(processVO) > 0) {
+        ProcessVO isProcess = processService.existProcess(processVO);
+        if (isProcess.getType().equals("required")) {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
+        } else if (processService.existProcess(processVO) != null) {
+            processService.modifyToRequiredProcess(isProcess.getIdx());
+            return responseService.getSingleResult(processService.findRequiredProcessList());
         }
         return responseService.getSingleResult(processService.insertRequiredProcess(processVO));
     }

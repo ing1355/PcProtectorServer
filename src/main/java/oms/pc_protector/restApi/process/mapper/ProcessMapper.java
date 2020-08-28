@@ -12,7 +12,7 @@ public interface ProcessMapper {
     public List<ProcessVO> selectProcessAll();
 
     public List<ProcessVO> selectProcessList(String processType);
-    public int existProcess(ProcessVO processVO);
+    public ProcessVO existProcess(ProcessVO processVO);
     public List<ProcessVO> searchProcess(@Param(value = "displayName") String displayName,
                                          @Param(value = "registryName") String registryName);
 

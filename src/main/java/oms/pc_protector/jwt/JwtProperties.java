@@ -7,6 +7,7 @@ public class JwtProperties {
 
     // EXPIRATION_TIME : JWT Token의 validation 기간입니다. (30분)
     public static final int ACCESS_TIME = 1800000;
+    public static final int CLIENT_ACCESS_TIME = 3600000;
     // REFRESH_TIME : JWT Token의 validation 기간입니다. (10일)
     public static final int REFRESH_TIME = 864000000;
 

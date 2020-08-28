@@ -156,7 +156,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     .withSubject(principal.getUsername())
                     .withClaim("role", "CLIENT")
                     .withAudience(principal.getPassword())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.CLIENT_ACCESS_TIME))
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
         }
 //        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
