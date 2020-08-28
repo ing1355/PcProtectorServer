@@ -6,6 +6,8 @@ import oms.pc_protector.restApi.process.model.ProcessVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,12 +51,15 @@ public class ProcessService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProcessVO> searchProcess(String displayName, String registryName) {
-        if(displayName.contains("%")) {
-            displayName = displayName.replace("%","\\%");
+    public List<ProcessVO> searchProcess(String displayName, String registryName) throws UnsupportedEncodingException {
+        displayName = URLDecoder.decode(displayName, "UTF-8");
+        registryName = URLDecoder.decode(registryName, "UTF-8");
+        if (displayName.contains("%")) {
+            displayName = displayName.replace("%", "\\%");
         }
-        if(registryName.contains("%")) {
-            registryName = registryName.replace("%","\\%");
+        log.info(displayName);
+        if (registryName.contains("%")) {
+            registryName = registryName.replace("%", "\\%");
         }
         return processMapper.searchProcess(displayName, registryName);
     }
@@ -100,13 +105,15 @@ public class ProcessService {
     }
 
     @Transactional
-    public int insertUnApprovedProcess(ProcessVO processVO) {
-        return processMapper.insertUnApprovedProcess(processVO);
+    public List<ProcessVO> insertUnApprovedProcess(ProcessVO processVO) {
+        processMapper.insertUnApprovedProcess(processVO);
+        return processMapper.selectProcessList("unApproved");
     }
 
     @Transactional
-    public int insertRequiredProcess(ProcessVO processVO) {
-        return processMapper.insertRequiredProcess(processVO);
+    public List<ProcessVO> insertRequiredProcess(ProcessVO processVO) {
+        processMapper.insertRequiredProcess(processVO);
+        return processMapper.selectProcessList("required");
     }
 
 

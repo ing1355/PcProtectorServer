@@ -25,8 +25,8 @@
             <!-- .gz,.zip 등을 넣으면 자동으로 일자별 로그파일 압축 -->
             <fileNamePattern>${LOG_DIR}/app_%d{yyyy-MM-dd}_%i.log.gz</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- 파일당 최고 용량 10MB -->
-                <maxFileSize>10MB</maxFileSize>
+                <!-- 파일당 최고 용량 50MB -->
+                <maxFileSize>50MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <!-- 일자별 로그파일 최대 보관주기(일단위)
             만약 해당 설정일 이상된 파일은 자동으로 제거-->

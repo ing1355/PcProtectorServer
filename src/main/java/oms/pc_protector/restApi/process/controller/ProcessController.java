@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 @Slf4j
@@ -38,7 +40,7 @@ public class ProcessController {
 
     @GetMapping(value = "/search")
     public SingleResult<?> searchProcess(@RequestParam(value = "displayName", required = false) String displayName,
-                                         @RequestParam(value = "registryName", required = false) String registryName) {
+                                         @RequestParam(value = "registryName", required = false) String registryName) throws UnsupportedEncodingException {
         List<ProcessVO> processList = processService.searchProcess(displayName, registryName);
         return responseService.getSingleResult(processList);
     }
@@ -79,8 +81,7 @@ public class ProcessController {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
         }
-        int resultNum = processService.insertUnApprovedProcess(processVO);
-        return responseService.getSingleResult(resultNum);
+        return responseService.getSingleResult(processService.insertUnApprovedProcess(processVO));
     }
 
     @PutMapping(value = "unapproved-process/modify")
@@ -109,8 +110,7 @@ public class ProcessController {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
         }
-        int resultNum = processService.insertRequiredProcess(processVO);
-        return responseService.getSingleResult(resultNum);
+        return responseService.getSingleResult(processService.insertRequiredProcess(processVO));
     }
 
     @PutMapping(value = "/required-process/modify")
