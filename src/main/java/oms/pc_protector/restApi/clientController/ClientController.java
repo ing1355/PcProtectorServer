@@ -119,9 +119,10 @@ public class ClientController {
 
     @PostMapping(value = "/result")
     public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO) {
+        HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
 
-        return responseService.getSingleResult(true);
+        return responseService.getSingleResult(map);
     }
 
 

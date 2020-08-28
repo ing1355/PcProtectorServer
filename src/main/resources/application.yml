@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: local # 기본 환경 선택
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
 
 # local 환경
 ---

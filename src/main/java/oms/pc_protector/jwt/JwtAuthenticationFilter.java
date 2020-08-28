@@ -105,7 +105,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "계정 잠금");
             } else {
                 log.error("비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
-                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호를 " + (managerVO.getLocked() + 1) + "회 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
+                response.sendError(HttpStatus.NOT_ACCEPTABLE.value(), "비밀번호가 틀렸습니다. 5회 틀릴 시 계정이 잠금됩니다.");
             }
         } catch (InternalAuthenticationServiceException ia) {
             log.error("아이디가 존재하지 않습니다.");

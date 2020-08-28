@@ -45,6 +45,12 @@ public class ProcessService {
 
     @Transactional(readOnly = true)
     public List<ProcessVO> searchProcess(String displayName, String registryName) {
+        if(displayName.contains("%")) {
+            displayName = displayName.replace("%","\\%");
+        }
+        if(registryName.contains("%")) {
+            registryName = registryName.replace("%","\\%");
+        }
         return processMapper.searchProcess(displayName, registryName);
     }
 
