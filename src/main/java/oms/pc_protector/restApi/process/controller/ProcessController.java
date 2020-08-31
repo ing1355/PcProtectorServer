@@ -78,10 +78,10 @@ public class ProcessController {
     @PostMapping(value = "unapproved-process/insert")
     public SingleResult<?> insertUnApprovedProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
         ProcessVO isProcess = processService.existProcess(processVO);
-        if (isProcess.getType().equals("unApproved")) {
+        if (isProcess != null && isProcess.getType().equals("unApproved")) {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
-        } else if (processService.existProcess(processVO) != null) {
+        } else if (isProcess != null) {
             processService.modifyToUnApprovedProcess(isProcess.getIdx());
             return responseService.getSingleResult(processService.findUnApprovedProcessList());
         }
@@ -111,10 +111,10 @@ public class ProcessController {
     @PostMapping(value = "required-process/insert")
     public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response) throws IOException {
         ProcessVO isProcess = processService.existProcess(processVO);
-        if (isProcess.getType().equals("required")) {
+        if (isProcess != null && isProcess.getType().equals("required")) {
             response.sendError(400, "중복된 프로세스입니다.");
             return null;
-        } else if (processService.existProcess(processVO) != null) {
+        } else if (isProcess != null) {
             processService.modifyToRequiredProcess(isProcess.getIdx());
             return responseService.getSingleResult(processService.findRequiredProcessList());
         }

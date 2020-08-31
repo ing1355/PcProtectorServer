@@ -24,4 +24,8 @@ public class ProcessVO {
 
     private String type = "none";
 
+    public ProcessVO(String displayName, String registryItem) {
+        this.displayName = displayName;
+        this.registryItem = registryItem;
+    }
 }

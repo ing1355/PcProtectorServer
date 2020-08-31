@@ -47,14 +47,6 @@ public class ProcessService {
 
     @Transactional(readOnly = true)
     public ProcessVO existProcess(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         return processMapper.existProcess(processVO);
     }
 
@@ -62,10 +54,15 @@ public class ProcessService {
     public List<ProcessVO> searchProcess(String displayName, String registryName) throws UnsupportedEncodingException {
         displayName = URLDecoder.decode(displayName, "UTF-8");
         registryName = URLDecoder.decode(registryName, "UTF-8");
+        if (displayName.contains("\\")) {
+            displayName = displayName.replace("\\", "\\\\");
+        }
+        if (registryName.contains("\\")) {
+            registryName = registryName.replace("\\", "\\\\");
+        }
         if (displayName.contains("%")) {
             displayName = displayName.replace("%", "\\%");
         }
-        log.info(displayName);
         if (registryName.contains("%")) {
             registryName = registryName.replace("%", "\\%");
         }
@@ -79,7 +76,6 @@ public class ProcessService {
         List<ProcessVO> list = findProcessByType(processType);
         for (ProcessVO process : list) {
             result.add(process);
-            log.debug("Process Registry Name : " + ((ProcessVO) process).getDisplayName());
         }
         return result;
     }
@@ -91,27 +87,11 @@ public class ProcessService {
 
 
     public void updateProcess(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         processMapper.processUpdate(processVO);
     }
 
 
     public void deleteProcess(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         processMapper.processDelete(processVO);
     }
 
@@ -125,41 +105,17 @@ public class ProcessService {
 
     @Transactional
     public int insertProcessDirect(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         return processMapper.insertProcess(processVO);
     }
 
     @Transactional
     public List<ProcessVO> insertUnApprovedProcess(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         processMapper.insertUnApprovedProcess(processVO);
         return processMapper.selectProcessList("unApproved");
     }
 
     @Transactional
     public List<ProcessVO> insertRequiredProcess(ProcessVO processVO) throws UnsupportedEncodingException {
-        processVO.setDisplayName(URLDecoder.decode(processVO.getDisplayName(), "UTF-8"));
-        processVO.setRegistryItem(URLDecoder.decode(processVO.getRegistryItem(), "UTF-8"));
-        if (processVO.getDisplayName().contains("%")) {
-            processVO.setDisplayName(processVO.getDisplayName().replace("%", "\\%"));
-        }
-        if (processVO.getRegistryItem().contains("%")) {
-            processVO.setRegistryItem(processVO.getRegistryItem().replace("%", "\\%"));
-        }
         processMapper.insertRequiredProcess(processVO);
         return processMapper.selectProcessList("required");
     }
