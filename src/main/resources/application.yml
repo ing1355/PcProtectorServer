@@ -4,6 +4,11 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
+  http:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
 
 # local 환경
 ---

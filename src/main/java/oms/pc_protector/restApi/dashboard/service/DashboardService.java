@@ -46,11 +46,11 @@ public class DashboardService {
 
     @Transactional
     public HashMap<String, Object> dashboardTop() {
-        double beforeTime = System.currentTimeMillis();
+//        double beforeTime = System.currentTimeMillis();
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
         int totalPc = dashboardMapper.selectClientCount();
         int runPc = resultService.countByMonth();
-        String resultRate = String.valueOf((int) (((double) runPc / (double) totalPc) * 100)) + "%";
+        String resultRate = String.valueOf((double) (((double) runPc / (double) totalPc) * 100));
 
         log.info("전체 PC : {}", totalPc);
         log.info("실행 PC : {}", runPc);
@@ -61,33 +61,33 @@ public class DashboardService {
         dashboardTopMap.put("resultRate", resultRate);
         dashboardTopMap.put("resultAvgScore", resultAvgScoreByCurrentMonth());
 
-        double afterTime = System.currentTimeMillis();
-        double secDiffTime = (afterTime - beforeTime) / 1000;
-        log.info("Top 걸린시간 : " + secDiffTime + "초");
-        log.info("Top : " + dashboardTopMap.get("totalPc"));
+//        double afterTime = System.currentTimeMillis();
+//        double secDiffTime = (afterTime - beforeTime) / 1000;
+//        log.info("Top 걸린시간 : " + secDiffTime + "초");
+//        log.info("Top : " + dashboardTopMap.get("totalPc"));
         return dashboardTopMap;
     }
 
     @Transactional
     public HashMap<String, Object> dashboardMiddle() {
 
-        double beforeTime = System.currentTimeMillis();
+//        double beforeTime = System.currentTimeMillis();
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         dashboardResultMap.put("resultTop5", ResultTop5());
         dashboardResultMap.put("resultLowTop5", ResultLowTop5());
         dashboardResultMap.put("userCountByScore", userCountByScore());
 
 
-        double afterTime = System.currentTimeMillis();
-        double secDiffTime = (afterTime - beforeTime) / 1000;
-        log.info("Middle 걸린시간 : " + secDiffTime + "초");
+//        double afterTime = System.currentTimeMillis();
+//        double secDiffTime = (afterTime - beforeTime) / 1000;
+//        log.info("Middle 걸린시간 : " + secDiffTime + "초");
         return dashboardResultMap;
     }
 
     @Transactional
     public HashMap<String, Object> dashboardBottom(String term) {
 
-        double beforeTime = System.currentTimeMillis();
+//        double beforeTime = System.currentTimeMillis();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
         HashMap<String, Object> dashboardResultMap = new HashMap<>();
         HashMap<String, Object> resultChart = new HashMap<>();
@@ -113,10 +113,10 @@ public class DashboardService {
             }
         }
 
-
-        double afterTime = System.currentTimeMillis();
-        double secDiffTime = (afterTime - beforeTime) / 1000;
-        log.info("Bottom 걸린시간 : " + secDiffTime + "초");
+//
+//        double afterTime = System.currentTimeMillis();
+//        double secDiffTime = (afterTime - beforeTime) / 1000;
+//        log.info("Bottom 걸린시간 : " + secDiffTime + "초");
         return dashboardResultMap;
     }
 

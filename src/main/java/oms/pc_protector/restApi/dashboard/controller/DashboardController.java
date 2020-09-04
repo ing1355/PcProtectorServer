@@ -26,7 +26,7 @@ public class DashboardController {
 
     @GetMapping(value = "")
     public SingleResult<?> dashboard(@RequestParam(value = "term") String term) {
-        double beforeTime = System.currentTimeMillis();
+//        double beforeTime = System.currentTimeMillis();
         HashMap<String, Object> dashboardTopMap = dashboardService.dashboardTop();
         HashMap<String, Object> dashboardMiddleMap = dashboardService.dashboardMiddle();
         HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(term);
@@ -35,9 +35,9 @@ public class DashboardController {
         result.put("middle",dashboardMiddleMap);
         result.put("bottom",dashboardBottomMap);
         result.put("Period",dashboardService.selectDashboardPeriod());
-        double afterTime = System.currentTimeMillis();
-        double secDiffTime = (afterTime - beforeTime) / 1000;
-        log.info("대시보드 전체 걸린시간 : " + secDiffTime + "초");
+//        double afterTime = System.currentTimeMillis();
+//        double secDiffTime = (afterTime - beforeTime) / 1000;
+//        log.info("대시보드 전체 걸린시간 : " + secDiffTime + "초");
         return responseService.getSingleResult(result);
     }
 

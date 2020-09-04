@@ -7,6 +7,7 @@
     <!-- Console Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>
                 %-5level %d{HH:mm:ss.SSS} [%thread %F:%L] %method - %msg%n
             </pattern>
@@ -18,6 +19,7 @@
         <file>${LOG_PATH}</file>
         <!-- 출력패턴 -->
         <encoder>
+            <charset>UTF-8</charset>
             <pattern>%-5level %d{HH:mm:ss.SSS} [%thread %F:%L] %method - %msg%n</pattern>
         </encoder>
         <!-- Rolling 정책 -->

@@ -2,7 +2,7 @@ package oms.pc_protector.filter;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import oms.pc_protector.apiConfig.RereadableRequestWrapper;
+import oms.pc_protector.apiConfig.ReadableRequestWrapper;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.log.model.LogVO;
 import oms.pc_protector.restApi.log.service.LogService;
@@ -71,7 +71,8 @@ public class ApiFilter implements Filter {
 
         if (!(logVO.getUri().contains("chunk")) && !(logVO.getUri().contains(".svg"))
                 && !(logVO.getUri().contains(".json")) && !(logVO.getUri().contains(".png"))
-                && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
+                && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))
+                && !(logVO.getUri().contains("/front")) && !(logVO.getUri().contains("favicon.ico"))) {
             Set<String> ketSet = parameterMap.keySet();
             if (hasClientURI) {
                 log.info("=============CLIENT API=============");
@@ -106,7 +107,7 @@ public class ApiFilter implements Filter {
             log.info("");
 
         }
-        RereadableRequestWrapper rereadableRequestWrapper = new RereadableRequestWrapper((HttpServletRequest) request);
+        ReadableRequestWrapper rereadableRequestWrapper = new ReadableRequestWrapper((HttpServletRequest) request);
         filterChain.doFilter(rereadableRequestWrapper, response);
     }
 
