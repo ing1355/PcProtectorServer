@@ -80,17 +80,25 @@ public class SchedulerService {
             next_end.set(Calendar.DAY_OF_WEEK, Now_Schedule.getToDay() + 1);
             if (Now_Schedule.getFromWeek() == 1) {
                 if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    log.info("Schedule case 1");
                     next_start.add(Calendar.MONTH, 1);
                     next_start.set(Calendar.DAY_OF_MONTH, next_end.getMinimum(Calendar.DAY_OF_MONTH));
                 } else if (next_start.get(Calendar.MONTH) == start.get(Calendar.MONTH) && next_end.get(Calendar.MONTH) == end.get(Calendar.MONTH)) {
+                    log.info("Schedule case 2");
+                    next_start.add(Calendar.DATE, 7);
+                    next_end.add(Calendar.DATE, 7);
+                } else if (next_start.get(Calendar.DAY_OF_MONTH) > 15) {
+                    log.info("Schedule case 3");
                     next_start.add(Calendar.DATE, 7);
                     next_end.add(Calendar.DATE, 7);
                 }
             } else if (Now_Schedule.getFromWeek() == 5) {
                 if (next_start.get(Calendar.MONTH) != next_end.get(Calendar.MONTH)) {
+                    log.info("Schedule case 4");
                     next_end.set(Calendar.MONTH, next_start.get(Calendar.MONTH));
                     next_end.set(Calendar.DAY_OF_MONTH, next_start.getActualMaximum(Calendar.DAY_OF_MONTH));
                 } else if (next_start.get(Calendar.MONTH) != next_month && next_end.get(Calendar.MONTH) != next_month) {
+                    log.info("Schedule case 5");
                     next_start.add(Calendar.DATE, -7);
                     next_end.add(Calendar.DATE, -7);
                 }

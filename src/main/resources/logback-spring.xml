@@ -1,8 +1,8 @@
 <configuration debug="true">
     <!-- Created By yeoseong_yoon -->
     <!-- 로그 경로 변수 선언 -->
-    <property name="LOG_DIR" value="D:/PCProtectorLogs/" />
-    <property name="LOG_PATH" value="D:/PCProtectorLogs/app.log"/>
+    <property name="LOG_DIR" value="D:/Desktop/PCProtectorLogs/" />
+    <property name="LOG_PATH" value="D:/Desktop/PCProtectorLogs/app.log"/>
 
     <!-- Console Appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">

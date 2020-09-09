@@ -50,7 +50,7 @@ public class DashboardService {
         LinkedHashMap<String, Object> dashboardTopMap = new LinkedHashMap<>();
         int totalPc = dashboardMapper.selectClientCount();
         int runPc = resultService.countByMonth();
-        String resultRate = String.valueOf((double) (((double) runPc / (double) totalPc) * 100));
+        String resultRate = totalPc == 0 ? "0" : String.valueOf((double) (((double) runPc / (double) totalPc) * 100));
 
         log.info("전체 PC : {}", totalPc);
         log.info("실행 PC : {}", runPc);
