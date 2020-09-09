@@ -61,8 +61,8 @@ public class StatisticsService {
             RunPcAndScoreVO runPcAndScoreVO = statisticsMapper.countRunPcByMonth(statisticsResponseVO);
             List<StatisticsVO> statisticsVO = statisticsMapper.selectItemsByMonth(statisticsResponseVO);
             int[] safePc = new int[16];
-            int[] safePcDivideAllPc = new int[16];
-            int[] safePcDivideRunPc = new int[16];
+            double[] safePcDivideAllPc = new double[16];
+            double[] safePcDivideRunPc = new double[16];
             for (StatisticsVO statisticsVO1 : statisticsVO) {
                 if (statisticsVO1.getItem1Result() == 1)
                     safePc[0] += 1;
@@ -99,9 +99,9 @@ public class StatisticsService {
             }
             for (int i = 0; i < 16; i++) {
                 if(TotalPc != 0)
-                    safePcDivideAllPc[i] = (int)((safePc[i] / (double)TotalPc) * 100);
+                    safePcDivideAllPc[i] = (double)((safePc[i] / (double)TotalPc) * 100);
                 if(runPcAndScoreVO.getRunPc() != 0)
-                    safePcDivideRunPc[i] = (int)(( safePc[i] / (double)runPcAndScoreVO.getRunPc() ) * 100);
+                    safePcDivideRunPc[i] = (double)(( safePc[i] / (double)runPcAndScoreVO.getRunPc() ) * 100);
             }
             objectMap.put("departmentName", departmentVO.getName());
             objectMap.put("departmentCode", departmentVO.getCode());
