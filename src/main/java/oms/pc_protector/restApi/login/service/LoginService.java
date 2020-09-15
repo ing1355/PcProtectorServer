@@ -48,8 +48,8 @@ public class LoginService {
         return true;
     }
 
-    public boolean loginForClient(ClientLoginVO loginVO) {
-        return loginMapper.loginForClient(loginVO) > 0;
+    public boolean loginForClientFirst(ClientVO clientVO) {
+        return loginMapper.loginForClientFirst(clientVO) > 0;
     }
 
     @Transactional(readOnly = true)

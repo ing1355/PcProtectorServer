@@ -11,7 +11,7 @@ public interface LoginMapper {
 
     public int isExistId(String id);
 
-    public int loginForClient(ClientLoginVO loginVO);
+    public int loginForClientFirst(ClientVO clientVO);
 
     public ClientVO findClient(ClientLoginVO loginVO);
 

@@ -133,12 +133,12 @@ public class ClientController {
                                           HttpServletRequest request,
                                           HttpServletResponse response){
         ClientVO client = new ClientVO();
-        boolean isLogin = loginService.loginForClient(login);
+
         boolean userExist = userService.findSameId(login.getId());
-        if(!isLogin && userExist) {
+        if(userExist) {
             clientService.register(new ClientVO(login.getId(), login.getIpAddress()));
         }
-        else if(!userExist) {
+        else {
             return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
         }
         client = loginService.findClient(login);

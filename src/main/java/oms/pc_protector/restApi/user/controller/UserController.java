@@ -47,7 +47,7 @@ public class UserController {
 
     @GetMapping(value = "client")
     public SingleResult<?> findClientList(@RequestParam @Valid String id) {
-        ClientVO clientVO = clientService.findById(id);
+        List<ClientVO> clientVO = clientService.selectClientListById(id);
         return responseService.getSingleResult(clientVO);
     }
 
@@ -106,15 +106,6 @@ public class UserController {
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
-
-//    @PutMapping(value = "/update/{id}")
-//    public SingleResult<?> modify(
-//            @PathVariable(value = "id") String id,
-//            @RequestBody UserRequestVO userRequestVO) {
-//        HashMap<String, Object> map = new HashMap<>();
-//        boolean modify = userService.modifyUserInfo(id, userRequestVO);
-//        return responseService.getSingleResult(modify);
-//    }
 
 
     @DeleteMapping(value = "/delete")

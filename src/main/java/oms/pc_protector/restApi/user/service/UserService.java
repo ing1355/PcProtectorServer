@@ -112,13 +112,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 부서코드입니다."));
     }
 
-
-    @Transactional(readOnly = true)
-    public boolean duplicateCheckClient(ClientVO clientVO) {
-        int result = clientService.findSameClient(clientVO);
-        return result > 0;
-    }
-
     @Transactional(readOnly = true)
     public boolean duplicateCheckIpAddress(String IpAddress) {
         int result = clientService.findSameIpAddress(IpAddress);
@@ -211,14 +204,12 @@ public class UserService {
                 start.getTime().compareTo(now.getTime()) <= 0 && end.getTime().compareTo(now.getTime()) >= 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }
-            clientService.First_update(clientVO);
+            clientService.First_update(clientVO, client_prev);
         } else {
             log.info("등록되지 않은 사용자입니다.");
             return false;
         }
         return true;
     }
-
-
 }
 

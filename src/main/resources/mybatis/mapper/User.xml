@@ -24,17 +24,23 @@
     </select>
 
     <select id="selectSameId" resultType="int" parameterType="String">
-        SELECT COUNT(*) FROM user WHERE user_id = #{value}
+        SELECT COUNT(*)
+        FROM user
+        WHERE user_id = #{value}
     </select>
 
     <select id="selectByDepartment" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="String">
-        SELECT * FROM user WHERE department = #{value}
+        SELECT *
+        FROM user
+        WHERE department = #{value}
     </select>
 
     <select id="selectByDepartmentCode" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="Long">
-        SELECT * FROM user WHERE department_idx = #{departmentCode}
+        SELECT *
+        FROM user
+        WHERE department_idx = #{departmentCode}
     </select>
 
     <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
@@ -151,13 +157,13 @@
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
         UPDATE user
-        SET user.user_id     = #{userId},
-            user.name        = #{name},
-            user.department  = #{department},
+        SET user.user_id        = #{userId},
+            user.name           = #{name},
+            user.department     = #{department},
             user.department_idx = #{departmentCode},
-            user.email       = #{email},
-            user.phone       = #{phone},
-            user.update_time = now()
+            user.email          = #{email},
+            user.phone          = #{phone},
+            user.update_time    = now()
         WHERE user.user_id = #{userId};
     </update>
 
@@ -167,6 +173,12 @@
         WHERE user.user_id = #{value};
         DELETE
         FROM client
+        WHERE user_id = #{value};
+        DELETE
+        FROM user_result
+        WHERE user_id = #{value};
+        DELETE
+        FROM client_history
         WHERE user_id = #{value};
     </delete>
 

@@ -6,9 +6,20 @@
         SELECT * FROM client
     </select>
 
-    <select id="selectByIdCount" parameterType="String" resultType="int">
+    <select id="selectClientHistory" parameterType="String"
+            resultType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT * FROM client_history
+        WHERE user_id = #{value}
+    </select>
+
+    <select id="selectClientByIdIp" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
+            resultType="int">
         SELECT COUNT(*) FROM client
         WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectSameIpAddress" resultType="int" parameterType="String">
+        SELECT COUNT(*) FROM client WHERE ip_address = #{value}
     </select>
 
     <select id="selectById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -16,21 +27,16 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="selectSameIdIpAddress" resultType="oms.pc_protector.restApi.client.model.ClientVO" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client WHERE user_id = #{userId} AND ip_address = #{ipAddress}
+    <select id="selectClientHistoryFirstById" parameterType="String"
+            resultType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT *, ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0 FROM client
+        WHERE user_id = #{value} AND r0 = 1
     </select>
 
-    <select id="selectSameIpAddress" resultType="int" parameterType="String">
-        SELECT COUNT(*) FROM client WHERE ip_address = #{value}
-    </select>
-
-    <select id="selectSameClient" resultType="int" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT COUNT(*) FROM client WHERE mac_address = #{macAddress} AND user_id = #{userId}
-    </select>
-
-    <select id="selectCountAll" resultType="int">
-        SELECT COUNT(*) FROM client t1, user t2
-        WHERE t1.user_id = t2.user_id
+    <select id="selectClientListById" parameterType="String"
+            resultType="oms.pc_protector.restApi.client.model.ClientVO">
+        SELECT * FROM client_history
+        WHERE user_id = #{value} ORDER BY check_time DESC
     </select>
 
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -49,7 +55,26 @@
                 #{pcProtectorVersion},
                 #{pcName},
                 #{checkTime},
-                'CLIENT')
+                'CLIENT');
+    </insert>
+
+    <insert id="insertClientHistory" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        INSERT INTO client_history (user_id,
+                            ip_address,
+                            mac_address,
+                            os,
+                            pc_protector_version,
+                            pc_name,
+                            check_time,
+                            roles)
+        VALUES (#{userId},
+                #{ipAddress},
+                #{macAddress},
+                #{os},
+                #{pcProtectorVersion},
+                #{pcName},
+                #{checkTime},
+                'CLIENT');
     </insert>
 
     <update id="loginUpdateTime" parameterType="String">
@@ -60,14 +85,26 @@
 
     <update id="updateClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
         UPDATE client
-        SET user_id              = #{userId},
-            os                   = #{os},
+        SET os                   = #{os},
             ip_address           = #{ipAddress},
             mac_address          = #{macAddress},
             pc_name              = #{pcName},
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
+        WHERE user_id = #{userId};
+    </update>
+
+    <update id="updateClientHistoryInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        UPDATE client_history
+        SET os                   = #{os},
+            ip_address           = #{ipAddress},
+            mac_address          = #{macAddress},
+            pc_name              = #{pcName},
+            pc_protector_version = #{pcProtectorVersion},
+            check_time          = now()
         WHERE user_id = #{userId}
+        ORDER BY check_time DESC
+        LIMIT 1
     </update>
 
     <update id="updateWrongMd5" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -77,6 +114,11 @@
             update_time          = now()
         WHERE user_id = #{userId}
     </update>
+
+    <delete id="deleteClientDuplicated" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
+        DELETE FROM client
+        WHERE mac_address = #{macAddress} OR user_id = #{userId}
+    </delete>
 
 </mapper>
 

@@ -33,7 +33,7 @@
                    ROW_NUMBER() over (PARTITION BY user_id, ip_address ORDER BY check_time DESC) AS r0
             FROM user_result
             WHERE DATE_FORMAT(check_time, '%Y-%m') = #{yearMonth}
-        ) AS B ON A.user_id = B.user_id AND A.ip_address = B.ip_address AND
+        ) AS B ON A.user_id = B.user_id AND
                   A.ip_address = B.ip_address AND
                   B.r0 = 1 AND
                   B.in_schedule = 1

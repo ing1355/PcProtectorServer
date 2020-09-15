@@ -10,25 +10,29 @@ public interface ClientMapper {
 
     public ClientVO selectById(String id);
 
-    public int selectByIdCount(String id);
-
-    public int selectSameClient(ClientVO clientVO);
-
-    public ClientVO selectSameIdIpAddress(ClientVO clientVO);
-
-    public int selectSameIpAddress(String IpAddress);
+    public List<ClientVO> selectClientHistory(String userId);
 
     public void loginUpdateTime(String id);
 
-    public int selectCountAll();
+    public int selectClientByIdIp(ClientVO clientVO);
+
+    public int selectSameIpAddress(String IpAddress);
+
+    public ClientVO selectClientHistoryFirstById(String userId);
 
     public int insertClientInfo(ClientVO clientVO);
 
+    public int insertClientHistory(ClientVO clientVO);
+
     public List<ClientVO> selectClientAll();
+
+    public List<ClientVO> selectClientListById(String id);
 
     public boolean updateClientInfo(ClientVO clientVO);
 
+    public boolean updateClientHistoryInfo(ClientVO clientVO);
+
     public void updateWrongMd5(ClientVO clientVO);
 
-    public void deleteClientInfo(ClientVO clientVO);
+    public void deleteClientDuplicated(ClientVO clientVO);
 }

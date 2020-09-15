@@ -6,16 +6,16 @@
         SELECT COUNT(*) FROM manager WHERE id = #{value}
     </select>
 
-    <select id="loginForClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO" resultType="int">
+    <select id="loginForClientFirst" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
+            resultType="int">
         SELECT COUNT(*) FROM client
-        WHERE user_id = #{id} AND mac_address = #{ipAddress}
+        WHERE user_id = #{userId} OR mac_address = #{macAddress}
     </select>
 
     <select id="findClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO"
             resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT * FROM client
-        WHERE user_id = #{id} AND
-            mac_address = #{ipAddress}
+        WHERE user_id = #{id}
     </select>
 
     <select id="findPasswordById" resultType="String" parameterType="String">
