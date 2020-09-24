@@ -48,9 +48,6 @@ public class License implements CommandLineRunner {
         String id = DigestUtils.sha512Hex(hash_product + hash_domain + hash_mac + hash_uuid);
         id = DigestUtils.sha512Hex(id);
 
-        System.out.println("mac : " + getHardwareAddress());
-        System.out.println("input_id : " + input_id);
-        System.out.println("id : " + id);
         if(!input_id.equals(id)) {
             System.exit(0);
         }
