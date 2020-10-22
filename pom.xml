@@ -168,16 +168,16 @@
                         </goals>
                     </execution>
 
-<!--                    <execution>-->
-<!--                        <id>build-frontend</id>-->
-<!--                        <goals>-->
-<!--                            <goal>yarn</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>prepare-package</phase>-->
-<!--                        <configuration>-->
-<!--                            <arguments>build</arguments>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
+                    <execution>
+                        <id>build-frontend</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>

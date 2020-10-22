@@ -2,6 +2,7 @@ package oms.pc_protector.util;
 
 import oms.pc_protector.PcProtectorApplication;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,10 @@ import java.net.UnknownHostException;
 
 @Component
 public class License implements CommandLineRunner {
+
+    @Autowired
+    ParseRoute parseRoute;
+
     @Override
     public void run(String... args) throws Exception {
         File file = new File("/Users/licenseKey/oms.lic");
@@ -53,15 +58,14 @@ public class License implements CommandLineRunner {
         }
     }
 
-    public static String getHardwareAddress() throws UnknownHostException,
+    public String getHardwareAddress() throws UnknownHostException,
             SocketException
     {
-        InetAddress ipAddress = InetAddress.getLocalHost();
+        InetAddress ipAddress = InetAddress.getByName(parseRoute.getLocalIPAddress());
         NetworkInterface networkInterface = NetworkInterface
                 .getByInetAddress(ipAddress);
         byte[] macAddressBytes = networkInterface.getHardwareAddress();
         StringBuilder macAddressBuilder = new StringBuilder();
-
         for (int macAddressByteIndex = 0; macAddressByteIndex < macAddressBytes.length; macAddressByteIndex++)
         {
             String macAddressHexByte = String.format("%02X",
