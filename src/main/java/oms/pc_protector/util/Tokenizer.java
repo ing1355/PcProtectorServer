@@ -1,10 +1,5 @@
 package oms.pc_protector.util;
 
-import oms.pc_protector.util.StringArray;
-
-import java.io.*;
-import java.util.*;
-
 /**
  * This class perform similar functionality to StringTokenizer class but faster.
  * The difference is StringTokenizer doesn't count empty token, but this class does.

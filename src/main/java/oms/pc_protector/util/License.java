@@ -1,6 +1,5 @@
 package oms.pc_protector.util;
 
-import oms.pc_protector.PcProtectorApplication;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -23,7 +21,8 @@ public class License implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        File file = new File("/Users/licenseKey/oms.lic");
+        File file = new File("oms.lic");
+        System.out.println(file.getAbsoluteFile());
         FileReader filereader = new FileReader(file);
         //입력 버퍼 생성
         BufferedReader bufReader = new BufferedReader(filereader);
