@@ -45,13 +45,19 @@ public class ConfigurationController {
     }
 
     @PutMapping(value = "/check/setting/config")
-    public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO) {
+    public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO,
+                                        HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        configurationVO.setUserIdx(User_Idx);
         configurationService.updateConfiguration_service(configurationVO);
         return responseService.getSingleResult(true);
     }
 
     @PutMapping(value = "/check/setting/edit")
-    public SingleResult<?> updateEdit(@RequestBody @Valid EditProgramVO editProgramVO) {
+    public SingleResult<?> updateEdit(@RequestBody @Valid EditProgramVO editProgramVO,
+                                      HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        editProgramVO.setUserIdx(User_Idx);
         configurationService.updateEditProgramFlag_service(editProgramVO);
         return responseService.getSingleResult(true);
     }
@@ -66,8 +72,10 @@ public class ConfigurationController {
     }
 
     @PutMapping(value = "/check/force")
-    public SingleResult<?> updateForceRun(@RequestBody @Valid boolean param) {
-        configurationService.updateForceRun(param);
+    public SingleResult<?> updateForceRun(@RequestBody @Valid boolean param,
+                                          HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        configurationService.updateForceRun(param, User_Idx);
         return responseService.getSingleResult(true);
     }
 

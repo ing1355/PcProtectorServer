@@ -24,4 +24,5 @@ public class ConfigurationVO {
     private boolean unApprovedProcess;
     private boolean requiredProcess;
     private String idx;
+    private String UserIdx;
 }

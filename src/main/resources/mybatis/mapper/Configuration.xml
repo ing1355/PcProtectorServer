@@ -124,6 +124,7 @@
             security_usb                   = #{securityUsb},
             un_approved_process            = #{unApprovedProcess},
             required_process               = #{requiredProcess}
+        WHERE department_idx = #{UserIdx}
     </update>
 
     <update id="updateEditProgramFlag" parameterType="oms.pc_protector.restApi.policy.model.EditProgramVO">
@@ -133,6 +134,7 @@
             ms_excel       = #{msPowerPoint},
             hwp            = #{hwp},
             pdf            = #{pdf}
+        WHERE department_idx = #{UserIdx}
     </update>
     <update id="updateSecurityUsbDetails" parameterType="oms.pc_protector.restApi.policy.model.SecurityUsbDetailsVO">
         UPDATE security_usb_details
@@ -168,6 +170,7 @@
     <update id="updateForceRun" parameterType="boolean">
         UPDATE configuration
         SET force_run    = ${value}
+        WHERE department_idx = #{UserIdx}
     </update>
 
     <update id="updateNextSchedule" parameterType="oms.pc_protector.restApi.policy.model.NowScheduleVO">

@@ -95,8 +95,8 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public void updateForceRun(boolean param) {
-        configurationMapper.updateForceRun(param);
+    public void updateForceRun(boolean param, String UserIdx) {
+        configurationMapper.updateForceRun(param, UserIdx);
     }
 
     @Transactional

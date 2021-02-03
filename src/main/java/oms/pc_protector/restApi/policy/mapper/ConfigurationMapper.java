@@ -49,5 +49,5 @@ public interface ConfigurationMapper {
 
     public void updateNextSchedule(NowScheduleVO nowScheduleVO);
 
-    public void updateForceRun(boolean param);
+    public void updateForceRun(boolean param, String UserIdx);
 }

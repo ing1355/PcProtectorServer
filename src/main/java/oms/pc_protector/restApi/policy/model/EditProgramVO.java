@@ -13,5 +13,6 @@ public class EditProgramVO {
     private boolean hwp;
     private boolean pdf;
     private String idx;
+    private String UserIdx;
 }
 
