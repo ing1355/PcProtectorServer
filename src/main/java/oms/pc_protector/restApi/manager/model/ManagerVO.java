@@ -1,7 +1,6 @@
 package oms.pc_protector.restApi.manager.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +17,8 @@ public class ManagerVO {
     private String password;
     private String name;
     private String mobile;
+    private String department;
+    private String departmentIdx;
     private String email;
     private int locked;
 

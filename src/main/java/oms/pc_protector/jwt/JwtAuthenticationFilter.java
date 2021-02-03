@@ -131,6 +131,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             token = JWT.create()
                     .withSubject(principal.getUsername())
                     .withClaim("role", "MANAGER")
+                    .withClaim("idx", principal.getManagerVO().getDepartmentIdx())
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))
                     .withAudience(String.valueOf(passwordEncoder.matches("dmFWh++LdJf6eBKb/uhDwFfBybghv3ajctRl8EDNGUE", principal.getPassword())))
                     .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
@@ -148,6 +149,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     && !(logVO.getUri().contains(".woff")) && !(logVO.getUri().contains(".ttf"))) {
                 boolean hasClientURI = excludeURI(request);
                 if (!hasClientURI) logVO.setManagerId(principal.getUsername());
+                logVO.setDepartmentIdx(principal.getManagerVO().getDepartmentIdx());
                 logService.register(logVO);
             }
         } else {

@@ -9,13 +9,17 @@ import java.util.List;
 @Repository
 public interface DepartmentMapper {
 
-    public List<DepartmentVO> selectAll();
+    public List<DepartmentVO> selectAll(String idx);
 
     public Integer findUserInDepartment(String department);
 
+    public Integer findDepartmentCode(String code);
+
     public DepartmentVO selectByDepartment(String department);
 
-    public DepartmentVO selectBycode(Long departmentCode);
+    public DepartmentVO selectBycode(Long departmentIdx);
+
+    public DepartmentVO selectByDptCode(String code);
 
     public List<DepartmentVO> selectChildCodeDescByParentCode(Long parentCode);
 
@@ -23,12 +27,11 @@ public interface DepartmentMapper {
 
     public void registerByExcel(DepartmentVO departmentVO);
 
-    public void deleteAll();
+    public void deleteAll(String idx);
 
     public void insert(DepartmentVO departmentVO);
 
+    public void insertRoot(DepartmentVO departmentVO);
+
     public void update(UpdateDepartmentVO updateDepartmentVO);
-
-    public void deleteByDepartment(String department);
-
 }

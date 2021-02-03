@@ -7,7 +7,10 @@
         SELECT NVL(AVG(u.score), 0)
         FROM user_result u,
              dashboard_period da,
-             client c
+             (SELECT c.user_id, user.department_idx
+              FROM client c,
+                   user user
+              WHERE c.user_id = user.user_id) c
         WHERE u.user_id = c.user_id
           AND (u.item1_result +
                u.item2_result +
@@ -26,11 +29,16 @@
                u.item15_result +
                u.item16_result) > 0
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
-        AND u.in_schedule = 1
+          AND u.in_schedule = 1
+          AND c.department_idx LIKE CONCAT(#{departmentIdx}, '%')
     </select>
 
     <select id="selectClientCount" resultType="Integer">
-        SELECT COUNT(*) FROM client, user WHERE client.user_id = user.user_id;
+        SELECT COUNT(*)
+        FROM client,
+             user
+        WHERE client.user_id = user.user_id
+          AND user.department_idx LIKE CONCAT(#{departmentIdx}, '%')
     </select>
 
     <select id="selectAvgScoreByRecentMonths"
@@ -40,7 +48,8 @@
         FROM (SELECT c.user_id, c.ip_address
               FROM user u,
                    client c
-              WHERE u.user_id = c.user_id) AS t1
+              WHERE u.user_id = c.user_id
+                AND u.department_idx LIKE CONCAT(#{idx}, '%')) AS t1
                  LEFT OUTER JOIN
              (SELECT *,
                      ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
@@ -68,10 +77,19 @@
 
     <select id="selectUserCountByScore" resultType="Integer">
         SELECT COUNT(*)
-        FROM dashboard_period da, user_result t1, client c
-        WHERE c.user_id = t1.user_id AND c.ip_address = t1.ip_address
+        FROM dashboard_period da,
+             user_result t1,
+             (SELECT c.user_id, user.department_idx, c.ip_address
+              FROM client c,
+                   user user
+              WHERE c.user_id = user.user_id
+                AND c.department_idx LIKE CONCAT(#{idx}, '%')) c
+        WHERE c.user_id = t1.user_id
+          AND c.ip_address = t1.ip_address
           AND in_schedule = 1
-          AND DATE_FORMAT(t1.check_time,'%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
+          AND da.department_idx = t1.department_idx
+          AND c.department_idx = da.department_idx
+          AND DATE_FORMAT(t1.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND score BETWEEN #{startScore} AND #{endScore}
           AND (t1.item1_result +
                t1.item2_result +
@@ -91,15 +109,22 @@
                t1.item16_result) > 0
     </select>
 
-    <select id="selectDashboardPeriod" resultType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
+    <select id="selectAllDashboardPeriod" resultType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
         SELECT *
         FROM dashboard_period;
+    </select>
+
+    <select id="selectDashboardPeriod" resultType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
+        SELECT *
+        FROM dashboard_period
+        WHERE department_idx = #{departmentIdx};
     </select>
 
     <update id="dashboardPeriodUpdate" parameterType="oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO">
         UPDATE dashboard_period
         SET start_date = #{startDate},
             end_date   = #{endDate}
+        WHERE department_idx = #{departmentIdx}
     </update>
 
 </mapper>

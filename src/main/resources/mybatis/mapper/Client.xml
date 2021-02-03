@@ -3,7 +3,11 @@
 <mapper namespace="oms.pc_protector.restApi.client.mapper.ClientMapper">
 
     <select id="selectClientAll" resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client
+        SELECT c.idx, c.ip_address, c.user_id, c.mac_address, c.pc_name, c.os, c.pc_protector_version, c.vaccine_version,
+               c.check_time, c.create_time, c.update_time, c.wrong_md5, c.roles, c.active, c.department_idx
+        FROM client c, user u
+        WHERE c.user_id = u.user_id
+        AND u.department_idx LIKE CONCAT(#{idx}, '%');
     </select>
 
     <select id="selectClientHistory" parameterType="String"
@@ -15,16 +19,35 @@
     <select id="selectClientByIdIp" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
             resultType="int">
         SELECT COUNT(*) FROM client
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND department_idx = #{departmentIdx}
     </select>
 
     <select id="selectSameIpAddress" resultType="int" parameterType="String">
         SELECT COUNT(*) FROM client WHERE ip_address = #{value}
     </select>
 
+    <select id="selectClient" parameterType="String" resultType="Int">
+        SELECT COUNT(u.user_id)
+        FROM user u, (SELECT code FROM department WHERE dpt_code = #{code}) d
+        WHERE u.department_idx LIKE CONCAT(d.code, '%') AND u.user_id = #{id}
+    </select>
+
     <select id="selectById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client
-        WHERE user_id = #{userId}
+        SELECT c.idx,
+               c.ip_address,
+               c.user_id,
+               c.mac_address,
+               c.pc_name,
+               c.os,
+               c.pc_protector_version,
+               c.vaccine_version,
+               c.check_time,
+               c.create_time,
+               c.update_time,
+               c.wrong_md5,
+               c.roles,
+               c.active FROM client c, user u
+        WHERE c.user_id = #{id} AND c.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%')
     </select>
 
     <select id="selectClientHistoryFirstById" parameterType="String"
@@ -47,6 +70,7 @@
                             pc_protector_version,
                             pc_name,
                             check_time,
+                            department_idx,
                             roles)
         VALUES (#{userId},
                 #{ipAddress},
@@ -55,6 +79,7 @@
                 #{pcProtectorVersion},
                 #{pcName},
                 #{checkTime},
+                #{departmentIdx},
                 'CLIENT');
     </insert>
 
@@ -66,7 +91,8 @@
                             pc_protector_version,
                             pc_name,
                             check_time,
-                            roles)
+                            roles,
+                            department_idx)
         VALUES (#{userId},
                 #{ipAddress},
                 #{macAddress},
@@ -74,7 +100,8 @@
                 #{pcProtectorVersion},
                 #{pcName},
                 #{checkTime},
-                'CLIENT');
+                'CLIENT',
+                #{departmentIdx});
     </insert>
 
     <update id="loginUpdateTime" parameterType="String">
@@ -91,7 +118,7 @@
             pc_name              = #{pcName},
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE user_id = #{userId};
+        WHERE user_id = #{userId} AND department_idx = #{departmentIdx};
     </update>
 
     <update id="updateClientHistoryInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -102,7 +129,7 @@
             pc_name              = #{pcName},
             pc_protector_version = #{pcProtectorVersion},
             check_time          = now()
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND department_idx = #{departmentIdx}
         ORDER BY check_time DESC
         LIMIT 1
     </update>

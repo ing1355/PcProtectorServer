@@ -20,7 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -45,6 +47,8 @@ public class ClientFileController {
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+
         String b64 = "";
         for(int i=0;i<inputFile.getB64temp().length;i++) {
             b64 += inputFile.getB64temp()[i];
@@ -64,13 +68,14 @@ public class ClientFileController {
                 .fileSize(inputFile.getFileSize())
                 .md5(fileMd5)
                 .version(inputFile.getVersion())
+                .idx(User_Idx)
                 .build();
-        if (clientFileService.findExistMd5(fileMd5)) {
+        if (clientFileService.findExistMd5(fileMd5, User_Idx)) {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         } else {
             log.info("FILE 등록");
-            ArrayList<String> version_list = clientFileService.selectVersionList();
+            ArrayList<String> version_list = clientFileService.selectVersionList(User_Idx);
             String[] req_version = inputFile.getVersion().split("[.]");
             for (String res_version : version_list) {
                 String[] temp = res_version.split("[.]");
@@ -86,19 +91,22 @@ public class ClientFileController {
             clientFileService.registerClientFile(clientFileVO);
         }
 
-        return responseService.getSingleResult(clientFileService.findClientFile());
+        return responseService.getSingleResult(clientFileService.findClientFile(User_Idx));
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> findClientFileAll() {
-        List<ClientFileVO> clientFile = clientFileService.findClientFile();
+    public SingleResult<?> findClientFileAll(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<ClientFileVO> clientFile = clientFileService.findClientFile(User_Idx);
         return responseService.getSingleResult(clientFile);
     }
 
     @PostMapping(value = "update")
     public SingleResult<?> updateClientFile(@RequestPart("version") String version,
                                             @RequestParam MultipartFile file,
+                                            HttpServletRequest httpServletRequest,
                                             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         long fileSize = file.getSize();
         final InputStream inputStream = file.getInputStream();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -123,12 +131,13 @@ public class ClientFileController {
         log.info("FILE 버전 : " + version);
         log.info("MD5 : " + fileMd5);
 
-        if (clientFileService.findExistMd5(fileMd5)) {
+        if (clientFileService.findExistMd5(fileMd5, User_Idx)) {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         }
+        clientFileVO.setIdx(User_Idx);
         clientFileService.update(clientFileVO);
-        return responseService.getSingleResult(clientFileService.findClientFile());
+        return responseService.getSingleResult(clientFileService.findClientFile(User_Idx));
     }
 
     public boolean fileCheckFunction(@RequestParam MultipartFile file, HttpServletResponse httpServletResponse, InputStream inputStream, long fileSize) throws IOException {
@@ -153,10 +162,12 @@ public class ClientFileController {
     }
 
     @PutMapping(value = "delete")
-    public SingleResult<?> deleteClientFile(@RequestBody List<ClientFileVO> clientFileVO) {
-        int row_num = clientFileService.removeClientFile(clientFileVO);
+    public SingleResult<?> deleteClientFile(@RequestBody List<ClientFileVO> clientFileVO,
+                                            HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        int row_num = clientFileService.removeClientFile(clientFileVO, User_Idx);
 
-        return responseService.getSingleResult(clientFileService.findClientFile());
+        return responseService.getSingleResult(clientFileService.findClientFile(User_Idx));
     }
 
 }

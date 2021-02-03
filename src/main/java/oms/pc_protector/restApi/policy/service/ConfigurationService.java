@@ -44,30 +44,33 @@ public class ConfigurationService {
 
 
     @Transactional
-    public LinkedHashMap findConfiguration() {
+    public LinkedHashMap findConfiguration(String idx) {
         LinkedHashMap<String, Object> configMap = new LinkedHashMap<>();
-        ConfigurationVO configurationVO = configurationMapper.selectConfiguration();
-        SecurityUsbDetailsVO securityUsbMap = findSecurityUsbDetails();
-        EditProgramVO editProgramVO = findEditProgramFlag();
+        ConfigurationVO configurationVO = configurationMapper.selectConfiguration(idx);
+        SecurityUsbDetailsVO securityUsbMap = findSecurityUsbDetails(idx);
+        EditProgramVO editProgramVO = findEditProgramFlag(idx);
         if (configurationVO == null) {
             ConfigurationVO empty_config = new ConfigurationVO();
+            empty_config.setIdx(idx);
             configurationMapper.insertConfiguration(empty_config);
         } else {
             configMap.put("config", configurationVO);
         }
         if (editProgramVO == null) {
             EditProgramVO empty_edit = new EditProgramVO();
+            empty_edit.setIdx(idx);
             configurationMapper.insertEditProgramFlag(empty_edit);
         } else {
             configMap.put("editProgram_set", editProgramVO);
         }
         if (securityUsbMap == null) {
             SecurityUsbDetailsVO empty_security = new SecurityUsbDetailsVO();
+            empty_security.setIdx(idx);
             configurationMapper.insertSecurityUsbDetails(empty_security);
         } else {
             configMap.put("securityUsb_input", securityUsbMap);
         }
-        configMap.put("force_run", configurationMapper.selectForceRun());
+        configMap.put("force_run", configurationMapper.selectForceRun(idx));
         return configMap;
     }
 
@@ -78,7 +81,7 @@ public class ConfigurationService {
 
     @Transactional
     public void updateSecurityUsbDetails_service(SecurityUsbDetailsVO securityUsbDetailsVO) {
-        if(configurationMapper.countSecurityUsbDetails() == 0) {
+        if(configurationMapper.countSecurityUsbDetails(securityUsbDetailsVO.getIdx()) == 0) {
             configurationMapper.insertSecurityUsbDetails(securityUsbDetailsVO);
         }
         else {
@@ -97,20 +100,20 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public List<PeriodDateVO> findScheduleAll() {
-        return Optional.ofNullable(configurationMapper.selectScheduleAll())
+    public List<PeriodDateVO> findScheduleAll(String idx) {
+        return Optional.ofNullable(configurationMapper.selectScheduleAll(idx))
                 .orElseGet(ArrayList::new);
     }
 
     @Transactional
-    public NowScheduleVO findNextSchedule() {
-        return configurationMapper.selectNextSchedule();
+    public NowScheduleVO findNextSchedule(String idx) {
+        return configurationMapper.selectNextSchedule(idx);
     }
 
 
     @Transactional
-    public PeriodDateVO findAppliedSchedule() {
-        return Optional.ofNullable(configurationMapper.selectAppliedSchedule())
+    public PeriodDateVO findAppliedSchedule(String idx) {
+        return Optional.ofNullable(configurationMapper.selectAppliedSchedule(idx))
                 .orElseGet(PeriodDateVO::new);
     }
 
@@ -124,7 +127,7 @@ public class ConfigurationService {
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) throws ParseException {
         PeriodDateVO Now_Schedule = requestPeriodDateVO.getNew_data();
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(requestPeriodDateVO.getDepartmentIdx());
         SimpleDateFormat dfm = new SimpleDateFormat("yyyy-MM");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -133,7 +136,7 @@ public class ConfigurationService {
         Calendar end = Calendar.getInstance();
         Calendar next_end = Calendar.getInstance();
         Calendar now = Calendar.getInstance();
-        List<ClientVO> temp = clientMapper.selectClientAll();
+        List<ClientVO> temp = clientMapper.selectClientAll(requestPeriodDateVO.getDepartmentIdx());
 
         if (Now_Schedule.getPeriod() == 1) { // 매달
             start.set(Calendar.WEEK_OF_MONTH, Now_Schedule.getFromWeek());
@@ -212,9 +215,9 @@ public class ConfigurationService {
         if ((start.getTime().compareTo(dash_start.getTime()) >= 0 && start.getTime().compareTo(dash_end.getTime()) <= 0) ||
                 (end.getTime().compareTo(dash_start.getTime()) >= 0 && end.getTime().compareTo(dash_end.getTime()) <= 0) ||
                 now.getTime().compareTo(start.getTime()) > 0) {
-            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime())));
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(next_start.getTime()), df.format(next_end.getTime()), requestPeriodDateVO.getDepartmentIdx()));
         } else {
-            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime())));
+            configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime()), requestPeriodDateVO.getDepartmentIdx()));
         }
         return configurationMapper.updateSchedule(requestPeriodDateVO.getNew_data());
     }
@@ -230,28 +233,28 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public boolean hasAppliedFlag() {
-        return configurationMapper.selectAppliedFlag();
+    public boolean hasAppliedFlag(String idx) {
+        return configurationMapper.selectAppliedFlag(idx);
     }
 
 
     @Transactional
-    public SecurityUsbDetailsVO findSecurityUsbDetails() {
-        return Optional.ofNullable(configurationMapper.selectSecurityUsbDetails())
+    public SecurityUsbDetailsVO findSecurityUsbDetails(String idx) {
+        return Optional.ofNullable(configurationMapper.selectSecurityUsbDetails(idx))
                 .orElseGet(SecurityUsbDetailsVO::new);
     }
 
 
     @Transactional
-    public EditProgramVO findEditProgramFlag() {
-        return configurationMapper.selectEditProgramFlag();
+    public EditProgramVO findEditProgramFlag(String idx) {
+        return configurationMapper.selectEditProgramFlag(idx);
     }
 
 
     @Transactional
-    public ForceRunVO findForceRun() {
+    public ForceRunVO findForceRun(String idx) {
         ForceRunVO forceRunVO = new ForceRunVO();
-        forceRunVO.setForceRun(configurationMapper.selectForceRun());
+        forceRunVO.setForceRun(configurationMapper.selectForceRun(idx));
         return forceRunVO;
     }
 
@@ -259,7 +262,7 @@ public class ConfigurationService {
     // 클라이언트에게 보내는 정책 설정.
     // 차후 리팩토링 필요한 메소드.
     @Transactional
-    public HashMap findConfigurationToClient() {
+    public HashMap findConfigurationToClient(String idx) {
         HashMap<String, Object> map = new HashMap<>();
         HashMap<String, Object> securityUsbMap = new HashMap<>();
         HashMap<String, Object> unApprovedProcessMap = new HashMap<>();
@@ -267,8 +270,8 @@ public class ConfigurationService {
         HashMap<String, Object> periodDateMap = new HashMap<>();
         HashMap<String, Object> editProgram = new HashMap<>();
 
-        ConfigurationVO configurationVO = configurationMapper.selectConfiguration();
-        EditProgramVO editProgramVO = findEditProgramFlag();
+        ConfigurationVO configurationVO = configurationMapper.selectConfiguration(idx);
+        EditProgramVO editProgramVO = findEditProgramFlag(idx);
 
         boolean vaccineInstallationExecution = configurationVO.isVaccineInstallationExecution();
         boolean vaccinePatch = configurationVO.isVaccinePatch();
@@ -289,19 +292,19 @@ public class ConfigurationService {
         boolean requiredProcess = configurationVO.isRequiredProcess();
 
         securityUsbMap.put("securityUsbCheck", securityUsb);
-        securityUsbMap.put("securityUsbArray", findSecurityUsbDetails());
+        securityUsbMap.put("securityUsbArray", findSecurityUsbDetails(idx));
 
         unApprovedProcessMap.put("unapprovedProcessCheck", unApprovedProcess);
-        unApprovedProcessMap.put("unapprovedProcessArray", processService.findUnApprovedProcessList());
+        unApprovedProcessMap.put("unapprovedProcessArray", processService.findUnApprovedProcessList(idx));
 
         requiredProcessMap.put("requiredProcessCheck", requiredProcess);
-        requiredProcessMap.put("requiredProcessArray", processService.findRequiredProcessList());
+        requiredProcessMap.put("requiredProcessArray", processService.findRequiredProcessList(idx));
 
-        periodDateMap.put("periodDateCheck", hasAppliedFlag());
-        periodDateMap.put("periodDateArray", findAppliedSchedule());
-        periodDateMap.put("nextPeriodDateArray", findNextSchedule());
+        periodDateMap.put("periodDateCheck", hasAppliedFlag(idx));
+        periodDateMap.put("periodDateArray", findAppliedSchedule(idx));
+        periodDateMap.put("nextPeriodDateArray", findNextSchedule(idx));
 
-        boolean forceRun = (boolean) Optional.ofNullable(findConfiguration()
+        boolean forceRun = (boolean) Optional.ofNullable(findConfiguration(idx)
                 .get("forceRun")).orElse(false);
 
         editProgram.put("editProgramInstalledCheck", editProgramFlag);

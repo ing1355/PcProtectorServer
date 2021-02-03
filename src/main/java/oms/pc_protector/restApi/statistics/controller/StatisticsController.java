@@ -4,10 +4,9 @@ package oms.pc_protector.restApi.statistics.controller;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.statistics.service.StatisticsService;
-import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,8 +26,10 @@ public class StatisticsController {
 
     @GetMapping(value = "")
     public SingleResult<?> findAll(@RequestParam(required = false) String yearMonth,
-                                   @RequestParam(required = false) String department) {
-        List<HashMap<String, Object>> result = statisticsService.findAllByYearMonthOrDepartment(yearMonth, department);
+                                   @RequestParam(required = false) String department,
+                                   HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<HashMap<String, Object>> result = statisticsService.findAllByYearMonthOrDepartment(yearMonth, department, User_Idx);
         return responseService.getSingleResult(result);
     }
 

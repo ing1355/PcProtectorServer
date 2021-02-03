@@ -1,12 +1,9 @@
 package oms.pc_protector.restApi.process.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotEmpty;
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -23,6 +20,8 @@ public class ProcessVO {
     private String registryItem;
 
     private String type = "none";
+
+    private String departmentIdx;
 
     public ProcessVO(String displayName, String registryItem) {
         this.displayName = displayName;

@@ -40,16 +40,16 @@ public class StatisticsService {
 
 
     @Transactional(readOnly = true)
-    public List<HashMap<String, Object>> findAllByYearMonthOrDepartment(String yearMonth, String department) {
+    public List<HashMap<String, Object>> findAllByYearMonthOrDepartment(String yearMonth, String department, String User_Idx) {
         double beforeTime = System.currentTimeMillis();
         List<HashMap<String, Object>> departmentResultMap = new ArrayList<>();
         List<DepartmentVO> departmentList = new ArrayList<>();
 
         if (department == null) {
-            departmentList = departmentService.findAll();
+            departmentList = departmentService.findAll(User_Idx);
         } else {
             Long parentCode = departmentService.findByDepartment(department).getCode();
-            departmentList.add(departmentService.findByDepartmentCode(parentCode));
+            departmentList.add(departmentService.findByDepartmentIdx(parentCode));
             departmentList.addAll(departmentService.findChildDescByParentCode(parentCode));
         }
 
@@ -104,7 +104,7 @@ public class StatisticsService {
                     safePcDivideRunPc[i] = (double)(( safePc[i] / (double)runPcAndScoreVO.getRunPc() ) * 100);
             }
             objectMap.put("departmentName", departmentVO.getName());
-            objectMap.put("departmentCode", departmentVO.getCode());
+            objectMap.put("departmentIdx", departmentVO.getCode());
             objectMap.put("totalPc", TotalPc);
             objectMap.put("runPc", runPcAndScoreVO.getRunPc());
             objectMap.put("avgScore", runPcAndScoreVO.getScore());
@@ -144,8 +144,8 @@ public class StatisticsService {
         Collections.sort(list, new Comparator<HashMap<String, Object>>() {
             @Override
             public int compare(HashMap<String, Object> o1, HashMap<String, Object> o2) {
-                Long score1 = (Long) o1.get("departmentCode");
-                Long score2 = (Long) o2.get("departmentCode");
+                Long score1 = (Long) o1.get("departmentIdx");
+                Long score2 = (Long) o2.get("departmentIdx");
                 return score1.compareTo(score2);
             }
         });

@@ -9,25 +9,23 @@ import java.util.List;
 @Repository
 public interface ConfigurationMapper {
 
-    public ConfigurationVO selectConfiguration();
+    public ConfigurationVO selectConfiguration(String idx);
 
-    public SecurityUsbDetailsVO selectSecurityUsbDetails();
+    public SecurityUsbDetailsVO selectSecurityUsbDetails(String idx);
 
-    public List<PeriodDateVO> selectScheduleAll();
+    public List<PeriodDateVO> selectScheduleAll(String idx);
 
-    public PeriodDateVO selectAppliedSchedule();
+    public PeriodDateVO selectAppliedSchedule(String idx);
 
-    public int countSecurityUsbDetails();
+    public int countSecurityUsbDetails(String idx);
 
-    public boolean selectAppliedFlag();
+    public boolean selectAppliedFlag(String idx);
 
-    public boolean selectForceRun();
+    public boolean selectForceRun(String idx);
 
-    public EditProgramVO selectEditProgramFlag();
+    public EditProgramVO selectEditProgramFlag(String idx);
 
-    public NowScheduleVO selectNextSchedule();
-
-    public int selectNextScheduleCount();
+    public NowScheduleVO selectNextSchedule(String idx);
 
     public int insertConfiguration(ConfigurationVO configurationVO);
 
@@ -38,8 +36,6 @@ public interface ConfigurationMapper {
     public int updateSecurityUsbDetails(SecurityUsbDetailsVO securityUsbDetailsVO);
 
     public int insertSchedule(PeriodDateVO periodDateVO);
-
-    public int insertNextSchedule(NowScheduleVO nowScheduleVO);
 
     public int updateSchedule(@Param("new_data") PeriodDateVO periodDateVO_new);
 

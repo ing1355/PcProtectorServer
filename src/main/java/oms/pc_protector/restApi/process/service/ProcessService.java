@@ -1,7 +1,7 @@
 package oms.pc_protector.restApi.process.service;
 
-import oms.pc_protector.restApi.process.mapper.ProcessMapper;
 import lombok.extern.slf4j.Slf4j;
+import oms.pc_protector.restApi.process.mapper.ProcessMapper;
 import oms.pc_protector.restApi.process.model.ProcessVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +26,11 @@ public class ProcessService {
 
     /* Client로 받은 프로세스 목록을 등록한다. */
     @Transactional
-    public int insertProcess(List<ProcessVO> processVOList) throws UnsupportedEncodingException {
+    public int insertProcess(List<ProcessVO> processVOList, String idx) throws UnsupportedEncodingException {
         int resultNum = 0;
         if (processVOList == null) return resultNum;
         for (ProcessVO processVO : processVOList) {
+            processVO.setDepartmentIdx(idx);
             if (processMapper.existProcess(processVO) == null) {
                 resultNum += processMapper.insertProcess(processVO);
             }
@@ -41,8 +42,8 @@ public class ProcessService {
 
     /* 해당 종류의 프로세스 모든 정보 목록을 가져온다.*/
     @Transactional(readOnly = true)
-    public List<ProcessVO> findProcessByType(String processType) {
-        return processMapper.selectProcessList(processType);
+    public List<ProcessVO> findProcessByType(String processType, String idx) {
+        return processMapper.selectProcessList(processType, idx);
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +52,7 @@ public class ProcessService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProcessVO> searchProcess(String displayName, String registryName) throws UnsupportedEncodingException {
+    public List<ProcessVO> searchProcess(String displayName, String registryName, String User_Idx) throws UnsupportedEncodingException {
         displayName = URLDecoder.decode(displayName, "UTF-8");
         registryName = URLDecoder.decode(registryName, "UTF-8");
         if (displayName.contains("\\")) {
@@ -66,14 +67,14 @@ public class ProcessService {
         if (registryName.contains("%")) {
             registryName = registryName.replace("%", "\\%");
         }
-        return processMapper.searchProcess(displayName, registryName);
+        return processMapper.searchProcess(displayName, registryName, User_Idx);
     }
 
     /* 해당 종류의 프로세스 Registry Item 목록을 가져온다. */
     @Transactional(readOnly = true)
-    public List<ProcessVO> findRegistryItem(String processType) {
+    public List<ProcessVO> findRegistryItem(String processType, String idx) {
         List<ProcessVO> result = new ArrayList<>();
-        List<ProcessVO> list = findProcessByType(processType);
+        List<ProcessVO> list = findProcessByType(processType, idx);
         for (ProcessVO process : list) {
             result.add(process);
         }
@@ -81,8 +82,8 @@ public class ProcessService {
     }
 
 
-    public List<ProcessVO> findProcessAll() {
-        return processMapper.selectProcessAll();
+    public List<ProcessVO> findProcessAll(String User_Idx) {
+        return processMapper.selectProcessAll(User_Idx);
     }
 
 
@@ -97,8 +98,8 @@ public class ProcessService {
 
 
     @Transactional
-    public List<ProcessVO> findUnApprovedProcessList() {
-        return Optional.ofNullable(findRegistryItem("unApproved"))
+    public List<ProcessVO> findUnApprovedProcessList(String idx) {
+        return Optional.ofNullable(findRegistryItem("unApproved", idx))
                 .orElseGet(ArrayList::new);
     }
 
@@ -111,13 +112,13 @@ public class ProcessService {
     @Transactional
     public List<ProcessVO> insertUnApprovedProcess(ProcessVO processVO) throws UnsupportedEncodingException {
         processMapper.insertUnApprovedProcess(processVO);
-        return processMapper.selectProcessList("unApproved");
+        return processMapper.selectProcessList("unApproved",processVO.getDepartmentIdx());
     }
 
     @Transactional
     public List<ProcessVO> insertRequiredProcess(ProcessVO processVO) throws UnsupportedEncodingException {
         processMapper.insertRequiredProcess(processVO);
-        return processMapper.selectProcessList("required");
+        return processMapper.selectProcessList("required", processVO.getDepartmentIdx());
     }
 
 
@@ -132,8 +133,8 @@ public class ProcessService {
     }
 
     @Transactional
-    public List<ProcessVO> findRequiredProcessList() {
-        return Optional.ofNullable(findRegistryItem("required"))
+    public List<ProcessVO> findRequiredProcessList(String idx) {
+        return Optional.ofNullable(findRegistryItem("required", idx))
                 .orElseGet(ArrayList::new);
     }
 }

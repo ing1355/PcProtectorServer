@@ -9,7 +9,7 @@
     <select id="loginForClientFirst" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
             resultType="int">
         SELECT COUNT(*) FROM client
-        WHERE user_id = #{userId} OR mac_address = #{macAddress}
+        WHERE user_id = #{userId} OR mac_address = #{macAddress} AND department_idx = #{departmentIdx}
     </select>
 
     <select id="findClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO"

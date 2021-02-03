@@ -3,8 +3,6 @@ package oms.pc_protector.restApi.policy.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 public class ConfigurationVO {
@@ -25,4 +23,5 @@ public class ConfigurationVO {
     private boolean acrobatSecurityPatch;
     private boolean unApprovedProcess;
     private boolean requiredProcess;
+    private String idx;
 }

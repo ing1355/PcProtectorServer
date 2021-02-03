@@ -1,19 +1,18 @@
 package oms.pc_protector.restApi.result.controller;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
-import oms.pc_protector.restApi.result.model.ResponseResultVO;
 import oms.pc_protector.restApi.result.model.ResultVO;
 import oms.pc_protector.restApi.result.model.SearchInputVO;
 import oms.pc_protector.restApi.result.service.ResultService;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
-import lombok.extern.slf4j.Slf4j;
-import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @CrossOrigin
@@ -32,9 +31,10 @@ public class ResultController {
 
     // 모든 점검결과를 가져온다.
     @GetMapping(value = "")
-    public SingleResult<?> findAllResult() {
+    public SingleResult<?> findAllResult(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         HashMap<String, Object> map = new HashMap<>();
-        List<?> list = resultService.findAllResult();
+        List<?> list = resultService.findAllResult(User_Idx);
         return responseService.getSingleResult(list);
     }
 
@@ -62,14 +62,16 @@ public class ResultController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
-            @RequestParam(value = "departmentCode", required = false) Long departmentCode) {
+            @RequestParam(value = "departmentIdx", required = false) Long departmentIdx,
+            HttpServletRequest httpServletRequest) {
         SearchInputVO searchInputVO = new SearchInputVO();
         searchInputVO.setUserId(id);
         searchInputVO.setName(name);
         searchInputVO.setIpAddress(ipAddress);
         searchInputVO.setStartDate(startDate);
         searchInputVO.setEndDate(endDate);
-        searchInputVO.setDepartmentCode(departmentCode);
+        searchInputVO.setDepartmentIdx(departmentIdx);
+        searchInputVO.setUserIdx(httpServletRequest.getHeader("dptIdx"));
         List<?> list = resultService.findBySearchInput(searchInputVO);
         return responseService.getSingleResult(list);
     }
@@ -78,8 +80,10 @@ public class ResultController {
     //사용자 관리 - 상세 보기 전용
     @GetMapping(value = "/userstaticbyid")
     public SingleResult<?> findUserDetailStaticInfo(
-            @RequestParam(value = "id") String id) {
-        List<ResultVO> list = resultService.findUserDetailStaticInfo(id);
+            @RequestParam(value = "id") String id,
+            HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<ResultVO> list = resultService.findUserDetailStaticInfo(id, User_Idx);
         return responseService.getSingleResult(list);
     }
 }

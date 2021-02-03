@@ -28,32 +28,32 @@ public class ClientFileService {
     }
 
     @Transactional
-    public List<ClientFileVO> findClientFile() {
-        return Optional.ofNullable(clientFileMapper.selectClientFile())
+    public List<ClientFileVO> findClientFile(String User_Idx) {
+        return Optional.ofNullable(clientFileMapper.selectClientFile(User_Idx))
                 .orElseThrow(() -> new RuntimeException("등록된 파일이 없습니다."));
     }
 
     @Transactional
-    public ClientFileVO findClientFileRecent() {
-        return Optional.ofNullable(clientFileMapper.selectClientFileRecent())
+    public ClientFileVO findClientFileRecent(String idx) {
+        return Optional.ofNullable(clientFileMapper.selectClientFileRecent(idx))
                 .orElse(null);
     }
 
     @Transactional
-    public ArrayList<String> selectVersionList() {
-        return Optional.ofNullable(clientFileMapper.selectVersionList())
+    public ArrayList<String> selectVersionList(String User_Idx) {
+        return Optional.ofNullable(clientFileMapper.selectVersionList(User_Idx))
                 .orElse(null);
     }
 
     @Transactional
-    public String findRecentMd5() {
-        return Optional.ofNullable(findClientFileRecent())
+    public String findRecentMd5(String idx) {
+        return Optional.ofNullable(findClientFileRecent(idx))
                 .map(ClientFileVO::getMd5).orElse("");
     }
 
     @Transactional
-    public String findRecentVersion() {
-        return Optional.ofNullable(findClientFileRecent())
+    public String findRecentVersion(String idx) {
+        return Optional.ofNullable(findClientFileRecent(idx))
                 .map(ClientFileVO::getVersion).orElse("");
     }
 
@@ -65,24 +65,18 @@ public class ClientFileService {
 
 
     @Transactional
-    public int removeClientFile(List<ClientFileVO> clientFileVO) {
+    public int removeClientFile(List<ClientFileVO> clientFileVO, String idx) {
         int temp = 0;
         for(ClientFileVO clientFileVO1 : clientFileVO) {
+            clientFileVO1.setIdx(idx);
             temp = clientFileMapper.deleteClientFile(clientFileVO1);
         }
         return temp;
     }
 
-
     @Transactional
-    public boolean findExistFile(String version) {
-        int result = clientFileMapper.selectExistFile(version);
-        return result > 0;
-    }
-
-    @Transactional
-    public boolean findExistMd5(String md5) {
-        int result = clientFileMapper.selectExistMd5(md5);
+    public boolean findExistMd5(String md5, String User_Idx) {
+        int result = clientFileMapper.selectExistMd5(md5, User_Idx);
         return result > 0;
     }
 

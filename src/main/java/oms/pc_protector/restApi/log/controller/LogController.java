@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.log.model.LogRequestVO;
-import oms.pc_protector.restApi.log.model.LogVO;
 import oms.pc_protector.restApi.log.service.LogService;
 import oms.pc_protector.restApi.result.service.ResultService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +31,9 @@ public class LogController {
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> getAllLog() {
-        List<?> result = logService.getAllLog();
+    public SingleResult<?> getAllLog(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<?> result = logService.getAllLog(User_Idx);
         return responseService.getSingleResult(result);
     }
 
@@ -41,15 +42,17 @@ public class LogController {
             @RequestParam(value = "userId", required = false) String userId,
             @RequestParam(value = "ipAddress", required = false) String ipAddress,
             @RequestParam(value = "startDay", required = false) String startDay,
-            @RequestParam(value = "endDay", required = false) String endDay) throws ParseException {
+            @RequestParam(value = "endDay", required = false) String endDay,
+            HttpServletRequest httpServletRequest) throws ParseException {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         HashMap<String, Object> map = new HashMap<>();
         LogRequestVO logRequestVO = new LogRequestVO();
+        logRequestVO.setDepartmentIdx(User_Idx);
         Optional.ofNullable(userId).ifPresent(logRequestVO::setManagerId);
         Optional.ofNullable(ipAddress).ifPresent(logRequestVO::setIpAddress);
         Optional.ofNullable(startDay).ifPresent(logRequestVO::setStartDay);
         Optional.ofNullable(endDay).ifPresent(logRequestVO::setEndDay);
         List<?> list = logService.search(logRequestVO);
-        map.put("results", list);
-        return responseService.getSingleResult(map);
+        return responseService.getSingleResult(list);
     }
 }

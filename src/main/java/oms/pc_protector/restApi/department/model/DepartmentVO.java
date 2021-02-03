@@ -10,4 +10,6 @@ public class DepartmentVO {
     private String name;
     private Long code;
     private Long parentCode;
+    private String idx;
+    private String dptCode;
 }

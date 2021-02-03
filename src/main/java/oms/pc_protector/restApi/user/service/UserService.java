@@ -8,7 +8,6 @@ import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
-import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
 import oms.pc_protector.restApi.user.model.*;
@@ -30,12 +29,12 @@ public class UserService {
     private final ResultMapper resultMapper;
     private final DashboardMapper dashboardMapper;
 
-    public UserService(UserMapper userMapper,
-                       ClientMapper clientMapper,
+    public UserService(ClientMapper clientMapper,
                        ClientService clientService,
                        DepartmentService departmentService,
                        ResultMapper resultMapper,
-                       DashboardMapper dashboardMapper) {
+                       DashboardMapper dashboardMapper,
+                       UserMapper userMapper) {
         this.userMapper = userMapper;
         this.clientMapper = clientMapper;
         this.clientService = clientService;
@@ -46,15 +45,15 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> findAll() {
-        return Optional.ofNullable(userMapper.selectUserInfoAll())
+    public List<UserVO> findAll(String User_Idx) {
+        return Optional.ofNullable(userMapper.selectUserInfoAll(User_Idx))
                 .orElseGet(ArrayList::new);
     }
 
 
     @Transactional
-    public boolean findSameId(String id) {
-        int result = userMapper.selectSameId(id);
+    public boolean findSameId(String id, String User_Idx) {
+        int result = userMapper.selectSameId(id, User_Idx);
         return result > 0;
     }
 
@@ -62,13 +61,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<UserVO> findBySearchInput(UserSearchInputVO userSearchVO) {
         List<UserVO> userList = new ArrayList<>();
-        if (userSearchVO.getDepartmentCode() != null) {
-            Long code = userSearchVO.getDepartmentCode();
+        if (userSearchVO.getDepartmentIdx() != null) {
+            Long code = userSearchVO.getDepartmentIdx();
             List<DepartmentVO> childCodeList = new ArrayList<>();
-            childCodeList.add(departmentService.findByDepartmentCode(code));
+            childCodeList.add(departmentService.findByDepartmentIdx(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));
             for (DepartmentVO childCode : childCodeList) {
-                userSearchVO.setDepartmentCode(childCode.getCode());
+                userSearchVO.setDepartmentIdx(childCode.getCode());
                 userList.addAll(userMapper.search(userSearchVO));
             }
             return userList;
@@ -93,8 +92,8 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public UserVO findById(String id) {
-        return Optional.ofNullable(userMapper.selectById(id))
+    public UserVO findById(String id, String code) {
+        return Optional.ofNullable(userMapper.selectById(id, code))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
     }
 
@@ -107,8 +106,8 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public List<UserVO> findByDepartmentCode(Long departmentCode) {
-        return Optional.ofNullable(userMapper.selectByDepartmentCode(departmentCode))
+    public List<UserVO> findByDepartmentIdx(Long departmentIdx) {
+        return Optional.ofNullable(userMapper.selectByDepartmentIdx(departmentIdx))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 부서코드입니다."));
     }
 
@@ -120,8 +119,8 @@ public class UserService {
 
 
     @Transactional(readOnly = true)
-    public boolean duplicateCheckId(String id) {
-        List<UserVO> clientList = findAll();
+    public boolean duplicateCheckId(String id, String UserIdx) {
+        List<UserVO> clientList = findAll(UserIdx);
         for (UserVO user : clientList) {
             if (user.getUserId().equals(id)) return true;
         }
@@ -146,7 +145,7 @@ public class UserService {
             log.info("-------------------------");
             log.info("ID : {}", user.getUserId());
             log.info("NAME {}: ", user.getName());
-            log.info("DEPARTMENTCODE : {}", user.getDepartmentCode());
+            log.info("DEPARTMENTIDX : {}", user.getDepartmentIdx());
             log.info("DEPARTMENT : {}", user.getDepartment());
             log.info("PHONE : {}", user.getPhone());
             log.info("EMAIL : {}", user.getEmail());
@@ -163,30 +162,18 @@ public class UserService {
     }
 
     @Transactional
-    public boolean modifyUserInfo(String id, UserRequestVO userRequestVO) {
-        UserVO userVO = findById(id);
-        userVO.setName(userRequestVO.getName());
-        userVO.setDepartmentCode(userRequestVO.getDepartmentCode());
-        userVO.setDepartment(userRequestVO.getDepartment());
-        userVO.setEmail(userRequestVO.getEmail());
-        userVO.setPhone(userRequestVO.getPhone());
-        return userMapper.updateUserInfo(userVO);
-    }
-
-
-    @Transactional
-    public boolean removeUserInfo(String id) {
-        return Optional.of(userMapper.deleteUserInfo(id))
+    public boolean removeUserInfo(String id, String User_Idx) {
+        return Optional.of(userMapper.deleteUserInfo(id, User_Idx))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
     }
 
 
     @Transactional
-    public boolean agentLogin(ClientVO clientVO, ConfigurationService configurationService) throws ParseException {
-        boolean duplicateId = duplicateCheckId(clientVO.getUserId());
-        ClientVO client_prev = clientMapper.selectById(clientVO.getUserId());
+    public boolean agentLogin(ClientVO clientVO) throws ParseException {
+        boolean duplicateId = duplicateCheckId(clientVO.getUserId(), clientVO.getDepartmentIdx());
+        ClientVO client_prev = clientMapper.selectById(clientVO.getUserId(), clientVO.getDepartmentIdx());
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(clientVO.getDepartmentIdx().substring(0,3));
         Date d1 = df.parse(dashboardPeriodVO.getStartDate());
         Date d2 = df.parse(dashboardPeriodVO.getEndDate());
         Calendar start = Calendar.getInstance();
@@ -200,7 +187,7 @@ public class UserService {
             log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
 
             clientVO.setCheckTime(df.format(now.getTime()));
-            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress()) == 0 &&
+            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress(), clientVO.getDepartmentIdx().substring(0,3)) == 0 &&
                 start.getTime().compareTo(now.getTime()) <= 0 && end.getTime().compareTo(now.getTime()) >= 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
             }

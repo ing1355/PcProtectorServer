@@ -10,6 +10,7 @@
         WHERE t2.user_id = t3.user_id
           AND t1.user_id = t3.user_id
           AND t1.in_schedule = 1
+          AND t2.department_idx LIKE CONCAT(#{idx}, '%')
         ORDER BY t1.check_time DESC
     </select>
 
@@ -25,7 +26,7 @@
     <select id="selectResultProcessById" resultType="oms.pc_protector.restApi.result.model.ResultProcessVO"
             parameterType="String">
         SELECT *
-        FROM user_result_process
+        FROM user_result_process p
         WHERE ip_address = #{ipAddress}
           AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
     </select>
@@ -55,7 +56,11 @@
         SELECT COUNT(*)
         FROM user_result u,
              dashboard_period da,
-             client c
+             (SELECT c.ip_address, c.user_id, c.department_idx
+              FROM client c,
+                   user user
+              WHERE user.user_id = c.user_id
+                AND c.department_idx LIKE CONCAT(#{idx}, '%')) c
         WHERE u.user_id = c.user_id
           AND c.ip_address = u.ip_address
           AND (u.item1_result +
@@ -76,6 +81,8 @@
                u.item16_result) > 0
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND u.in_schedule = 1
+          AND u.department_idx = da.department_idx
+          AND u.department_idx = c.department_idx
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
@@ -90,7 +97,25 @@
              ) AS t0
                  LEFT OUTER JOIN
              (
-                 SELECt *
+                 SELECT item1_result,
+                        item2_result,
+                        item3_result,
+                        item4_result,
+                        item5_result,
+                        item6_result,
+                        item7_result,
+                        item8_result,
+                        item9_result,
+                        item10_result,
+                        item11_result,
+                        item12_result,
+                        item13_result,
+                        item14_result,
+                        item15_result,
+                        item16_result,
+                        ip_address,
+                        user_id,
+                        score
                  FROM user_result,
                       dashboard_period d
                  WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
@@ -122,6 +147,7 @@
         WHERE t0.user_id = t1.user_id
         ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1
         WHERE A.user_id = B.user_id
+        AND B.department_idx LIKE CONCAT(#{userIdx}, '%')
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')
         </if>
@@ -131,8 +157,8 @@
         <if test="ipAddress != null">
             AND A.ip_address LIKE concat('%', #{ipAddress}, '%')
         </if>
-        <if test="departmentCode != null">
-            AND B.department_idx = #{departmentCode}
+        <if test="departmentIdx != null">
+            AND B.department_idx = #{departmentIdx}
         </if>
         <if test="startDate != null and endDate != null">
             And A.check_time BETWEEN #{startDate} AND #{endDate}
@@ -142,37 +168,43 @@
 
     <select id="findUserDetailStaticInfo" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="String">
-        SELECT
-               A.user_id,
+        SELECT A.user_id,
                A.os,
                A.pc_protector_version,
-            B.check_time,
-            A.ip_address,
-            B.score,
-            B.item1_result,
-            B.item2_result,
-            B.item3_result,
-            B.item4_result,
-            B.item5_result,
-            B.item6_result,
-            B.item7_result,
-            B.item8_result,
-            B.item9_result,
-            B.item10_result,
-            B.item11_result,
-            B.item12_result,
-            B.item13_result,
-            B.item14_result,
-            B.item15_result,
-            B.item16_result
+               B.check_time,
+               A.ip_address,
+               B.score,
+               B.item1_result,
+               B.item2_result,
+               B.item3_result,
+               B.item4_result,
+               B.item5_result,
+               B.item6_result,
+               B.item7_result,
+               B.item8_result,
+               B.item9_result,
+               B.item10_result,
+               B.item11_result,
+               B.item12_result,
+               B.item13_result,
+               B.item14_result,
+               B.item15_result,
+               B.item16_result
         FROM (
-            SELECT DISTINCT
-                ip_address, os, pc_protector_version, user_id
-            FROM client_history
-            WHERE user_id = #{value}
+            SELECT DISTINCT ch.ip_address,
+                            ch.os,
+                            ch.pc_protector_version,
+                            ch.user_id
+            FROM client_history ch,
+                 user u
+            WHERE ch.user_id = #{id}
+              AND u.department_idx LIKE CONCAT(#{UserIdx}, '%')
+              AND ch.user_id = u.user_id
         ) AS A
            , (
-            SELECT * FROM user_result WHERE user_id = #{value}
+            SELECT *
+            FROM user_result
+            WHERE user_id = #{id}
         ) AS B
 
         WHERE A.ip_address = B.ip_address
@@ -185,6 +217,7 @@
         FROM user_result,
              dashboard_period d
         WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
+          AND d.department_idx = #{idx}
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
           AND in_schedule = 1
@@ -243,22 +276,9 @@
                 #{item10Count}, #{inSchedule})
     </insert>
 
-    <insert id="insertResultProcess" parameterType="oms.pc_protector.restApi.result.model.ResultProcessVO">
-        INSERT INTO user_result_process (user_id,
-                                         ip_address,
-                                         process_name,
-                                         type,
-                                         check_time)
-        VALUES (#{userId},
-                #{ipAddress},
-                #{processName},
-                #{type},
-                #{checkTime})
-    </insert>
-
     <insert id="insertEmptyResultBySchedule" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        INSERT INTO user_result (user_id, ip_address, check_time, in_schedule)
-        VALUES (#{userId}, #{ipAddress}, #{checkTime}, 1)
+        INSERT INTO user_result (user_id, ip_address, check_time, in_schedule, department_idx)
+        VALUES (#{userId}, #{ipAddress}, #{checkTime}, 1, #{departmentIdx})
     </insert>
 
     <update id="updateResultClient" parameterType="oms.pc_protector.restApi.result.model.ResultVO">

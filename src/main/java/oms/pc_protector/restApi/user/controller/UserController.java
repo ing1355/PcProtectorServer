@@ -13,6 +13,7 @@ import oms.pc_protector.restApi.user.model.UserVO;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +40,9 @@ public class UserController {
 
 
     @GetMapping(value = "")
-    public SingleResult<?> findAll() {
-        List<UserVO> list = Optional.ofNullable(userService.findAll())
+    public SingleResult<?> findAll(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
@@ -52,20 +54,25 @@ public class UserController {
     }
 
     @GetMapping(value = "/duplicated")
-    public SingleResult<?> duplicatedId(@RequestParam(value = "userId") String Id) {
-        return responseService.getSingleResult(userService.findSameId(Id));
+    public SingleResult<?> duplicatedId(@RequestParam(value = "userId") String Id,
+                                        HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        return responseService.getSingleResult(userService.findSameId(Id, User_Idx));
     }
 
     @GetMapping(value = "/search")
     public SingleResult<?> search(@RequestParam(value = "userId", required = false) String userId,
                                   @RequestParam(value = "name", required = false) String name,
-                                  @RequestParam(value = "departmentCode", required = false) Long departmentCode,
-                                  @RequestParam(value = "phone", required = false) String phone){
+                                  @RequestParam(value = "departmentIdx", required = false) Long departmentIdx,
+                                  @RequestParam(value = "phone", required = false) String phone,
+                                  HttpServletRequest httpServletRequest){
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         UserSearchInputVO userSearchVO = new UserSearchInputVO();
         userSearchVO.setUserId(userId);
         userSearchVO.setName(name);
         userSearchVO.setPhone(phone);
-        userSearchVO.setDepartmentCode(departmentCode);
+        userSearchVO.setDepartmentIdx(departmentIdx);
+        userSearchVO.setUserIdx(User_Idx);
         List<UserVO> userList = Optional.ofNullable(userService.findBySearchInput(userSearchVO))
                 .orElseThrow(() -> new RuntimeException("값이 없습니다."));
         return responseService.getSingleResult(userList);
@@ -73,19 +80,22 @@ public class UserController {
 
 
     @PostMapping(value = "/registerList")
-    public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList) {
+    public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList,
+                                        HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         userService.registryFromAdminList(userVOList);
-        List<UserVO> list = Optional.ofNullable(userService.findAll())
+        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
 
 
     @PostMapping(value = "/register")
-    public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO) {
-
+    public SingleResult<?> register(@RequestBody @Valid UserRequestVO userRequestVO,
+                                    HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         userService.registryFromAdmin(userRequestVO);
-        List<UserVO> list = Optional.ofNullable(userService.findAll())
+        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
@@ -93,27 +103,32 @@ public class UserController {
 
     @PutMapping(value = "/{id}")
     public SingleResult<?> update(@PathVariable(value = "id") String id,
+                                  HttpServletRequest httpServletRequest,
                                   @RequestBody UserVO userVO) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         RequestUserVO requestUserVO = new RequestUserVO();
         requestUserVO.setUserId(id);
         requestUserVO.setName(userVO.getName());
         requestUserVO.setDepartment(userVO.getDepartment());
-        requestUserVO.setDepartmentCode(userVO.getDepartmentCode());
+        requestUserVO.setDepartmentIdx(userVO.getDepartmentIdx());
         requestUserVO.setPhone(userVO.getPhone());
         requestUserVO.setEmail(userVO.getEmail());
+        requestUserVO.setUserIdx(User_Idx);
         boolean update = userService.updateUserInfo(requestUserVO);
-        List<UserVO> list = Optional.ofNullable(userService.findAll())
+        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }
 
 
     @DeleteMapping(value = "/delete")
-    public SingleResult<?> delete(@RequestBody @Valid List<String> id) {
+    public SingleResult<?> delete(@RequestBody @Valid List<String> id,
+                                  HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
         for (String ID : id) {
-            userService.removeUserInfo(ID);
+            userService.removeUserInfo(ID, User_Idx);
         }
-        List<UserVO> list = Optional.ofNullable(userService.findAll())
+        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);
     }

@@ -17,4 +17,5 @@ public class ClientFileVO {
     private String updateTime;
     private String version;
     private String[] b64temp;
+    private String idx;
 }

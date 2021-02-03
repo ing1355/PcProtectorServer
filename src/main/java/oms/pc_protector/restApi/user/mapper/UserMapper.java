@@ -9,17 +9,17 @@ import java.util.List;
 @Repository
 public interface UserMapper {
 
-    public List<UserVO> selectUserInfoAll();
+    public List<UserVO> selectUserInfoAll(String idx);
 
-    public UserVO selectById(String id);
+    public UserVO selectById(String id, String code);
 
-    public int selectSameId(String id);
+    public int selectSameId(String id, String departmentIdx);
 
     public List<UserVO> search(UserSearchInputVO userSearchVO);
 
     public List<UserVO> selectByDepartment(String departmentName);
 
-    public List<UserVO> selectByDepartmentCode(Long departmentCode);
+    public List<UserVO> selectByDepartmentIdx(Long departmentIdx);
 
     public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
 
@@ -31,13 +31,11 @@ public interface UserMapper {
 
     public void RegisterUserInfo(UserVO userVO);
 
-    public boolean updateUserInfo(UserVO userVO);
-
     public boolean updateUserInfo_Front(RequestUserVO requestUserVO);
 
     public void departmentModified(UpdateDepartmentVO updateDepartmentVO);
 
-    public boolean deleteUserInfo(String id);
+    public boolean deleteUserInfo(String id, String UserIdx);
 
     public void deleteAllUserInfo();
 }

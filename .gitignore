@@ -32,3 +32,4 @@ keystore.p12
 
 .yml
 /src/main/resources/application.yml
+.lic

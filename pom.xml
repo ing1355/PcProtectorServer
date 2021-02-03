@@ -160,14 +160,13 @@
                     <installDirectory>${project.build.directory}</installDirectory>
                 </configuration>
 
-                <executions>
-                    <execution>
-                        <id>install-frontend-tools</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                    </execution>
-
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>install-frontend-tools</id>-->
+<!--                        <goals>-->
+<!--                            <goal>install-node-and-yarn</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
 <!--                    <execution>-->
 <!--                        <id>build-frontend</id>-->
 <!--                        <goals>-->
@@ -178,7 +177,7 @@
 <!--                            <arguments>build</arguments>-->
 <!--                        </configuration>-->
 <!--                    </execution>-->
-                </executions>
+<!--                </executions>-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 public class LogRequestVO {
 
     private String managerId;
     private String ipAddress;
+    private String departmentIdx;
 
     @JsonIgnore
     private String startDay;

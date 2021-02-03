@@ -4,6 +4,7 @@ import oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO;
 import oms.pc_protector.restApi.manager.model.ManagerLockVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,13 +12,13 @@ import java.util.List;
 @Repository
 public interface ManagerMapper {
 
-    public List<ManagerVO> findAll();
+    public List<ManagerVO> findAll(String idx);
 
     public ManagerVO findById(String id);
 
     public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO);
 
-    public int selectSameId(String id);
+    public int selectSameId(@Param(value = "id") String id, @Param(value = "idx") String User_Idx);
 
     public void updateManagerInfo(ManagerVO managerVO);
 

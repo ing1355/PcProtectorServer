@@ -9,7 +9,7 @@ public class UserResponseVO {
 
     private String userId;
     private String department;
-    private int department_idx;
+    private int departmentIdx;
     private int score;
     private String email;
     private String phone;

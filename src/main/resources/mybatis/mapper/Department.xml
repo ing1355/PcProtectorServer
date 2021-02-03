@@ -3,82 +3,121 @@
 <mapper namespace="oms.pc_protector.restApi.department.mapper.DepartmentMapper">
 
     <select id="selectAll"
-            resultType="oms.pc_protector.restApi.department.model.DepartmentVO" >
-        SELECT * FROM department
+            resultType="oms.pc_protector.restApi.department.model.DepartmentVO">
+        SELECT *
+        FROM department
+        WHERE code LIKE CONCAT(#{idx}, '%')
+        ORDER BY CODE
     </select>
 
     <select id="findUserInDepartment" parameterType="String" resultType="Int">
-        SELECT COUNT(user_id) FROM user WHERE department = #{value}
+        SELECT COUNT(user_id)
+        FROM user
+        WHERE department = #{value}
+    </select>
+
+    <select id="findDepartmentCode" parameterType="String" resultType="Int">
+        SELECT COUNT(code)
+        FROM department
+        WHERE code = #{value}
     </select>
 
     <select id="selectByDepartment"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="String">
-        SELECT * FROM department WHERE name = #{value}
+        SELECT *
+        FROM department
+        WHERE name = #{value}
     </select>
 
     <select id="selectBycode"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="Long">
-        SELECT * FROM department WHERE code = #{departmentCode}
+        SELECT *
+        FROM department
+        WHERE code = #{departmentIdx}
+    </select>
+
+    <select id="selectByDptCode" parameterType="String"
+            resultType="oms.pc_protector.restApi.department.model.DepartmentVO">
+        SELECT * FROM department WHERE dpt_code = #{code}
     </select>
 
     <select id="selectChildCodeAscByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
             parameterType="Long">
         SELECT code, name, parent_code
-        FROM
-            (
-                SELECT *
-                FROM department
-                ORDER BY parent_code, code) products_sorted,
-            (
-                SELECT @pv := #{departmentCode}) initialisation
+        FROM (
+                 SELECT *
+                 FROM department
+                 ORDER BY parent_code, code) products_sorted,
+             (
+                 SELECT @pv := #{departmentIdx}) initialisation
         WHERE FIND_IN_SET(parent_code, @pv) > 0 AND @pv := CONCAT(@pv, ',', code)
     </select>
 
     <select id="selectChildCodeDescByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
-    parameterType="Long">
+            parameterType="Long">
         SELECT code, name, parent_code
-        FROM
-            (
-                SELECT *
-                FROM department
-                ORDER BY parent_code, code) products_sorted,
-            (
-                SELECT @pv := #{departmentCode}) initialisation
+        FROM (
+                 SELECT *
+                 FROM department
+                 ORDER BY parent_code, code) products_sorted,
+             (
+                 SELECT @pv := #{departmentIdx}) initialisation
         WHERE FIND_IN_SET(parent_code, @pv) > 0 AND @pv := CONCAT(@pv, ',', code)
         ORDER BY code desc;
     </select>
 
     <select id="selectByParentCode"
             resultType="Long" parameterType="Long">
-        SELECT code FROM department WHERE parent_code = #{value}
+        SELECT code
+        FROM department
+        WHERE parent_code = #{value}
     </select>
 
     <insert id="registerByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
-        INSERT INTO department (name, code, parent_code)
-        VALUES (#{name}, #{code}, #{parentCode});
+        INSERT INTO department (name, code, parent_code, dpt_code)
+        VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
         UPDATE user
         SET department_idx = #{code}
         WHERE department = #{name}
     </insert>
 
     <insert id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
-        INSERT INTO department (name, code, parent_code)
-        VALUES (#{name}, #{code}, #{parentCode})
+        INSERT INTO department (name, code, parent_code, dpt_code)
+        VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
+    </insert>
+
+    <insert id="insertRoot" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+        INSERT INTO department (name, code, parent_code, dpt_code)
+        VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
+        INSERT INTO edit_program_check(department_idx)
+        VALUES (#{code});
+        INSERT INTO dashboard_period (start_date, end_date, department_idx)
+        VALUES (DATE_FORMAT(NOW(), '%Y-%m-%d'),
+                DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL 1 SECOND),
+                #{code});
+        INSERT INTO period_date_configuration (period,apply, department_idx)
+        VALUES (3,1, #{code});
+        INSERT INTO configuration (department_idx)
+        VALUES (#{code});
+        INSERT INTO next_period_date_configuration (start_date, end_date, department_idx)
+        VALUES (
+                   DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL 1 DAY),
+                   DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL 2 DAY), INTERVAL 1 SECOND),
+                    #{code}
+               );
     </insert>
 
     <update id="update" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE department
-        SET name = #{new_name},
+        SET name        = #{new_name},
             update_time = now()
         WHERE name = #{old_name}
     </update>
 
     <delete id="deleteAll">
-        DELETE FROM department
-    </delete>
-
-    <delete id="deleteByDepartment" parameterType="String">
-        DELETE FROM department WHERE name = #{value}
+        DELETE
+        FROM department
+        WHERE code LIKE CONCAT(#{idx}, '%');
     </delete>
 
 

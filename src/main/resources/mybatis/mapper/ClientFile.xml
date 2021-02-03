@@ -5,6 +5,7 @@
     <select id="selectClientFile" resultType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         SELECT file_name, file_size, md5, update_time, version
         FROM client_file
+        WHERE department_idx = #{idx}
         ORDER BY version DESC
     </select>
 
@@ -15,28 +16,32 @@
                  SELECT MAX(VERSION) AS lastest_version
                  FROM client_file) t2
         WHERE t1.version = t2.lastest_version
+          AND department_idx = #{idx}
     </select>
 
     <select id="selectVersionList" resultType="String">
         SELECT version
         FROM client_file
+        WHERE department_idx = #{idx}
     </select>
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
-        INSERT INTO client_file (file_name, file_size, md5, version)
-        VALUES (#{fileName}, #{fileSize}, #{md5}, #{version})
+        INSERT INTO client_file (file_name, file_size, md5, version, department_idx)
+        VALUES (#{fileName}, #{fileSize}, #{md5}, #{version}, #{idx})
     </insert>
 
     <select id="selectExistFile" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM client_file
         WHERE version = #{version}
+          AND department_idx = #{idx}
     </select>
 
     <select id="selectExistMd5" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM client_file
         WHERE md5 = #{md5}
+          AND department_idx = #{idx}
     </select>
 
     <update id="update" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
@@ -45,7 +50,8 @@
             file_size   = #{fileSize},
             md5         = #{md5},
             update_time = now()
-        WHERE version=#{version}
+        WHERE version = #{version}
+          AND department_idx = #{idx}
     </update>
 
     <delete id="deleteClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
@@ -55,6 +61,7 @@
           AND file_name = #{fileName}
           AND file_size = #{fileSize}
           AND md5 = #{md5}
+          AND department_idx = #{idx}
     </delete>
 
 </mapper>

@@ -21,8 +21,6 @@ public class ParseRoute {
     public void abstractIpaddress() {
         try {
             ParseRoute pr = ParseRoute.getInstance();
-            System.out.println("Gateway: " + pr.getGateway());
-            System.out.println("IP: " + pr.getLocalIPAddress());
         } catch (Exception e) {
             System.out.println(e);
             e.printStackTrace();

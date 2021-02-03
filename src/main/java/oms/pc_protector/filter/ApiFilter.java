@@ -6,6 +6,7 @@ import oms.pc_protector.apiConfig.ReadableRequestWrapper;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
 import oms.pc_protector.restApi.log.model.LogVO;
 import oms.pc_protector.restApi.log.service.LogService;
+import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -25,13 +26,15 @@ import java.util.Set;
 @WebFilter(urlPatterns = {"/v1/*"}, description = "API LOG FILTER")
 public class ApiFilter implements Filter {
 
-
     private LogService logService;
     private ClientFileService clientFileService;
+    private ManagerMapper managerMapper;
 
-    public ApiFilter(LogService logService, ClientFileService clientFileService) {
+    public ApiFilter(LogService logService, ClientFileService clientFileService,
+                     ManagerMapper managerMapper) {
         this.logService = logService;
         this.clientFileService = clientFileService;
+        this.managerMapper = managerMapper;
     }
 
     @Override
@@ -82,8 +85,11 @@ public class ApiFilter implements Filter {
                         request.getRequestURI().contains("/firstlogin") ||
                         request.getRequestURI().contains("/logout")) {
                     logVO.setManagerId(parameterMap.get("userId")[0]);
+                    logVO.setDepartmentIdx(managerMapper.findById(parameterMap.get("userId")[0]).getDepartmentIdx());
                 } else {
                     logVO.setManagerId(GetUserIdByPrincipal(User_info));
+                    if(!GetUserIdByPrincipal(User_info).equals("정보 없음"))
+                        logVO.setDepartmentIdx(managerMapper.findById(GetUserIdByPrincipal(User_info)).getDepartmentIdx());
                 }
                 if (!(logVO.getMethod().equals("GET"))) {
                     logService.register(logVO);

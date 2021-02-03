@@ -1,9 +1,9 @@
 package oms.pc_protector.restApi.result.model;
 
-import lombok.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +16,5 @@ public class ResultProcessVO {
     private String type;
     private String processName;
     private String checkTime;
-
+    private String idx;
 }

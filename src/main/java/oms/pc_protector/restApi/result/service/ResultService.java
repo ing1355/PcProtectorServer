@@ -12,7 +12,7 @@ import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.result.model.*;
-import org.jetbrains.annotations.NotNull;
+import oms.pc_protector.restApi.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,24 +29,27 @@ public class ResultService {
     private final ClientMapper clientMapper;
     private final ConfigurationService configurationService;
     private final DashboardMapper dashboardMapper;
+    private final UserMapper userMapper;
 
     public ResultService(ResultMapper resultMapper,
                          DepartmentService departmentService,
                          ConfigurationMapper configurationMapper,
                          ClientMapper clientMapper,
                          ConfigurationService configurationService,
-                         DashboardMapper dashboardMapper) {
+                         DashboardMapper dashboardMapper,
+                         UserMapper userMapper) {
         this.resultMapper = resultMapper;
         this.configurationMapper = configurationMapper;
         this.departmentService = departmentService;
         this.clientMapper = clientMapper;
         this.configurationService = configurationService;
         this.dashboardMapper = dashboardMapper;
+        this.userMapper = userMapper;
     }
 
     @Transactional
-    public List<ResponseResultVO> findAllResult() {
-        return Optional.ofNullable(resultMapper.selectResultAll())
+    public List<ResponseResultVO> findAllResult(String User_Idx) {
+        return Optional.ofNullable(resultMapper.selectResultAll(User_Idx))
                 .orElse(new ArrayList<>());
     }
 
@@ -55,13 +58,13 @@ public class ResultService {
     @Transactional
     public List<ResponseResultVO> findBySearchInput(SearchInputVO searchInputVO) {
         List<ResponseResultVO> resultList = new ArrayList<>();
-        if (searchInputVO.getDepartmentCode() != null) {
-            Long code = searchInputVO.getDepartmentCode();
+        if (searchInputVO.getDepartmentIdx() != null) {
+            Long code = searchInputVO.getDepartmentIdx();
             List<DepartmentVO> childCodeList = new ArrayList<>();
-            childCodeList.add(departmentService.findByDepartmentCode(code));
+            childCodeList.add(departmentService.findByDepartmentIdx(code));
             childCodeList.addAll(departmentService.findChildAscByParentCode(code));
             for (DepartmentVO childCode : childCodeList) {
-                searchInputVO.setDepartmentCode(childCode.getCode());
+                searchInputVO.setDepartmentIdx(childCode.getCode());
                 resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
             }
             return resultList;
@@ -74,8 +77,8 @@ public class ResultService {
     /* 사용자 아이디에 해당하는 점검결과의 세부사항을 반환한다. */
 
     @Transactional
-    public List<ResultVO> findUserDetailStaticInfo(String id) {
-        List<ResultVO> list = resultMapper.findUserDetailStaticInfo(id);
+    public List<ResultVO> findUserDetailStaticInfo(String id, String User_Idx) {
+        List<ResultVO> list = resultMapper.findUserDetailStaticInfo(id, User_Idx);
 
         return list;
     }
@@ -107,8 +110,8 @@ public class ResultService {
 
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
-    public int countByMonth() {
-        return resultMapper.selectCountRunByMonth();
+    public int countByMonth(String User_Idx) {
+        return resultMapper.selectCountRunByMonth(User_Idx);
     }
 
     @SneakyThrows
@@ -302,13 +305,10 @@ public class ResultService {
         log.info("VACCINE_VERSION : " + clientVO.getVaccineVersion());
         log.info("CHECK_TIME : " + resultVO.getCheckTime());
         log.info("사용자 전체 점수 : " + resultVO.getScore());
+        log.info("소속 코드 : " + inspectionResults.getClientVO().getDepartmentIdx());
         log.info("-------------------------");
         Optional.ofNullable(resultVO).ifPresent(this::resultSet);
 
-        resultProcessSet((HashMap<String, Object>) parsedResult.get("processList"),
-                clientVO.getUserId(),
-                clientVO.getIpAddress(),
-                resultVO.getCheckTime());
     }
 
     /* 아이템별 결과값을 등록한다. */
@@ -317,7 +317,7 @@ public class ResultService {
     public void resultSet(ResultVO resultVO) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat dfd = new SimpleDateFormat("yyyy-MM-dd");
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod();
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(resultVO.getDepartmentIdx());
         Date d1 = df.parse(dashboardPeriodVO.getStartDate());
         Date d2 = df.parse(dashboardPeriodVO.getEndDate());
         Date d3 = df.parse(resultVO.getCheckTime());
@@ -357,35 +357,6 @@ public class ResultService {
             throw new InputMismatchException("날짜가 잘못 설정되어있습니다.");
         }
     }
-
-
-    /* 아이템별 취약 프로세스를 등록한다.*/
-    @Transactional
-    public void resultProcessSet(
-            @NotNull HashMap<String, Object> processMap, String userId,
-            String ipAddress, String checkTime) {
-        ArrayList<String> processList = new ArrayList<>();
-        Set<String> keyList = processMap.keySet();
-        for (String key : keyList) {
-            processList = (ArrayList<String>) processMap.get(key);
-            for (String processName : processList) {
-                if (!processName.equals("")) {
-                    Optional.ofNullable(processName).ifPresentOrElse(p -> {
-                        ResultProcessVO resultProcessVO = ResultProcessVO.builder()
-                                .userId(userId)
-                                .ipAddress(ipAddress)
-                                .processName(p)
-                                .type(key)
-                                .checkTime(checkTime)
-                                .build();
-                        Optional.ofNullable(resultProcessVO)
-                                .ifPresent(resultMapper::insertResultProcess);
-                    }, () -> log.info("해당 프로세스 이름이 NULL 입니다."));
-                }
-            }
-        }
-    }
-
 
     /* Client에서 받아온 결과를 파싱하여 분류한다. */
     @Transactional
@@ -433,6 +404,7 @@ public class ResultService {
         ResultVO resultVO = ResultVO.builder()
                 .userId(clientVO.getUserId())
                 .ipAddress(clientVO.getIpAddress())
+                .departmentIdx(clientVO.getDepartmentIdx())
                 .checkTime(clientVO.getCheckTime())
                 .score(score)
 

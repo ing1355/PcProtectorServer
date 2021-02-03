@@ -8,9 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -24,8 +21,8 @@ public class LogService {
     }
 
     @Transactional
-    public List<?> getAllLog() {
-        return logMapper.getAllLog();
+    public List<?> getAllLog(String User_Idx) {
+        return logMapper.getAllLog(User_Idx);
     }
 
     @Transactional

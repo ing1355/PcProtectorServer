@@ -8,7 +8,9 @@ import java.util.List;
 @Repository
 public interface ClientMapper {
 
-    public ClientVO selectById(String id);
+    public ClientVO selectById(String id, String UserIdx);
+
+    public Integer selectClient(String id, String code);
 
     public List<ClientVO> selectClientHistory(String userId);
 
@@ -24,7 +26,7 @@ public interface ClientMapper {
 
     public int insertClientHistory(ClientVO clientVO);
 
-    public List<ClientVO> selectClientAll();
+    public List<ClientVO> selectClientAll(String idx);
 
     public List<ClientVO> selectClientListById(String id);
 

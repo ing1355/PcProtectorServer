@@ -1,9 +1,9 @@
 package oms.pc_protector.restApi.result.model;
 
-import lombok.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,6 +15,7 @@ public class ResultVO {
     private String ipAddress;
     private String checkTime;
     private int score;
+    private String departmentIdx;
 
     private int item1Result;
     private int item2Result;

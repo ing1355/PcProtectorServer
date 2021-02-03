@@ -1,5 +1,6 @@
 package oms.pc_protector.util;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +14,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+@Log4j2
 @Component
 public class License implements CommandLineRunner {
 
@@ -21,8 +23,8 @@ public class License implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        File file = new File("oms.lic");
-        System.out.println(file.getAbsoluteFile());
+        File file = new File("/home/oms/Desktop/oms.lic");
+        log.info(file.getAbsoluteFile());
         FileReader filereader = new FileReader(file);
         //입력 버퍼 생성
         BufferedReader bufReader = new BufferedReader(filereader);

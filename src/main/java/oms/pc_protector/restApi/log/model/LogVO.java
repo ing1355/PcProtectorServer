@@ -3,8 +3,6 @@ package oms.pc_protector.restApi.log.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 public class LogVO {
@@ -14,4 +12,5 @@ public class LogVO {
     private String method;
     private String ipAddress;
     private String createTime;
+    private String departmentIdx;
 }

@@ -8,4 +8,5 @@ import lombok.Setter;
 public class ManagerLockVO {
     private String userId;
     private String password;
+    private String departmentIdx;
 }

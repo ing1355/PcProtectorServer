@@ -1,4 +1,4 @@
-package oms.pc_protector.restApi.clientController;
+package oms.pc_protector.restApi.client.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,6 +9,8 @@ import oms.pc_protector.jwt.JwtProperties;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.clientFile.service.ClientFileService;
+import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
+import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.login.model.ClientLoginVO;
 import oms.pc_protector.restApi.login.service.LoginService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
@@ -51,13 +53,14 @@ public class ClientController {
     private ResultMapper resultMapper;
     private final LoginService loginService;
     private final ConfigurationMapper configurationMapper;
+    private final DepartmentMapper departmentMapper;
 
     public ClientController(ResponseService responseService, UserService userService,
                             ClientFileService clientFileService,
                             ProcessService processService,ConfigurationService configurationService,
                             ResultService resultService, ClientService clientService,
                             ResultMapper resultMapper, ConfigurationMapper configurationMapper,
-                            LoginService loginService) {
+                            LoginService loginService, DepartmentMapper departmentMapper) {
         this.responseService = responseService;
         this.userService = userService;
         this.clientFileService = clientFileService;
@@ -68,27 +71,34 @@ public class ClientController {
         this.resultMapper = resultMapper;
         this.loginService = loginService;
         this.configurationMapper = configurationMapper;
+        this.departmentMapper = departmentMapper;
     }
 
     @PostMapping(value = "/first-request")
-    public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO) throws ParseException {
-        boolean isLogin = userService.agentLogin(clientVO, configurationService);
+    public SingleResult<?> clientStartRequest(@RequestBody ClientVO clientVO,
+                                              HttpServletRequest httpServletRequest) throws ParseException {
+        String code = httpServletRequest.getHeader("code");
+        DepartmentVO departmentVO = departmentMapper.selectByDptCode(code);
+        clientVO.setDepartmentIdx(departmentVO.getCode().toString());
+        boolean isLogin = userService.agentLogin(clientVO);
         if(!isLogin) return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
         else clientService.loginUpdateTime(clientVO.getUserId());
 
         String department = userService
-                .findById(clientVO.getUserId())
+                .findById(clientVO.getUserId(), code)
                 .getDepartment();
 
-        String md5 = Optional.ofNullable(clientFileService.findRecentMd5()).orElse("");
-        String version = Optional.ofNullable(clientFileService.findRecentVersion()).orElse("");
+        String user_idx = departmentVO.getCode().toString().substring(0,3);
+
+        String md5 = Optional.ofNullable(clientFileService.findRecentMd5(user_idx)).orElse("");
+        String version = Optional.ofNullable(clientFileService.findRecentVersion(user_idx)).orElse("");
 
         boolean forceRun = configurationService
-                .findForceRun()
+                .findForceRun(user_idx)
                 .isForceRun();
 
         HashMap configuration = Optional
-                .ofNullable(configurationService.findConfigurationToClient())
+                .ofNullable(configurationService.findConfigurationToClient(user_idx))
                 .orElseGet(HashMap::new);
 
         HashMap<String, Object> map = new HashMap<>();
@@ -102,17 +112,22 @@ public class ClientController {
 
 
     @PostMapping(value = "/process")
-    public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO) throws UnsupportedEncodingException {
+    public SingleResult<?> clientProcessAdd(@NotNull @RequestBody ProcessVO processVO,
+                                            HttpServletRequest request) throws UnsupportedEncodingException {
+        String code = request.getHeader("code");
+        DepartmentVO departmentVO = departmentMapper.selectByDptCode(code);
         HashMap<String, Object> map = new HashMap<>();
         if(processVO.getProcessVOList() != null) {
-            processService.insertProcess(processVO.getProcessVOList());
+            processService.insertProcess(processVO.getProcessVOList(), departmentVO.getCode().toString());
         }
         return responseService.getSingleResult(map);
     }
 
 
     @PostMapping(value = "/install/wrong-md5")
-    public SingleResult<?> modulation(@NotNull @RequestBody ClientVO clientVO) {
+    public SingleResult<?> modulation(@NotNull @RequestBody ClientVO clientVO,
+                                      HttpServletRequest request) {
+        String code = request.getHeader("code");
         HashMap<String, Object> map = new HashMap<>();
         Optional.of(clientVO).ifPresent(clientService::registerWrongMd5);
         return responseService.getSingleResult("");
@@ -120,7 +135,11 @@ public class ClientController {
 
 
     @PostMapping(value = "/result")
-    public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO) {
+    public SingleResult<?> postResult(@NotNull @RequestBody InspectionResultsVO inspectionResultVO,
+                                      HttpServletRequest request) {
+        String code = request.getHeader("code");
+        DepartmentVO departmentVO = departmentMapper.selectByDptCode(code);
+        inspectionResultVO.getClientVO().setDepartmentIdx(departmentVO.getCode().toString().substring(0,3));
         HashMap<String, Object> map = new HashMap<>();
         resultService.registrationResult(inspectionResultVO);
 
@@ -133,10 +152,11 @@ public class ClientController {
                                           HttpServletRequest request,
                                           HttpServletResponse response){
         ClientVO client = new ClientVO();
-
-        boolean userExist = userService.findSameId(login.getId());
+        String code = request.getHeader("code");
+        DepartmentVO departmentVO = departmentMapper.selectByDptCode(code);
+        boolean userExist = clientService.findClient(login.getId(), code);
         if(userExist) {
-            clientService.register(new ClientVO(login.getId(), login.getIpAddress()));
+            clientService.register(new ClientVO(login.getId(), login.getIpAddress(), departmentVO.getCode()));
         }
         else {
             return responseService.getSingleResult("서버에 등록되지 않은 사용자입니다.");
@@ -149,9 +169,10 @@ public class ClientController {
                 .withAudience(client.getMacAddress())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + token);
+        String dpt_idx = userService.findById(login.getId(), code).getDepartmentIdx().substring(0,3);
         HashMap<String, Object> result = new HashMap<>();
         result.put("client",client);
-        result.put("nextPeriodDateArray",configurationMapper.selectNextSchedule());
+        result.put("nextPeriodDateArray",configurationMapper.selectNextSchedule(dpt_idx));
         return responseService.getSingleResult(result);
     }
 

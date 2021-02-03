@@ -8,6 +8,7 @@ import oms.pc_protector.restApi.policy.model.*;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.LinkedHashMap;
@@ -30,21 +31,17 @@ public class ConfigurationController {
     }
 
     @GetMapping(value = "/check")
-    public SingleResult<?> findConfiguration() {
-        LinkedHashMap checkListMap = configurationService.findConfiguration();
+    public SingleResult<?> findConfiguration(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        LinkedHashMap checkListMap = configurationService.findConfiguration(User_Idx);
         return responseService.getSingleResult(checkListMap);
     }
 
     @GetMapping(value = "/schedule")
-    public SingleResult<?> findScheduleAll() {
-        List<PeriodDateVO> scheduleList = configurationService.findScheduleAll();
+    public SingleResult<?> findScheduleAll(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<PeriodDateVO> scheduleList = configurationService.findScheduleAll(User_Idx);
         return responseService.getSingleResult(scheduleList);
-    }
-
-    @GetMapping(value = "/schedule/applied")
-    public SingleResult<?> findApply() {
-        PeriodDateVO result = configurationService.findAppliedSchedule();
-        return responseService.getSingleResult(result);
     }
 
     @PutMapping(value = "/check/setting/config")
@@ -60,7 +57,10 @@ public class ConfigurationController {
     }
 
     @PutMapping(value = "/check/setting/usb")
-    public SingleResult<?> updateUsb(@RequestBody @Valid SecurityUsbDetailsVO securityUsbDetailsVO) {
+    public SingleResult<?> updateUsb(@RequestBody @Valid SecurityUsbDetailsVO securityUsbDetailsVO,
+                                     HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        securityUsbDetailsVO.setIdx(User_Idx);
         configurationService.updateSecurityUsbDetails_service(securityUsbDetailsVO);
         return responseService.getSingleResult(true);
     }
@@ -79,7 +79,10 @@ public class ConfigurationController {
     }
 
     @PutMapping(value = "/schedule/update")
-    public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO) throws ParseException {
+    public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO,
+                                          HttpServletRequest httpServletRequest) throws ParseException {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        requestPeriodDateVO.setDepartmentIdx(User_Idx);
         int resultNum = configurationService.updateSchedule(requestPeriodDateVO);
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);

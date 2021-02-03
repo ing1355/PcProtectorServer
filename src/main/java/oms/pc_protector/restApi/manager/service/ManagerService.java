@@ -28,8 +28,8 @@ public class ManagerService {
     }
 
     @Transactional(readOnly = true)
-    public List<ManagerVO> findAll() {
-        return Optional.ofNullable(managerMapper.findAll()).orElseGet(() -> Collections.EMPTY_LIST);
+    public List<ManagerVO> findAll(String User_Idx) {
+        return Optional.ofNullable(managerMapper.findAll(User_Idx)).orElseGet(() -> Collections.EMPTY_LIST);
     }
 
 
@@ -46,8 +46,8 @@ public class ManagerService {
 
 
    @Transactional(readOnly = true)
-    public boolean duplicatedManager(String id) {
-        return managerMapper.selectSameId(id) > 0;
+    public boolean duplicatedManager(String id, String User_Idx) {
+        return managerMapper.selectSameId(id, User_Idx) > 0;
     }
 
 
@@ -67,8 +67,10 @@ public class ManagerService {
 
     @Transactional
     public void updateManager(ManagerVO managerVO) {
-        String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
-        managerVO.setPassword(encodedPassword);
+        if(managerVO.getPassword() != null) {
+            String encodedPassword = new BCryptPasswordEncoder().encode(managerVO.getPassword());
+            managerVO.setPassword(encodedPassword);
+        }
         managerMapper.updateManagerInfo(managerVO);
     }
 

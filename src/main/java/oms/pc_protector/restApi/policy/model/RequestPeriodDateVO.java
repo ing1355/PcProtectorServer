@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class RequestPeriodDateVO {
     private PeriodDateVO new_data;
+    private String departmentIdx;
 }

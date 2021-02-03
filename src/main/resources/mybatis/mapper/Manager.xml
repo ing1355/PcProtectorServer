@@ -4,7 +4,9 @@
 
 
     <select id="findAll" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT id,name,mobile,email,locked FROM manager
+        SELECT id, name, mobile, department, department_idx, email, locked
+        FROM manager
+        WHERE department_idx LIKE CONCAT(#{idx}, '%')
     </select>
 
     <select id="searchManager" parameterType="oms.pc_protector.restApi.manager.model.SearchManagerVO"
@@ -23,15 +25,20 @@
         <if test='email != null and email != ""'>
             AND email LIKE CONCAT('%',#{email},'%')
         </if>
+        AND department_idx LIKE CONCAT(#{idx}, '%')
         ORDER BY idx DESC
     </select>
 
     <select id="findById" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT * FROM manager WHERE id = #{id}
+        SELECT *
+        FROM manager
+        WHERE id = #{id}
     </select>
 
     <select id="selectSameId" resultType="int" parameterType="String">
-        SELECT COUNT(*) FROM manager WHERE id = #{value}
+        SELECT COUNT(*)
+        FROM manager
+        WHERE id = #{id} AND department_idx LIKE CONCAT(#{idx}, '%')
     </select>
 
     <insert id="insertManager" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
@@ -42,7 +49,9 @@
                              permissions,
                              active,
                              mobile,
-                             email)
+                             email,
+                             department,
+                             department_idx)
         VALUES (#{id},
                 #{name},
                 #{password},
@@ -50,7 +59,9 @@
                 #{permissions},
                 '1',
                 #{mobile},
-                #{email});
+                #{email},
+                #{department},
+                #{departmentIdx});
     </insert>
 
     <delete id="deleteManager" parameterType="String">
@@ -63,37 +74,53 @@
     </delete>
 
     <update id="updateManagerInfo" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        UPDATE manager
-        SET name   = #{name},
-            mobile = #{mobile},
-            email  = #{email},
-            password = #{password}
-        WHERE id = #{id};
+        <choose>
+            <when test='password != null and password != ""'>
+                UPDATE manager
+                SET name = #{name},
+                mobile = #{mobile},
+                email = #{email},
+                department = #{department},
+                department_idx = #{departmentIdx},
+                password = #{password}
+                WHERE id = #{id};
+            </when>
+            <when test='password == null'>
+                UPDATE manager
+                SET name = #{name},
+                mobile = #{mobile},
+                email = #{email},
+                department = #{department},
+                department_idx = #{departmentIdx}
+                WHERE id = #{id};
+            </when>
+        </choose>
     </update>
 
-    <update id="updateManagerInfoFirstLogin" parameterType="oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO">
+    <update id="updateManagerInfoFirstLogin"
+            parameterType="oms.pc_protector.restApi.manager.model.FirstLoginRequestManagerVO">
         UPDATE manager
         SET password = #{password}
-        WHERE id = #{userId};
+        WHERE id = #{userId} AND department_idx = #{departmentIdx};
     </update>
 
     <update id="initManagerLock" parameterType="String">
         UPDATE manager
         SET locked = 0
-        WHERE id = #{value};
+        WHERE id = #{userId};
     </update>
 
     <update id="updateManagerLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
         UPDATE manager
         SET locked = locked + 1
-        WHERE id = #{userId};
+        WHERE id = #{userId} AND department_idx = #{departmentIdx};
     </update>
 
     <update id="updateManagerUnLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
         UPDATE manager
         SET password = #{password},
-            locked = 0
-        WHERE id = #{userId};
+            locked   = 0
+        WHERE id = #{userId} AND department_idx = #{departmentIdx};
     </update>
 
 </mapper>

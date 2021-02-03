@@ -5,13 +5,15 @@
 
     <select id="getAllLog" resultType="oms.pc_protector.restApi.log.model.LogVO">
         SELECT *
-        FROM audit_log
+        FROM audit_log a
+        WHERE department_idx LIKE CONCAT(#{idx}, '%')
         ORDER BY idx DESC
     </select>
 
     <select id="search" parameterType="oms.pc_protector.restApi.log.model.LogRequestVO"
             resultType="oms.pc_protector.restApi.log.model.LogVO">
-        SELECT * FROM audit_log
+        SELECT a.manager_id, a.uri, a.ip_address, a.method, a.create_time
+        FROM audit_log a, manager m
         WHERE 1 = 1
             <if test='managerId != null and managerId != ""'>
                 AND manager_id LIKE CONCAT('%',#{managerId},'%')
@@ -22,16 +24,18 @@
             <if test='startDay != null and endDay != null and startDay != "" and endDay != ""'>
                 AND create_time BETWEEN #{startDay} AND #{endDay}
             </if>
-        ORDER BY idx DESC
+        AND m.department_idx LIKE CONCAT(#{departmentIdx}, '%')
+        ORDER BY m.idx DESC
     </select>
 
     <insert id="insert" parameterType="oms.pc_protector.restApi.log.model.LogVO">
-        INSERT INTO audit_log (manager_id, uri, method, ip_address)
+        INSERT INTO audit_log (manager_id, uri, method, ip_address, department_idx)
         VALUES (
                 #{managerId},
                 #{uri},
                 #{method},
-                #{ipAddress}
+                #{ipAddress},
+                #{departmentIdx}
                )
     </insert>
 

@@ -14,11 +14,11 @@ import java.util.List;
 @Repository
 public interface ResultMapper {
 
-    public List<ResponseResultVO> selectResultAll();
+    public List<ResponseResultVO> selectResultAll(String idx);
 
     public List<ResponseResultVO> selectBySearchInput(SearchInputVO searchInputVO);
 
-    public List<ResultVO> findUserDetailStaticInfo(String id);
+    public List<ResultVO> findUserDetailStaticInfo(String id, String UserIdx);
 
     public List<ResultVO> selectById(String id);
 
@@ -30,7 +30,7 @@ public interface ResultMapper {
 
     public int selectExistByDay(String day);
 
-    public int selectCountRunByMonth();
+    public int selectCountRunByMonth(String idx);
 
     public int selectCountBySchedule(NowScheduleVO nowScheduleVO);
 
@@ -40,11 +40,10 @@ public interface ResultMapper {
             @Param("department") String department);
 
     public int selectByScheduleIsExist(@Param(value = "userId") String userId,
-                                       @Param(value = "ipAddress") String IpAddress);
+                                       @Param(value = "ipAddress") String IpAddress,
+                                       @Param(value = "idx") String idx);
 
     public void insertResult(ResultVO resultVO);
-
-    public void insertResultProcess(ResultProcessVO resultProcessVO);
 
     public void insertEmptyResultBySchedule(ClientVO clientVO);
 

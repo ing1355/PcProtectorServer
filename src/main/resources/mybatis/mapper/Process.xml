@@ -6,13 +6,15 @@
             resultType="oms.pc_protector.restApi.process.model.ProcessVO" parameterType="String">
         SELECT *
         FROM process
-        WHERE type = #{value}
+        WHERE type = #{processType}
+          AND department_idx = #{idx}
     </select>
 
     <select id="selectProcessAll" resultType="oms.pc_protector.restApi.process.model.ProcessVO">
         SELECT *
         FROM process
         WHERE type = 'none'
+          AND department_idx = #{idx}
     </select>
 
     <select id="searchProcess" parameterType="String"
@@ -26,6 +28,7 @@
         <if test='registryName != null and registryName != ""'>
             AND registry_item LIKE CONCAT('%',#{registryName},'%')
         </if>
+        AND department_idx = #{departmentIdx}
     </select>
 
     <select id="existProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO"
@@ -34,14 +37,20 @@
         FROM process
         WHERE display_name = #{displayName}
           AND registry_item = #{registryItem}
+          AND department_idx = #{departmentIdx}
     </select>
 
     <insert id="insertProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        INSERT INTO process (registry_item, display_name)
+        INSERT INTO process (registry_item, display_name, department_idx)
         SELECT #{registryItem},
-               #{displayName}
+               #{displayName},
+               #{departmentIdx}
         FROM DUAL
-        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem} AND display_name = #{displayName});
+        WHERE NOT EXISTS(SELECT *
+                         FROM process
+                         WHERE registry_item = #{registryItem}
+                           AND display_name = #{displayName}
+                           AND department_idx = #{departmentIdx});
 
     </insert>
 

@@ -6,13 +6,11 @@ import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
-import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @CrossOrigin
@@ -28,8 +26,9 @@ public class DepartmentController {
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> findDepartmentAll() {
-        List<DepartmentVO> departmentVOList = departmentService.findAll();
+    public SingleResult<?> findDepartmentAll(HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<DepartmentVO> departmentVOList = departmentService.findAll(User_Idx);
         return responseService.getSingleResult(departmentVOList);
     }
 
@@ -40,26 +39,23 @@ public class DepartmentController {
     }
 
     @PostMapping(value = "/excel")
-    public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList) {
-        departmentService.registerByExcel(departmentVOList);
+    public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList,
+                                                     HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        departmentService.registerByExcel(departmentVOList, User_Idx);
         return responseService.getSingleResult(true);
     }
 
     @PostMapping(value = "")
-    public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
-        departmentService.register(departmentVO);
-        return responseService.getSingleResult(true);
+    public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO,
+                                            HttpServletRequest httpServletRequest) {
+        departmentVO.setDptCode(httpServletRequest.getHeader("dptIdx"));
+        return responseService.getSingleResult(departmentService.register(departmentVO));
     }
 
     @PutMapping(value = "")
     public SingleResult<?> updateDepartment(@RequestBody @Valid UpdateDepartmentVO updateDepartmentVO) {
         departmentService.update(updateDepartmentVO);
-        return responseService.getSingleResult(true);
-    }
-
-    @DeleteMapping(value = "")
-    public SingleResult<?> deleteDepartment(@RequestParam @Valid String name) {
-        departmentService.delete(name);
         return responseService.getSingleResult(true);
     }
 }

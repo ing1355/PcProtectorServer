@@ -13,20 +13,21 @@
         FROM user AS u
                  LEFT join client AS c
                            ON u.user_id = c.user_id
+        WHERE u.department_idx LIKE CONCAT(#{value}, '%')
         GROUP BY u.user_id
     </select>
 
     <select id="selectById" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="String">
         SELECT *
-        FROM user
-        WHERE user_id = #{value}
+        FROM user u, (SELECT code FROM department WHERE dpt_code = #{code}) d
+        WHERE user_id = #{id} AND u.department_idx LIKE CONCAT(d.code, '%')
     </select>
 
     <select id="selectSameId" resultType="int" parameterType="String">
         SELECT COUNT(*)
         FROM user
-        WHERE user_id = #{value}
+        WHERE user_id = #{id} AND department_idx LIKE CONCAT(#{departmentIdx}, '%');
     </select>
 
     <select id="selectByDepartment" resultType="oms.pc_protector.restApi.user.model.UserVO"
@@ -36,25 +37,26 @@
         WHERE department = #{value}
     </select>
 
-    <select id="selectByDepartmentCode" resultType="oms.pc_protector.restApi.user.model.UserVO"
+    <select id="selectByDepartmentIdx" resultType="oms.pc_protector.restApi.user.model.UserVO"
             parameterType="Long">
         SELECT *
         FROM user
-        WHERE department_idx = #{departmentCode}
+        WHERE department_idx = #{departmentIdx}
     </select>
 
     <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
         SELECT * FROM user
         WHERE 1 = 1
+        AND department_idx LIKE CONCAT(#{UserIdx}, '%')
         <if test='userId != null and userId != ""'>
             AND user_id LIKE CONCAT('%',#{userId},'%')
         </if>
         <if test='name != null and name != ""'>
             AND name LIKE CONCAT('%',#{name},'%')
         </if>
-        <if test='departmentCode != null and departmentCode != ""'>
-            AND department_idx = #{departmentCode}
+        <if test='departmentIdx != null and departmentIdx != ""'>
+            AND department_idx = #{departmentIdx}
         </if>
         <if test='phone != null and phone != ""'>
             AND phone LIKE CONCAT('%',#{phone},'%')
@@ -125,7 +127,7 @@
                 #{email},
                 #{phone},
                 #{department},
-                #{departmentCode})
+                #{departmentIdx})
     </insert>
 
     <insert id="RegisterUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
@@ -140,46 +142,34 @@
                 #{email},
                 #{phone},
                 #{department},
-                #{departmentCode})
+                #{departmentIdx})
     </insert>
-
-    <update id="updateUserInfo" parameterType="oms.pc_protector.restApi.user.model.UserVO">
-        UPDATE user, client
-        SET user.user_id        =#{userId},
-            client.user_id=#{userId},
-            user.name           = #{name},
-            user.department_idx = #{departmentCode},
-            user.department     = #{department},
-            user.email          = #{email},
-            user.phone          = #{phone}
-        WHERE user_id = #{userId}
-    </update>
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
         UPDATE user
         SET user.user_id        = #{userId},
             user.name           = #{name},
             user.department     = #{department},
-            user.department_idx = #{departmentCode},
+            user.department_idx = #{departmentIdx},
             user.email          = #{email},
             user.phone          = #{phone},
             user.update_time    = now()
-        WHERE user.user_id = #{userId};
+        WHERE user.user_id = #{userId} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
         DELETE
         FROM user
-        WHERE user.user_id = #{value};
-        DELETE
-        FROM client
-        WHERE user_id = #{value};
-        DELETE
-        FROM user_result
-        WHERE user_id = #{value};
-        DELETE
-        FROM client_history
-        WHERE user_id = #{value};
+        WHERE user.user_id = #{value} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
+        DELETE c
+        FROM client c, user u
+        WHERE c.user_id = #{value} AND c.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        DELETE ur
+        FROM user_result ur, user u
+        WHERE ur.user_id = #{value} AND ur.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        DELETE ch
+        FROM client_history ch, user u
+        WHERE ch.user_id = #{value} AND ch.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
     </delete>
 
     <delete id="deleteAllUserInfo">

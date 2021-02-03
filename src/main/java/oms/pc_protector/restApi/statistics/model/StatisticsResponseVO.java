@@ -9,11 +9,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StatisticsResponseVO {
 
-    private Long departmentCode;
+    private Long departmentIdx;
     private String yearMonth;
 
     public StatisticsResponseVO(String yearMonth, Long code) {
-        this.departmentCode = code;
+        this.departmentIdx = code;
         this.yearMonth = yearMonth;
     }
 }

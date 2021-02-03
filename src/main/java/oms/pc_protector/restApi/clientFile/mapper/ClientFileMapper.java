@@ -10,14 +10,16 @@ import java.util.List;
 @Repository
 public interface ClientFileMapper {
 
-    public List<ClientFileVO> selectClientFile();
+    public List<ClientFileVO> selectClientFile(String idx);
 
-    public ClientFileVO selectClientFileRecent();
+    public ClientFileVO selectClientFileRecent(String idx);
 
-    public ArrayList<String> selectVersionList();
+    public ArrayList<String> selectVersionList(String idx);
 
-    public int selectExistFile(@Param(value = "version") String version);
-    public int selectExistMd5(@Param(value = "md5") String md5);
+    public int selectExistFile(@Param(value = "version") String version,
+                               @Param(value = "idx") String idx);
+    public int selectExistMd5(@Param(value = "md5") String md5,
+                              @Param(value = "idx") String idx);
 
     public void insertClientFile(ClientFileVO clientFileVO);
 

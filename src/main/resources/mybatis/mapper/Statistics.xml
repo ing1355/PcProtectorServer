@@ -26,7 +26,7 @@
                  SELECT t2.user_id, t2.ip_address
                  FROM user AS t0,
                       client AS t2
-                 WHERE t0.department_idx = #{departmentCode}
+                 WHERE t0.department_idx = #{departmentIdx}
                    AND t0.user_id = t2.user_id) AS A
                  LEFT OUTER JOIN (
             SELECT *,
@@ -63,7 +63,7 @@
                  FROM user as A,
                       client as B
                  WHERE A.user_id = B.user_id
-                   AND A.department_idx LIKE CONCAT(#{departmentCode}, '%')
+                   AND A.department_idx LIKE CONCAT(#{departmentIdx}, '%')
              ) AS t0
                  LEFT OUTER JOIN
              (
@@ -95,7 +95,7 @@
                  FROM client AS t1,
                       user AS t2
                  WHERE t1.user_id = t2.user_id
-                   AND t2.department_idx LIKE CONCAT(#{departmentCode}, '%')
+                   AND t2.department_idx LIKE CONCAT(#{departmentIdx}, '%')
              ) AS A
                  LEFT OUTER JOIN
              (SELECT *,
@@ -146,7 +146,7 @@
                  FROM client AS t1,
                       user AS t2
                  WHERE t1.user_id = t2.user_id
-                   AND t2.department_idx LIKE CONCAT(#{departmentCode}, '%')
+                   AND t2.department_idx LIKE CONCAT(#{departmentIdx}, '%')
              ) AS A
                  LEFT OUTER JOIN
              (SELECT *,
