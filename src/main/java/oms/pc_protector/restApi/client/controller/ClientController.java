@@ -153,6 +153,7 @@ public class ClientController {
                                           HttpServletResponse response){
         ClientVO client = new ClientVO();
         String code = request.getHeader("code");
+        login.setDptCode(code);
         DepartmentVO departmentVO = departmentMapper.selectByDptCode(code);
         boolean userExist = clientService.findClient(login.getId(), code);
         if(userExist) {

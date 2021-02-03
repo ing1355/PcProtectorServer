@@ -9,13 +9,27 @@
     <select id="loginForClientFirst" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
             resultType="int">
         SELECT COUNT(*) FROM client
-        WHERE user_id = #{userId} OR mac_address = #{macAddress} AND department_idx = #{departmentIdx}
+        WHERE user_id = #{userId} AND mac_address = #{macAddress} AND department_idx = #{departmentIdx}
     </select>
 
     <select id="findClient" parameterType="oms.pc_protector.restApi.login.model.ClientLoginVO"
             resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client
-        WHERE user_id = #{id}
+        SELECT c.idx,
+               c.ip_address,
+               c.user_id,
+               c.mac_address,
+               c.pc_name,
+               c.os,
+               c.pc_protector_version,
+               c.vaccine_version,
+               c.check_time,
+               c.create_time,
+               c.update_time,
+               c.wrong_md5,
+               c.roles,
+               c.active,
+               c.department_idx FROM client c, (SELECT code FROM department WHERE dpt_code = #{dptCode}) d
+        WHERE user_id = #{id} AND c.department_idx = d.code
     </select>
 
     <select id="findPasswordById" resultType="String" parameterType="String">

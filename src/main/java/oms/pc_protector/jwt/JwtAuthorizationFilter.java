@@ -70,7 +70,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     }
                     else if(role.equals("CLIENT")) {
                         String ipAddress = decodedJWT.getAudience().get(0);
-                        ClientVO client = loginMapper.findClient(new ClientLoginVO(userId, ipAddress));
+                        ClientVO client = loginMapper.findClient(new ClientLoginVO(userId, ipAddress, request.getHeader("code")));
                         ClientPrincipal principal = new ClientPrincipal(client);
                         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, ipAddress, principal.getAuthorities());
                         authentication = auth;
