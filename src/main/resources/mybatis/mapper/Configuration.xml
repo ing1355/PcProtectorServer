@@ -169,7 +169,7 @@
 
     <update id="updateForceRun" parameterType="boolean">
         UPDATE configuration
-        SET force_run    = ${value}
+        SET force_run    = ${param}
         WHERE department_idx = #{UserIdx}
     </update>
 

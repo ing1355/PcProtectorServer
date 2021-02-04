@@ -81,12 +81,13 @@
         WHERE department = #{name}
     </insert>
 
-    <insert id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+    <select id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO" resultType="Int">
         INSERT INTO department (name, code, parent_code, dpt_code)
         VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
-    </insert>
+        SELECT idx FROM department WHERE code = #{code};
+    </select>
 
-    <insert id="insertRoot" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+    <select id="insertRoot" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO" resultType="Int">
         INSERT INTO department (name, code, parent_code, dpt_code)
         VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
         INSERT INTO edit_program_check(department_idx)
@@ -105,13 +106,24 @@
                    DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL 2 DAY), INTERVAL 1 SECOND),
                     #{code}
                );
-    </insert>
+        SELECT idx FROM department WHERE code = #{code};
+    </select>
+
+    <update id="changeDepartment" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
+        UPDATE department
+        SET name        = #{name},
+            code        = #{code},
+            parent_code = #{parentCode},
+            dpt_code    = #{dptCode},
+            update_time = now()
+        WHERE idx = #{idx}
+    </update>
 
     <update id="update" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE department
         SET name        = #{new_name},
             update_time = now()
-        WHERE name = #{old_name}
+        WHERE name = #{old_name} AND code = #{code}
     </update>
 
     <delete id="deleteAll">

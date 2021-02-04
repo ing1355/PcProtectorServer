@@ -76,39 +76,10 @@ public class UserService {
         return userList;
     }
 
-
-    @Transactional(readOnly = true)
-    public UserResponseVO findUserWithClientById(String id) {
-        return Optional.ofNullable(userMapper.selectUserWithClientInfoById(id))
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
-    }
-
-
-    @Transactional(readOnly = true)
-    public UserResponseVO findUserWithClientByIpAddress(String ipAddress) {
-        return Optional.ofNullable(userMapper.selectUserWithClientByIpAddress(ipAddress))
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이피입니다."));
-    }
-
-
     @Transactional(readOnly = true)
     public UserVO findById(String id, String code) {
         return Optional.ofNullable(userMapper.selectById(id, code))
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<UserVO> findByDepartment(String department) {
-        return Optional.ofNullable(userMapper.selectByDepartment(department))
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 부서입니다."));
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<UserVO> findByDepartmentIdx(Long departmentIdx) {
-        return Optional.ofNullable(userMapper.selectByDepartmentIdx(departmentIdx))
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 부서코드입니다."));
     }
 
     @Transactional(readOnly = true)

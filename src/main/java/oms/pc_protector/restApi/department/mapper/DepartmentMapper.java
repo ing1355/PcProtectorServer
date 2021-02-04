@@ -29,9 +29,11 @@ public interface DepartmentMapper {
 
     public void deleteAll(String idx);
 
-    public void insert(DepartmentVO departmentVO);
+    public void changeDepartment(DepartmentVO departmentVO);
 
-    public void insertRoot(DepartmentVO departmentVO);
+    public Integer insert(DepartmentVO departmentVO);
+
+    public Integer insertRoot(DepartmentVO departmentVO);
 
     public void update(UpdateDepartmentVO updateDepartmentVO);
 }

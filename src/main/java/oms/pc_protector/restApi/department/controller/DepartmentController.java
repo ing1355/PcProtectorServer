@@ -38,6 +38,14 @@ public class DepartmentController {
         return responseService.getSingleResult(result);
     }
 
+    @PostMapping(value = "/change")
+    public SingleResult<?> changeDepartment(@RequestBody @Valid List<DepartmentVO> departmentVOList,
+                                                     HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        departmentService.changeDepartment(departmentVOList, User_Idx);
+        return responseService.getSingleResult(true);
+    }
+
     @PostMapping(value = "/excel")
     public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList,
                                                      HttpServletRequest httpServletRequest) {

@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.department.service;
 
 import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
+import oms.pc_protector.restApi.department.model.DepartmentResponseVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
@@ -61,6 +62,19 @@ public class DepartmentService {
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
     }
 
+    @Transactional
+    public void changeDepartment(List<DepartmentVO> departmentVO, String UserIdx) {
+        List<DepartmentVO> departmentVOList = findAll(UserIdx);
+        int count = 0;
+        for(DepartmentVO departmentVO1 : departmentVO) {
+            DepartmentVO temp = departmentVOList.get(count);
+            if(departmentVO1.getCode() != temp.getCode() ||
+                    !departmentVO1.getName().equals(temp.getName())) {
+                departmentMapper.changeDepartment(departmentVO1);
+            }
+        }
+    }
+
 
     @Transactional
     public void registerByExcel(List<DepartmentVO> departmentVO, String User_Idx) {
@@ -72,25 +86,25 @@ public class DepartmentService {
 
 
     @Transactional
-    public String register(DepartmentVO departmentVO) {
+    public DepartmentResponseVO register(DepartmentVO departmentVO) {
         String code = null;
         do {
             code = CreateRandomDptCode();
         } while (departmentMapper.findDepartmentCode(code) == 0);
         departmentVO.setDptCode(code);
+        DepartmentResponseVO departmentResponseVO = null;
         if(departmentVO.getCode() / 100 < 10) {
-            departmentMapper.insertRoot(departmentVO);
+            departmentResponseVO = new DepartmentResponseVO(departmentMapper.insertRoot(departmentVO), code);
         } else {
-            departmentMapper.insert(departmentVO);
+            departmentResponseVO = new DepartmentResponseVO(departmentMapper.insert(departmentVO), code);
         }
-        return code;
+        return departmentResponseVO;
     }
 
 
     @Transactional
     public void update(UpdateDepartmentVO updateDepartmentVO) {
         departmentMapper.update(updateDepartmentVO);
-        userMapper.departmentModified(updateDepartmentVO);
     }
 
     private String CreateRandomDptCode() {

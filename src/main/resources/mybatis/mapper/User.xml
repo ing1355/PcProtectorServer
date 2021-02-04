@@ -30,20 +30,6 @@
         WHERE user_id = #{id} AND department_idx LIKE CONCAT(#{departmentIdx}, '%');
     </select>
 
-    <select id="selectByDepartment" resultType="oms.pc_protector.restApi.user.model.UserVO"
-            parameterType="String">
-        SELECT *
-        FROM user
-        WHERE department = #{value}
-    </select>
-
-    <select id="selectByDepartmentIdx" resultType="oms.pc_protector.restApi.user.model.UserVO"
-            parameterType="Long">
-        SELECT *
-        FROM user
-        WHERE department_idx = #{departmentIdx}
-    </select>
-
     <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
         SELECT * FROM user
@@ -62,42 +48,6 @@
             AND phone LIKE CONCAT('%',#{phone},'%')
         </if>
         ORDER BY idx DESC
-    </select>
-
-    <select id="selectUserWithClientByIpAddress" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
-            parameterType="String">
-        SELECT u.user_id,
-               u.department,
-               u.department_idx,
-               u.email,
-               u.phone,
-               c.ip_address,
-               c.mac_address,
-               c.pc_name,
-               c.pc_protector_version,
-               c.vaccine_version,
-               c.check_time
-        FROM user u
-                 LEFT JOIN client c ON u.user_id = c.user_id
-        WHERE ip_address = #{value}
-    </select>
-
-    <select id="selectUserWithClientInfoById" resultType="oms.pc_protector.restApi.user.model.UserResponseVO"
-            parameterType="String">
-        SELECT u.user_id,
-               u.department,
-               u.department_idx,
-               u.email,
-               u.phone,
-               c.ip_address,
-               c.mac_address,
-               c.pc_name,
-               c.pc_protector_version,
-               c.vaccine_version,
-               c.check_time
-        FROM user u
-                 LEFT JOIN client c ON u.user_id = c.user_id
-        WHERE u.user_id = #{value}
     </select>
 
     <update id="departmentModified" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
@@ -160,16 +110,16 @@
     <delete id="deleteUserInfo" parameterType="String">
         DELETE
         FROM user
-        WHERE user.user_id = #{value} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
+        WHERE user.user_id = #{id} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
         DELETE c
         FROM client c, user u
-        WHERE c.user_id = #{value} AND c.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        WHERE c.user_id = #{id} AND c.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
         DELETE ur
         FROM user_result ur, user u
-        WHERE ur.user_id = #{value} AND ur.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        WHERE ur.user_id = #{id} AND ur.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
         DELETE ch
         FROM client_history ch, user u
-        WHERE ch.user_id = #{value} AND ch.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        WHERE ch.user_id = #{id} AND ch.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
     </delete>
 
     <delete id="deleteAllUserInfo">

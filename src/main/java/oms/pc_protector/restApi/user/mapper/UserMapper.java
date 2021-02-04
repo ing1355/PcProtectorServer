@@ -17,14 +17,6 @@ public interface UserMapper {
 
     public List<UserVO> search(UserSearchInputVO userSearchVO);
 
-    public List<UserVO> selectByDepartment(String departmentName);
-
-    public List<UserVO> selectByDepartmentIdx(Long departmentIdx);
-
-    public UserResponseVO selectUserWithClientByIpAddress(String ipAddress);
-
-    public UserResponseVO selectUserWithClientInfoById(String id);
-
     public void insertUserInfo(String id);
 
     public void insertUserInfoUserInfoFromAdmin(UserRequestVO userRequestVO);
