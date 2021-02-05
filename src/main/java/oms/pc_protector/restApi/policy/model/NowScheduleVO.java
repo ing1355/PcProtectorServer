@@ -8,11 +8,11 @@ import lombok.Setter;
 public class NowScheduleVO {
     private String startDate;
     private String endDate;
-    private String idx;
+    private String departmentIdx;
 
     public NowScheduleVO(String format, String format1, String format2) {
         this.startDate = format;
         this.endDate = format1;
-        this.idx = format2;
+        this.departmentIdx = format2;
     }
 }

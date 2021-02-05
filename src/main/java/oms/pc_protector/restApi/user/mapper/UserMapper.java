@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface UserMapper {
 
-    public List<UserVO> selectUserInfoAll(String idx);
+    public List<UserVO> selectUserInfoAll(String departmentIdx);
 
     public UserVO selectById(String id, String code);
 

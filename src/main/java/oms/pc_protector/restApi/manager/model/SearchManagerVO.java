@@ -10,5 +10,5 @@ public class SearchManagerVO {
     private String name;
     private String mobile;
     private String email;
-    private String idx;
+    private String departmentIdx;
 }

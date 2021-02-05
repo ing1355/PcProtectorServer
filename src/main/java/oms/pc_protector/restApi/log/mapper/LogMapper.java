@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface LogMapper {
 
-    public List<?> getAllLog(String idx);
+    public List<?> getAllLog(String departmentIdx);
 
     public List<?> search(LogRequestVO logRequestVO);
 

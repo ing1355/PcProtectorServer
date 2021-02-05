@@ -6,61 +6,40 @@
         SELECT *
         FROM user_result AS t1,
              user AS t2,
-             client AS t3
+             client AS t3,
+             (SELECT b.idx
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE t2.user_id = t3.user_id
           AND t1.user_id = t3.user_id
+          AND t3.ip_address = t1.ip_address
           AND t1.in_schedule = 1
-          AND t2.department_idx LIKE CONCAT(#{idx}, '%')
+          AND t2.department_idx = d.idx
         ORDER BY t1.check_time DESC
     </select>
 
-    <select id="selectResultDetailsById" resultType="oms.pc_protector.restApi.result.model.ResultVO"
-            parameterType="String">
-        SELECT *
-        FROM user_result
-        WHERE ip_address = #{ipAddress}
-          AND DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{startCheckTime} AND #{endCheckTime}
-          AND in_schedule = 1
-    </select>
-
-    <select id="selectResultProcessById" resultType="oms.pc_protector.restApi.result.model.ResultProcessVO"
-            parameterType="String">
-        SELECT *
-        FROM user_result_process p
-        WHERE ip_address = #{ipAddress}
-          AND check_time BETWEEN #{startCheckTime} AND #{endCheckTime}
-    </select>
-
-    <select id="selectCountBySchedule" resultType="int">
-        SELECT COUNT(*)
-        FROM user_result
-        WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{startDate} AND #{endDate}
-          AND in_schedule = 1
-    </select>
-
-    <select id="selectCountByNowScheduleMonth" resultType="int">
-        SELECT COUNT(*)
-        FROM user_result
-        WHERE in_schedule = 1
-          AND DATE_FORMAT(check_time, '%Y-%m')
-    </select>
-
     <select id="selectExistByDay" resultType="int">
-        SELECT COUNT(*)
-        FROM user_result
-        WHERE in_schedule = 0
-          AND DATE_FORMAT(check_time, '%Y-%m-%d') = #{value}
+        SELECT COUNT(ur.idx)
+        FROM user_result ur, (SELECT b.idx
+                              FROM department a
+                                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE ur.in_schedule = 0
+          AND DATE_FORMAT(ur.check_time, '%Y-%m-%d') = #{day}
+          AND ur.department_idx = d.idx
     </select>
 
     <select id="selectCountRunByMonth" resultType="int">
-        SELECT COUNT(*)
+        SELECT COUNT(DISTINCT u.idx)
         FROM user_result u,
              dashboard_period da,
-             (SELECT c.ip_address, c.user_id, c.department_idx
+             (SELECT DISTINCT c.ip_address, c.user_id, c.department_idx
               FROM client c,
-                   user user
+                   user user,
+                   (SELECT b.idx
+                    FROM department a
+                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
               WHERE user.user_id = c.user_id
-                AND c.department_idx LIKE CONCAT(#{idx}, '%')) c
+                AND c.department_idx = d.idx) c
         WHERE u.user_id = c.user_id
           AND c.ip_address = u.ip_address
           AND (u.item1_result +
@@ -81,12 +60,10 @@
                u.item16_result) > 0
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND u.in_schedule = 1
-          AND u.department_idx = da.department_idx
           AND u.department_idx = c.department_idx
     </select>
 
     <select id="selectScoreByDepartmentWithMonth" resultType="Integer" parameterType="String">
-
         SELECT t1.score
         FROM (
                  SELECT A.department_idx, A.user_id, B.ip_address
@@ -142,12 +119,13 @@
 
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
-        SELECT * FROM (
-        SELECT t0.user_id, t0.name, t0.department, t0.department_idx FROM user t0 , client t1
+        SELECT * FROM (SELECT b.idx, b.name
+        FROM department a JOIN department b ON a.idx = #{userIdx} AND b.code LIKE CONCAT(a.code, '%')) d,
+        (SELECT t0.user_id, t0.name, t1.ip_address, t0.department_idx FROM user t0 , client t1
         WHERE t0.user_id = t1.user_id
-        ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1
+        ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1 AND A.ip_address = B.ip_address
         WHERE A.user_id = B.user_id
-        AND B.department_idx LIKE CONCAT(#{userIdx}, '%')
+        AND B.department_idx = d.idx
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')
         </if>
@@ -196,9 +174,12 @@
                             ch.pc_protector_version,
                             ch.user_id
             FROM client_history ch,
-                 user u
+                 user u,
+                 (SELECT b.idx
+                  FROM department a
+                           JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
             WHERE ch.user_id = #{id}
-              AND u.department_idx LIKE CONCAT(#{UserIdx}, '%')
+              AND u.department_idx = d.idx
               AND ch.user_id = u.user_id
         ) AS A
            , (
@@ -214,22 +195,27 @@
 
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
         SELECT COUNT(*)
-        FROM user_result,
-             dashboard_period d
-        WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
-          AND d.department_idx = #{idx}
-          AND user_id = #{userId}
-          AND ip_address = #{ipAddress}
-          AND in_schedule = 1
+        FROM user_result ur, client c,
+             dashboard_period dp, (SELECT b.idx
+                                  FROM department a
+                                           JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN dp.start_date AND dp.end_date
+          AND dp.department_idx = #{rootIdx}
+          AND ur.department_idx = d.idx
+          AND ur.user_id = #{userId}
+          AND ur.ip_address = c.ip_address
+          AND ur.ip_address = #{ipAddress}
+          AND ur.in_schedule = 1
     </select>
 
     <select id="selectClientForMiss" parameterType="oms.pc_protector.restApi.result.model.ResultVO"
             resultType="int">
-        SELECT COUNT(*)
+        SELECT COUNT(idx)
         FROM user_result
         WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN #{checkTime} AND now()
           AND user_id = #{userId}
           AND ip_address = #{ipAddress}
+          AND department_idx = #{departmentIdx}
           AND in_schedule = 1
     </select>
 
@@ -253,7 +239,7 @@
                                  item5_reasons_vulnerability, item5_password_length, item5_detail_reasons,
                                  item6_pw_last_change_past_date,
                                  item7_execution_status_check, item7_pw_usage_status, item7_period,
-                                 item10_count, in_schedule)
+                                 item10_count, in_schedule, department_idx)
         VALUES (#{userId},
                 #{ipAddress},
                 #{checkTime},
@@ -273,7 +259,7 @@
                 #{item5ReasonsVulnerability}, #{item5PasswordLength}, #{item5DetailReasons},
                 #{item6PwLastChangePastDate},
                 #{item7ExecutionStatusCheck}, #{item7PwUsageStatus}, #{item7Period},
-                #{item10Count}, #{inSchedule})
+                #{item10Count}, #{inSchedule}, #{departmentIdx})
     </insert>
 
     <insert id="insertEmptyResultBySchedule" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -282,7 +268,9 @@
     </insert>
 
     <update id="updateResultClient" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
-        UPDATE user_result, dashboard_period d
+        UPDATE user_result ur, dashboard_period dp, (SELECT b.idx
+                                                 FROM department a
+                                                          JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         SET score                           = #{score},
             check_time                      = #{checkTime},
             item1_result                    = #{item1Result},
@@ -317,7 +305,9 @@
             item10_count                    = #{item10Count}
         WHERE user_id = #{userId}
           AND ip_address = #{ipAddress}
-          AND DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
+          AND dp.department_idx = #{rootIdx}
+          AND d.idx = ur.department_idx
+          AND DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN dp.start_date AND dp.end_date
           AND in_schedule = 1
     </update>
 
@@ -358,13 +348,8 @@
         WHERE user_id = #{userId}
           AND ip_address = #{ipAddress}
           AND DATE_FORMAT(check_time, '%Y-%m-%d') = DATE_FORMAT(now(), '%Y-%m-%d')
+          AND department_idx = #{departmentIdx}
           AND in_schedule = 0
-    </update>
-
-    <update id="updateResultByUpdateClient" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
-        UPDATE user_result
-        SET ip_address = #{ipAddress}
-        WHERE user_id = #{userId}
     </update>
 </mapper>
 

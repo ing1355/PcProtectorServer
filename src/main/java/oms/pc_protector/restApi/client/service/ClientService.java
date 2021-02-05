@@ -19,21 +19,16 @@ public class ClientService {
         this.loginservice = loginService;
     }
 
-    public void loginUpdateTime(String id) {
-        clientMapper.loginUpdateTime(id);
+    public void loginUpdateTime(String id, String departmentIdx) {
+        clientMapper.loginUpdateTime(id, departmentIdx);
     }
 
-    public List<ClientVO> selectClientListById(String id) {
-        return clientMapper.selectClientListById(id);
+    public List<ClientVO> selectClientListById(String id, String departmentIdx) {
+        return clientMapper.selectClientListById(id, departmentIdx);
     }
 
-    public boolean findClient(String id, String code) {
-        return clientMapper.selectClient(id, code) > 0;
-    }
-
-    @Transactional
-    public int findSameIpAddress(String IpAddress) {
-        return clientMapper.selectSameIpAddress(IpAddress);
+    public String findClient(String id, String departmentIdx) {
+        return clientMapper.selectClient(id, departmentIdx);
     }
 
     @Transactional

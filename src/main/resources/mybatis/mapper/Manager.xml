@@ -4,29 +4,32 @@
 
 
     <select id="findAll" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT id, name, mobile, department, department_idx, email, locked
-        FROM manager
-        WHERE department_idx LIKE CONCAT(#{idx}, '%')
+        SELECT m.id, m.name, m.mobile, m.department_idx, m.email, m.locked, d.name as department
+        FROM manager m, (SELECT b.idx, b.name
+                         FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE m.department_idx = d.idx
     </select>
 
     <select id="searchManager" parameterType="oms.pc_protector.restApi.manager.model.SearchManagerVO"
             resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
-        SELECT id,name,mobile,email FROM manager
+        SELECT m.id,m.name,m.mobile,m.email, d.name as department
+        FROM manager m, (SELECT b.idx, b.name
+        FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE 1 = 1
         <if test='id != null and id != ""'>
-            AND id LIKE CONCAT('%',#{id},'%')
+            AND m.id LIKE CONCAT('%',#{id},'%')
         </if>
         <if test='name != null and name != ""'>
-            AND name LIKE CONCAT('%',#{name},'%')
+            AND m.name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test='mobile != null and mobile != ""'>
-            AND mobile LIKE CONCAT('%',#{mobile},'%')
+            AND m.mobile LIKE CONCAT('%',#{mobile},'%')
         </if>
         <if test='email != null and email != ""'>
-            AND email LIKE CONCAT('%',#{email},'%')
+            AND m.email LIKE CONCAT('%',#{email},'%')
         </if>
-        AND department_idx LIKE CONCAT(#{idx}, '%')
-        ORDER BY idx DESC
+        AND m.department_idx = d.idx
+        ORDER BY m.idx DESC
     </select>
 
     <select id="findById" resultType="oms.pc_protector.restApi.manager.model.ManagerVO">
@@ -36,9 +39,9 @@
     </select>
 
     <select id="selectSameId" resultType="int" parameterType="String">
-        SELECT COUNT(*)
+        SELECT COUNT(id)
         FROM manager
-        WHERE id = #{id} AND department_idx LIKE CONCAT(#{idx}, '%')
+        WHERE id = #{id}
     </select>
 
     <insert id="insertManager" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
@@ -50,7 +53,6 @@
                              active,
                              mobile,
                              email,
-                             department,
                              department_idx)
         VALUES (#{id},
                 #{name},
@@ -60,7 +62,6 @@
                 '1',
                 #{mobile},
                 #{email},
-                #{department},
                 #{departmentIdx});
     </insert>
 
@@ -69,8 +70,6 @@
         FROM manager
         WHERE manager.id = #{value};
         SET @COUNT = 0;
-        UPDATE manager
-        SET manager.idx = @COUNT := @COUNT + 1;
     </delete>
 
     <update id="updateManagerInfo" parameterType="oms.pc_protector.restApi.manager.model.ManagerVO">
@@ -80,8 +79,7 @@
                 SET name = #{name},
                 mobile = #{mobile},
                 email = #{email},
-                department = #{department},
-                department_idx = #{departmentIdx},
+                department_idx = (SELECT idx FROM department WHERE code = #{departmentIdx}),
                 password = #{password}
                 WHERE id = #{id};
             </when>
@@ -90,8 +88,7 @@
                 SET name = #{name},
                 mobile = #{mobile},
                 email = #{email},
-                department = #{department},
-                department_idx = #{departmentIdx}
+                department_idx = (SELECT idx FROM department WHERE code = #{departmentIdx})
                 WHERE id = #{id};
             </when>
         </choose>
@@ -104,6 +101,12 @@
         WHERE id = #{userId} AND department_idx = #{departmentIdx};
     </update>
 
+    <update id="updateRoot">
+        UPDATE manager
+        SET department_idx = (SELECT idx FROM department WHERE code = '1')
+        WHERE id = 'admin'
+    </update>
+
     <update id="initManagerLock" parameterType="String">
         UPDATE manager
         SET locked = 0
@@ -113,14 +116,14 @@
     <update id="updateManagerLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
         UPDATE manager
         SET locked = locked + 1
-        WHERE id = #{userId} AND department_idx = #{departmentIdx};
+        WHERE id = #{userId}
     </update>
 
     <update id="updateManagerUnLock" parameterType="oms.pc_protector.restApi.manager.model.ManagerLockVO">
         UPDATE manager
         SET password = #{password},
             locked   = 0
-        WHERE id = #{userId} AND department_idx = #{departmentIdx};
+        WHERE id = #{userId};
     </update>
 
 </mapper>

@@ -23,6 +23,5 @@ public class ConfigurationVO {
     private boolean acrobatSecurityPatch;
     private boolean unApprovedProcess;
     private boolean requiredProcess;
-    private String idx;
-    private String UserIdx;
+    private String departmentIdx;
 }

@@ -9,14 +9,14 @@ import java.util.List;
 @Repository
 public interface ProcessMapper {
 
-    public List<ProcessVO> selectProcessAll(String idx);
+    public List<ProcessVO> selectProcessAll(String departmentIdx);
 
     public List<ProcessVO> selectProcessList(@Param(value = "processType") String processType,
-                                             @Param(value = "idx") String idx);
+                                             @Param(value = "departmentIdx") String departmentIdx);
     public ProcessVO existProcess(ProcessVO processVO);
     public List<ProcessVO> searchProcess(@Param(value = "displayName") String displayName,
                                          @Param(value = "registryName") String registryName,
-                                         @Param(value = "departmentIdx") String idx);
+                                         @Param(value = "departmentIdx") String departmentIdx);
 
     public int insertProcess(ProcessVO processVO);
     public int insertUnApprovedProcess(ProcessVO processVO);

@@ -21,7 +21,6 @@ import java.util.List;
 public class ConfigurationController {
 
     private final ResponseService responseService;
-
     private final ConfigurationService configurationService;
 
     public ConfigurationController(ConfigurationService configurationService,
@@ -48,7 +47,7 @@ public class ConfigurationController {
     public SingleResult<?> updateConfig(@RequestBody @Valid ConfigurationVO configurationVO,
                                         HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        configurationVO.setUserIdx(User_Idx);
+        configurationVO.setDepartmentIdx(User_Idx);
         configurationService.updateConfiguration_service(configurationVO);
         return responseService.getSingleResult(true);
     }
@@ -57,7 +56,7 @@ public class ConfigurationController {
     public SingleResult<?> updateEdit(@RequestBody @Valid EditProgramVO editProgramVO,
                                       HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        editProgramVO.setUserIdx(User_Idx);
+        editProgramVO.setDepartmentIdx(User_Idx);
         configurationService.updateEditProgramFlag_service(editProgramVO);
         return responseService.getSingleResult(true);
     }
@@ -66,7 +65,7 @@ public class ConfigurationController {
     public SingleResult<?> updateUsb(@RequestBody @Valid SecurityUsbDetailsVO securityUsbDetailsVO,
                                      HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        securityUsbDetailsVO.setIdx(User_Idx);
+        securityUsbDetailsVO.setDepartmentIdx(User_Idx);
         configurationService.updateSecurityUsbDetails_service(securityUsbDetailsVO);
         return responseService.getSingleResult(true);
     }
@@ -79,34 +78,12 @@ public class ConfigurationController {
         return responseService.getSingleResult(true);
     }
 
-    @PostMapping(value = "/schedule/insert")
-    public SingleResult<?> registerSchedule(@RequestBody PeriodDateVO periodDateVO) {
-        int resultNum = configurationService.registerSchedule(periodDateVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
-    }
-
     @PutMapping(value = "/schedule/update")
     public SingleResult<?> updateSchedule(@RequestBody RequestPeriodDateVO requestPeriodDateVO,
                                           HttpServletRequest httpServletRequest) throws ParseException {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
         requestPeriodDateVO.setDepartmentIdx(User_Idx);
         int resultNum = configurationService.updateSchedule(requestPeriodDateVO);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
-    }
-
-    @PutMapping(value = "/schedule/apply")
-    public SingleResult<?> updateApply(@RequestParam(value = "old_idx") Long old_idx,
-                                       @RequestParam(value = "new_idx") Long new_idx) {
-        int resultNum = configurationService.updateApply(old_idx, new_idx);
-        boolean responseResult = resultNum > 0;
-        return responseService.getSingleResult(responseResult);
-    }
-
-    @DeleteMapping(value = "/schedule/delete")
-    public SingleResult<?> deleteSchedule(@RequestBody PeriodDateVO periodDateVO) {
-        int resultNum = configurationService.deleteSchedule(periodDateVO);
         boolean responseResult = resultNum > 0;
         return responseService.getSingleResult(responseResult);
     }

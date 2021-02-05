@@ -16,7 +16,6 @@ import java.util.HashMap;
 public class DashboardController {
 
     private ResponseService responseService;
-
     private DashboardService dashboardService;
 
     public DashboardController(ResponseService responseService,
@@ -41,26 +40,5 @@ public class DashboardController {
 //        double secDiffTime = (afterTime - beforeTime) / 1000;
 //        log.info("대시보드 전체 걸린시간 : " + secDiffTime + "초");
         return responseService.getSingleResult(result);
-    }
-
-    @GetMapping(value = "top")
-    public SingleResult<?> dashboardTop(HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        HashMap<String, Object> dashboardTopMap = dashboardService.dashboardTop(User_Idx);
-        return responseService.getSingleResult(dashboardTopMap);
-    }
-
-    @GetMapping(value = "middle")
-    public SingleResult<?> dashboardMiddle(HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        HashMap<String, Object> dashboardMiddleMap = dashboardService.dashboardMiddle(User_Idx);
-        return responseService.getSingleResult(dashboardMiddleMap);
-    }
-
-    @GetMapping(value = "bottom")
-    public SingleResult<?> dashboardBottom(@RequestParam(value = "term") String term, HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(term, User_Idx);
-        return responseService.getSingleResult(dashboardBottomMap);
     }
 }

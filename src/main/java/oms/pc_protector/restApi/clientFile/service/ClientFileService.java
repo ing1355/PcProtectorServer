@@ -65,10 +65,10 @@ public class ClientFileService {
 
 
     @Transactional
-    public int removeClientFile(List<ClientFileVO> clientFileVO, String idx) {
+    public int removeClientFile(List<ClientFileVO> clientFileVO, String departmentIdx) {
         int temp = 0;
         for(ClientFileVO clientFileVO1 : clientFileVO) {
-            clientFileVO1.setIdx(idx);
+            clientFileVO1.setDepartmentIdx(departmentIdx);
             temp = clientFileMapper.deleteClientFile(clientFileVO1);
         }
         return temp;

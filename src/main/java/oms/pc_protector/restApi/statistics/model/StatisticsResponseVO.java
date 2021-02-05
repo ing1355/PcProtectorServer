@@ -1,19 +1,17 @@
 package oms.pc_protector.restApi.statistics.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class StatisticsResponseVO {
 
-    private Long departmentIdx;
+    private String departmentIdx;
     private String yearMonth;
 
-    public StatisticsResponseVO(String yearMonth, Long code) {
-        this.departmentIdx = code;
+    public StatisticsResponseVO(String yearMonth, String departmentIdx) {
+        this.departmentIdx = departmentIdx;
         this.yearMonth = yearMonth;
     }
 }

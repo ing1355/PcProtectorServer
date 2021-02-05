@@ -12,13 +12,13 @@ import java.util.List;
 @Repository
 public interface ManagerMapper {
 
-    public List<ManagerVO> findAll(String idx);
+    public List<ManagerVO> findAll(String departmentIdx);
 
     public ManagerVO findById(String id);
 
     public List<ManagerVO> searchManager(SearchManagerVO searchManagerVO);
 
-    public int selectSameId(@Param(value = "id") String id, @Param(value = "idx") String User_Idx);
+    public int selectSameId(@Param(value = "id") String id);
 
     public void updateManagerInfo(ManagerVO managerVO);
 
@@ -29,6 +29,8 @@ public interface ManagerMapper {
     public void initManagerLock(String userId);
 
     public void updateManagerUnLock(ManagerLockVO managerLockVO);
+
+    public void updateRoot();
 
     public void insertManager(ManagerVO managerVO);
 

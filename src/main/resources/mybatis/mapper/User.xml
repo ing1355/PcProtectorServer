@@ -5,15 +5,17 @@
     <select id="selectUserInfoAll" resultType="oms.pc_protector.restApi.user.model.UserVO">
         SELECT u.user_id,
                u.department_idx,
-               u.department,
                u.name,
                IFNULL(GROUP_CONCAT(ip_address SEPARATOR ' / '), "") AS ip_address,
                u.email,
+               d.name as department,
                u.phone
-        FROM user AS u
+        FROM (SELECT b.idx, b.name
+              FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d,
+             user AS u
                  LEFT join client AS c
                            ON u.user_id = c.user_id
-        WHERE u.department_idx LIKE CONCAT(#{value}, '%')
+        WHERE u.department_idx = d.idx
         GROUP BY u.user_id
     </select>
 
@@ -25,27 +27,28 @@
     </select>
 
     <select id="selectSameId" resultType="int" parameterType="String">
-        SELECT COUNT(*)
-        FROM user
-        WHERE user_id = #{id} AND department_idx LIKE CONCAT(#{departmentIdx}, '%');
+        SELECT COUNT(u.user_id)
+        FROM user u, (SELECT b.idx
+                    FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE u.user_id = #{id} AND u.department_idx = d.idx;
     </select>
 
     <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
-        SELECT * FROM user
-        WHERE 1 = 1
-        AND department_idx LIKE CONCAT(#{UserIdx}, '%')
+        SELECT * FROM user u, (SELECT b.idx
+        FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE u.department_idx = d.idx
         <if test='userId != null and userId != ""'>
-            AND user_id LIKE CONCAT('%',#{userId},'%')
+            AND u.user_id LIKE CONCAT('%',#{userId},'%')
         </if>
         <if test='name != null and name != ""'>
-            AND name LIKE CONCAT('%',#{name},'%')
+            AND u.name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test='departmentIdx != null and departmentIdx != ""'>
-            AND department_idx = #{departmentIdx}
+            AND u.department_idx = #{departmentIdx}
         </if>
         <if test='phone != null and phone != ""'>
-            AND phone LIKE CONCAT('%',#{phone},'%')
+            AND u.phone LIKE CONCAT('%',#{phone},'%')
         </if>
         ORDER BY idx DESC
     </select>
@@ -70,13 +73,11 @@
                           name,
                           email,
                           phone,
-                          department,
                           department_idx)
         VALUES (#{userId},
                 #{name},
                 #{email},
                 #{phone},
-                #{department},
                 #{departmentIdx})
     </insert>
 
@@ -85,41 +86,43 @@
                           name,
                           email,
                           phone,
-                          department,
                           department_idx)
         VALUES (#{userId},
                 #{name},
                 #{email},
                 #{phone},
-                #{department},
                 #{departmentIdx})
     </insert>
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
-        UPDATE user
+        UPDATE user user, (SELECT b.idx
+                           FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         SET user.user_id        = #{userId},
             user.name           = #{name},
-            user.department     = #{department},
             user.department_idx = #{departmentIdx},
             user.email          = #{email},
             user.phone          = #{phone},
             user.update_time    = now()
-        WHERE user.user_id = #{userId} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
+        WHERE user.user_id = #{userId} AND user.department_idx = d.idx;
     </update>
 
     <delete id="deleteUserInfo" parameterType="String">
-        DELETE
-        FROM user
-        WHERE user.user_id = #{id} AND department_idx LIKE CONCAT(#{UserIdx}, '%');
-        DELETE c
-        FROM client c, user u
-        WHERE c.user_id = #{id} AND c.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
-        DELETE ur
-        FROM user_result ur, user u
-        WHERE ur.user_id = #{id} AND ur.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
         DELETE ch
-        FROM client_history ch, user u
-        WHERE ch.user_id = #{id} AND ch.user_id = u.user_id AND u.department_idx LIKE CONCAT(#{UserIdx}, '%');
+        FROM client_history ch, user u, (SELECT b.idx
+                                         FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE ch.user_id = #{id} AND ch.user_id = u.user_id AND u.department_idx = d.idx;
+        DELETE ur
+        FROM user_result ur, user u, (SELECT b.idx
+                                      FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE ur.user_id = #{id} AND ur.user_id = u.user_id AND u.department_idx = d.idx;
+        DELETE c
+        FROM client c, user u, (SELECT b.idx
+                                FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE c.user_id = #{id} AND c.user_id = u.user_id AND u.department_idx = d.idx;
+        DELETE u
+        FROM user u, (SELECT b.idx
+                      FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE u.user_id = #{id} AND u.department_idx = d.idx;
     </delete>
 
     <delete id="deleteAllUserInfo">

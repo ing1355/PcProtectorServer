@@ -16,10 +16,8 @@ public interface ClientFileMapper {
 
     public ArrayList<String> selectVersionList(String idx);
 
-    public int selectExistFile(@Param(value = "version") String version,
-                               @Param(value = "idx") String idx);
     public int selectExistMd5(@Param(value = "md5") String md5,
-                              @Param(value = "idx") String idx);
+                              @Param(value = "departmentIdx") String departmentIdx);
 
     public void insertClientFile(ClientFileVO clientFileVO);
 

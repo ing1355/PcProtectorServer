@@ -6,7 +6,7 @@
     <select id="getAllLog" resultType="oms.pc_protector.restApi.log.model.LogVO">
         SELECT *
         FROM audit_log a
-        WHERE department_idx LIKE CONCAT(#{idx}, '%')
+        WHERE department_idx = #{departmentIdx}
         ORDER BY idx DESC
     </select>
 
@@ -24,7 +24,7 @@
             <if test='startDay != null and endDay != null and startDay != "" and endDay != ""'>
                 AND create_time BETWEEN #{startDay} AND #{endDay}
             </if>
-        AND m.department_idx LIKE CONCAT(#{departmentIdx}, '%')
+        AND m.department_idx = #{departmentIdx}
         ORDER BY m.idx DESC
     </select>
 

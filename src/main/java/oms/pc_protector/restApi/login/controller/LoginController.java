@@ -69,9 +69,4 @@ public class LoginController {
         return responseService.getSingleResult(JwtProperties.TOKEN_PREFIX + new_token);
     }
 
-    @PutMapping(value = "logout")
-    public void logout() {
-
-    }
-
 }

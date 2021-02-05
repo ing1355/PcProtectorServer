@@ -79,34 +79,8 @@ public class ResultService {
     @Transactional
     public List<ResultVO> findUserDetailStaticInfo(String id, String User_Idx) {
         List<ResultVO> list = resultMapper.findUserDetailStaticInfo(id, User_Idx);
-
         return list;
     }
-
-    @Transactional
-    public ResultVO findDetailsByUserId(String ipAddress, String checkTime) {
-        return Optional.ofNullable(resultMapper.selectResultDetailsById(ipAddress, checkTime))
-                .orElse(ResultVO.builder().build());
-    }
-
-
-    /*@Transactional(readOnly = true)
-    public List<ResponseResultVO> findByDepartmentHierarchy(String department) {
-        int parentCode = departmentService.findByDepartment(department).getCode();
-        List<ResponseResultVO> result = new ArrayList<>();
-        List<DepartmentVO> departmentList = departmentService.findChildAscByParentCode(parentCode);
-        SearchInputVO searchInputVO = new SearchInputVO();
-        searchInputVO.setDepartment(department);
-        // 선택된 부서 결과 먼저 리스트에 넣는다.
-        result = findByUserIdWithIpAddress(searchInputVO);
-        // 하위 부서 결과를 리스트에 넣는다.
-        for (DepartmentVO departmentVO : departmentList) {
-            searchInputVO.setDepartment(departmentVO.getName());
-            result.addAll(findByUserIdWithIpAddress(searchInputVO));
-        }
-        return result;
-    }*/
-
 
     /* 월별 점검결과 수를 반환한다. */
     @Transactional
@@ -121,178 +95,10 @@ public class ResultService {
     }
 
 
-    /* 해당 아이디의 점검결과의 취약 프로세스 목록을 반환한다. */
-    @Transactional
-    public HashMap<String, Object> findResultProcessByUserId(String ipAddress, String checkTime) {
-        List<ResultProcessVO> resultProcess = Optional
-                .ofNullable(resultMapper.selectResultProcessById(ipAddress, checkTime))
-                .orElse(new ArrayList<ResultProcessVO>());
-
-        ArrayList<String> item3Process = new ArrayList<>();
-        ArrayList<String> item4Process = new ArrayList<>();
-        ArrayList<String> item8Process = new ArrayList<>();
-        ArrayList<String> item10Process = new ArrayList<>();
-        ArrayList<String> item11Process = new ArrayList<>();
-        ArrayList<String> item12Process = new ArrayList<>();
-        ArrayList<String> item13Process = new ArrayList<>();
-        ArrayList<String> item14Process = new ArrayList<>();
-        ArrayList<String> item15Process = new ArrayList<>();
-
-        for (ResultProcessVO process : resultProcess) {
-            String type = process.getType();
-            switch (type) {
-                case "item3":
-                    item3Process.add(process.getProcessName());
-                    break;
-                case "item4":
-                    item4Process.add(process.getProcessName());
-                    break;
-                case "item8":
-                    item8Process.add(process.getProcessName());
-                    break;
-                case "item10":
-                    item10Process.add(process.getProcessName());
-                    break;
-                case "item11":
-                    item11Process.add(process.getProcessName());
-                    break;
-                case "item12":
-                    item12Process.add(process.getProcessName());
-                    break;
-                case "item13":
-                    item13Process.add(process.getProcessName());
-                    break;
-                case "item14":
-                    item14Process.add(process.getProcessName());
-                    break;
-                case "item15":
-                    item15Process.add(process.getProcessName());
-                    break;
-            }
-
-        }
-
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("item3", item3Process);
-        map.put("item4", item4Process);
-        map.put("item8", item8Process);
-        map.put("item10", item10Process);
-        map.put("item11", item11Process);
-        map.put("item12", item12Process);
-        map.put("item13", item13Process);
-        map.put("item14", item14Process);
-        map.put("item15", item15Process);
-        return map;
-    }
-
-
-    /* 사용자 아이디에 해당하는 모든 아이템별 세부 점검사항을 반환한다. */
-    @Transactional
-    public HashMap findDetailsWithProcessListByUserId(String ipAddress, String checkTime) {
-        ResultVO resultVO = Optional.ofNullable(findDetailsByUserId(ipAddress, checkTime))
-                .orElse(ResultVO.builder().build());
-
-        HashMap<String, Object> processListMap = Optional.ofNullable(findResultProcessByUserId(ipAddress, checkTime))
-                .orElse(new HashMap<>());
-
-        HashMap<String, Object> itemBox = new HashMap<>();
-        HashMap<String, Object> item1 = new HashMap<>();
-        HashMap<String, Object> item2 = new HashMap<>();
-        HashMap<String, Object> item3 = new HashMap<>();
-        HashMap<String, Object> item4 = new HashMap<>();
-        HashMap<String, Object> item5 = new HashMap<>();
-        HashMap<String, Object> item6 = new HashMap<>();
-        HashMap<String, Object> item7 = new HashMap<>();
-        HashMap<String, Object> item8 = new HashMap<>();
-        HashMap<String, Object> item9 = new HashMap<>();
-        HashMap<String, Object> item10 = new HashMap<>();
-        HashMap<String, Object> item11 = new HashMap<>();
-        HashMap<String, Object> item12 = new HashMap<>();
-        HashMap<String, Object> item13 = new HashMap<>();
-        HashMap<String, Object> item14 = new HashMap<>();
-        HashMap<String, Object> item15 = new HashMap<>();
-        HashMap<String, Object> item16 = new HashMap<>();
-
-        item1.put("result", resultVO.getItem1Result());
-        item1.put("installationStatusCheck", resultVO.getItem1InstallationStatusCheck());
-        item1.put("executionStatusCheck", resultVO.getItem1ExecutionStatusCheck());
-
-        item2.put("result", resultVO.getItem2Result());
-        item2.put("ExecutionStatusCheck", resultVO.getItem2ExecutionStatusCheck());
-        item2.put("UpdateStatusCheck", resultVO.getItem2UpdateStatusCheck());
-
-        item3.put("result", resultVO.getItem3Result());
-        item3.put("count", resultVO.getItem3Count());
-        item3.put("processList", processListMap.get("item3"));
-
-        item4.put("result", resultVO.getItem4Result());
-        item4.put("count", resultVO.getItem4Count());
-        item4.put("processList", processListMap.get("item4"));
-
-        item5.put("result", resultVO.getItem5Result());
-        item5.put("reasonsVulnerability", resultVO.getItem5ReasonsVulnerability());
-        item5.put("passwordLength", resultVO.getItem5PasswordLength());
-        item5.put("DetailReasons", resultVO.getItem5PasswordLength());
-
-        item6.put("result", resultVO.getItem6Result());
-        item6.put("pwLastChangePastDate", resultVO.getItem6PwLastChangePastDate());
-
-        item7.put("result", resultVO.getItem7Result());
-        item7.put("executionStatusCheck", resultVO.getItem7Result());
-        item7.put("pwUsageStatus", resultVO.getItem7PwUsageStatus());
-        item7.put("Period", resultVO.getItem7Period());
-
-        item8.put("result", resultVO.getItem8Result());
-        item8.put("processList", processListMap.get("item8"));
-
-        item9.put("result", resultVO.getItem9Result());
-        item9.put("processList", processListMap.get("item9"));
-
-        item10.put("result", resultVO.getItem10Result());
-        item10.put("processList", processListMap.get("item10"));
-
-        item11.put("result", resultVO.getItem11Result());
-        item11.put("processList", processListMap.get("item11"));
-
-        item12.put("result", resultVO.getItem11Result());
-        item12.put("processList", processListMap.get("item12"));
-
-        item13.put("result", resultVO.getItem11Result());
-        item13.put("processList", processListMap.get("item13"));
-
-        item14.put("result", resultVO.getItem11Result());
-        item14.put("processList", processListMap.get("item14"));
-
-        item15.put("result", resultVO.getItem11Result());
-        item15.put("processList", processListMap.get("item15"));
-
-        item16.put("result", resultVO.getItem16Result());
-
-        itemBox.put("item1", item1);
-        itemBox.put("item2", item2);
-        itemBox.put("item3", item3);
-        itemBox.put("item4", item4);
-        itemBox.put("item5", item5);
-        itemBox.put("item6", item6);
-        itemBox.put("item7", item7);
-        itemBox.put("item8", item8);
-        itemBox.put("item9", item9);
-        itemBox.put("item10", item10);
-        itemBox.put("item11", item11);
-        itemBox.put("item12", item12);
-        itemBox.put("item13", item13);
-        itemBox.put("item14", item14);
-        itemBox.put("item15", item15);
-        itemBox.put("item16", item16);
-
-        return itemBox;
-    }
-
-
     /* 점검결과를 등록한다. */
     @Transactional
-    public void registrationResult(InspectionResultsVO inspectionResults) {
-        HashMap<String, Object> parsedResult = resultParseFromClient(inspectionResults);
+    public void registrationResult(InspectionResultsVO inspectionResults, String rootIdx) {
+        HashMap<String, Object> parsedResult = resultParseFromClient(inspectionResults, rootIdx);
         ClientVO clientVO = (ClientVO) parsedResult.get("clientInfo");
         ResultVO resultVO = (ResultVO) parsedResult.get("resultInfo");
         log.info("-------------------------");
@@ -317,7 +123,7 @@ public class ResultService {
     public void resultSet(ResultVO resultVO) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat dfd = new SimpleDateFormat("yyyy-MM-dd");
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(resultVO.getDepartmentIdx());
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(resultVO.getRootIdx());
         Date d1 = df.parse(dashboardPeriodVO.getStartDate());
         Date d2 = df.parse(dashboardPeriodVO.getEndDate());
         Date d3 = df.parse(resultVO.getCheckTime());
@@ -335,7 +141,7 @@ public class ResultService {
         if (!(df.format(now.getTime()).compareTo(df.format(real_now.getTime())) > 0)) {
             if (df.format(start.getTime()).compareTo(df.format(now.getTime())) > 0 ||
                     df.format(end.getTime()).compareTo(df.format(now.getTime())) < 0) {
-                if (resultMapper.selectExistByDay(dfd.format(now.getTime())) > 0) {
+                if (resultMapper.selectExistByDay(dfd.format(now.getTime()), resultVO.getDepartmentIdx()) > 0) {
                     log.info("-------------------case 1------------------");
                     Optional.ofNullable(resultVO)
                             .ifPresent(resultMapper::updateResultClientNotInSchedule);
@@ -360,7 +166,7 @@ public class ResultService {
 
     /* Client에서 받아온 결과를 파싱하여 분류한다. */
     @Transactional
-    public HashMap<String, Object> resultParseFromClient(InspectionResultsVO inspectionResults) {
+    public HashMap<String, Object> resultParseFromClient(InspectionResultsVO inspectionResults, String rootIdx) {
         HashMap<String, Object> map = new HashMap<>();
         InspectionResultsVO inspectionResultsVO = inspectionResults;
 
@@ -404,6 +210,7 @@ public class ResultService {
         ResultVO resultVO = ResultVO.builder()
                 .userId(clientVO.getUserId())
                 .ipAddress(clientVO.getIpAddress())
+                .rootIdx(rootIdx)
                 .departmentIdx(clientVO.getDepartmentIdx())
                 .checkTime(clientVO.getCheckTime())
                 .score(score)

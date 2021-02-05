@@ -15,6 +15,7 @@ public class ResultVO {
     private String ipAddress;
     private String checkTime;
     private int score;
+    private String rootIdx;
     private String departmentIdx;
 
     private int item1Result;

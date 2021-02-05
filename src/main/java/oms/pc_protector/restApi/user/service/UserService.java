@@ -82,27 +82,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
     }
 
-    @Transactional(readOnly = true)
-    public boolean duplicateCheckIpAddress(String IpAddress) {
-        int result = clientService.findSameIpAddress(IpAddress);
-        return result > 0;
-    }
-
-
-    @Transactional(readOnly = true)
-    public boolean duplicateCheckId(String id, String UserIdx) {
-        List<UserVO> clientList = findAll(UserIdx);
-        for (UserVO user : clientList) {
-            if (user.getUserId().equals(id)) return true;
-        }
-        return false;
-    }
-
-
     @Transactional
     public void registryFromAdmin(UserRequestVO userRequestVO) {
-        boolean duplicateIpAddressCheck = duplicateCheckIpAddress(userRequestVO.getIpAddress());
-        if (duplicateIpAddressCheck) return;
         userMapper.insertUserInfoUserInfoFromAdmin(userRequestVO);
     }
 
@@ -140,11 +121,10 @@ public class UserService {
 
 
     @Transactional
-    public boolean agentLogin(ClientVO clientVO) throws ParseException {
-        boolean duplicateId = duplicateCheckId(clientVO.getUserId(), clientVO.getDepartmentIdx());
+    public boolean agentLogin(ClientVO clientVO, String rootIdx) throws ParseException {
         ClientVO client_prev = clientMapper.selectById(clientVO.getUserId(), clientVO.getDepartmentIdx());
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(clientVO.getDepartmentIdx().substring(0,3));
+        DashboardPeriodVO dashboardPeriodVO = dashboardMapper.selectDashboardPeriod(rootIdx);
         Date d1 = df.parse(dashboardPeriodVO.getStartDate());
         Date d2 = df.parse(dashboardPeriodVO.getEndDate());
         Calendar start = Calendar.getInstance();
@@ -154,13 +134,14 @@ public class UserService {
         start.setTime(d1);
         end.setTime(d2);
 
-        if (duplicateId) {
+        if (client_prev != null) {
             log.info("클라이언트 PC 정보 업데이트 : " + clientVO.getUserId() + " / " + clientVO.getIpAddress());
 
             clientVO.setCheckTime(df.format(now.getTime()));
-            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress(), clientVO.getDepartmentIdx().substring(0,3)) == 0 &&
+            if (resultMapper.selectByScheduleIsExist(clientVO.getUserId(), clientVO.getIpAddress(), rootIdx) == 0 &&
                 start.getTime().compareTo(now.getTime()) <= 0 && end.getTime().compareTo(now.getTime()) >= 0) {
                 resultMapper.insertEmptyResultBySchedule(clientVO);
+                log.info("teststsetestestestest");
             }
             clientService.First_update(clientVO, client_prev);
         } else {

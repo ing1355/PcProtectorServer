@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @CrossOrigin
@@ -23,7 +22,8 @@ public class ResultController {
     private final ResponseService responseService;
     private final ResultService resultService;
 
-    public ResultController(ResponseService responseService, ResultService resultService) {
+    public ResultController(ResponseService responseService,
+                            ResultService resultService) {
         this.responseService = responseService;
         this.resultService = resultService;
     }
@@ -37,21 +37,6 @@ public class ResultController {
         List<?> list = resultService.findAllResult(User_Idx);
         return responseService.getSingleResult(list);
     }
-
-
-    // 해당 점검결과의 세부사항을 가져온다.
-    @GetMapping(value = "/details")
-    public SingleResult<?> findResultsDetailsByUserName(
-            @RequestParam(value = "ip") String ipAddress,
-            @RequestParam(value = "checkTime") String checkTime) {
-        HashMap<String, Object> map = new HashMap<>();
-        HashMap itemMap = Optional
-                .ofNullable(resultService.findDetailsWithProcessListByUserId(ipAddress, checkTime))
-                .orElseThrow(() -> new RuntimeException("파라미터를 확인해주세요."));
-        map.put("itemDetails", itemMap);
-        return responseService.getSingleResult(map);
-    }
-
 
     // 조건 검색하여 점검결과를 가져온다.
     @SneakyThrows

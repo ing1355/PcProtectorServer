@@ -19,10 +19,10 @@ public class ClientVO {
     private String departmentIdx;
     private boolean active;
 
-    public ClientVO(String id, String ipAddress, Long departmentIdx) {
+    public ClientVO(String id, String ipAddress, String departmentIdx) {
         this.userId = id;
         this.macAddress = ipAddress;
-        this.departmentIdx = departmentIdx.toString();
+        this.departmentIdx = departmentIdx;
     }
 
     public ClientVO() {

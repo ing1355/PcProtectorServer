@@ -8,17 +8,17 @@ import java.util.List;
 @Repository
 public interface ClientMapper {
 
-    public ClientVO selectById(String id, String UserIdx);
+    public ClientVO selectById(String id, String departmentIdx);
 
-    public Integer selectClient(String id, String code);
+    public String selectClient(String id, String departmentIdx);
 
     public List<ClientVO> selectClientHistory(String userId);
 
-    public void loginUpdateTime(String id);
+    public String selectDepartmentByDepartmentIdx(String departmentidx);
+
+    public void loginUpdateTime(String id, String departmentIdx);
 
     public int selectClientByIdIp(ClientVO clientVO);
-
-    public int selectSameIpAddress(String IpAddress);
 
     public ClientVO selectClientHistoryFirstById(String userId);
 
@@ -26,9 +26,9 @@ public interface ClientMapper {
 
     public int insertClientHistory(ClientVO clientVO);
 
-    public List<ClientVO> selectClientAll(String idx);
+    public List<ClientVO> selectClientAll(String departmentIdx);
 
-    public List<ClientVO> selectClientListById(String id);
+    public List<ClientVO> selectClientListById(String id, String departmentIdx);
 
     public boolean updateClientInfo(ClientVO clientVO);
 

@@ -6,7 +6,7 @@ import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
-import oms.pc_protector.restApi.dashboard.service.DashboardService;
+import oms.pc_protector.restApi.manager.mapper.ManagerMapper;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.model.NowScheduleVO;
 import oms.pc_protector.restApi.policy.model.PeriodDateVO;
@@ -26,23 +26,24 @@ public class SchedulerService {
     private final ConfigurationMapper configurationMapper;
     private final ResultMapper resultMapper;
     private final ClientMapper clientMapper;
-    private final DashboardService dashboardService;
+    private final ManagerMapper managerMapper;
     private final DashboardMapper dashboardMapper;
 
     public SchedulerService(ConfigurationMapper configurationMapper,
                             ResultMapper resultMapper,
                             ClientMapper clientMapper,
-                            DashboardService dashboardService,
+                            ManagerMapper managerMapper,
                             DashboardMapper dashboardMapper) {
         this.clientMapper = clientMapper;
         this.resultMapper = resultMapper;
         this.configurationMapper = configurationMapper;
-        this.dashboardService = dashboardService;
+        this.managerMapper = managerMapper;
         this.dashboardMapper = dashboardMapper;
     }
 
     @PostConstruct
     public void onStartup() {
+        managerMapper.updateRoot();
         cronJobSch();
     } // 최초 서버 구동시 1회 실행
 

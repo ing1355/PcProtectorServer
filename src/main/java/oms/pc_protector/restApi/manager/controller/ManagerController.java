@@ -28,7 +28,8 @@ public class ManagerController {
     private ResponseService responseService;
     private ManagerService managerService;
 
-    public ManagerController(ResponseService responseService, ManagerService managerService) {
+    public ManagerController(ResponseService responseService,
+                             ManagerService managerService) {
         this.responseService = responseService;
         this.managerService = managerService;
     }
@@ -44,10 +45,8 @@ public class ManagerController {
     }
 
     @GetMapping(value = "/duplicated")
-    public SingleResult<?> duplicatedManager(@RequestParam(value = "userId") String id,
-                                             HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        boolean result = managerService.duplicatedManager(id, User_Idx);
+    public SingleResult<?> duplicatedManager(@RequestParam(value = "userId") String id) {
+        boolean result = managerService.duplicatedManager(id);
         return responseService.getSingleResult(result);
     }
 
@@ -64,7 +63,7 @@ public class ManagerController {
         input.setName(name);
         input.setMobile(mobile);
         input.setEmail(email);
-        input.setIdx(User_Idx);
+        input.setDepartmentIdx(User_Idx);
         List<ManagerVO> list = Optional.ofNullable(managerService.searchManager(input))
                 .orElseGet(() -> Collections.EMPTY_LIST);
         map.put("data", list);
@@ -85,8 +84,7 @@ public class ManagerController {
     }
 
     @PutMapping(value = "firstlogin")
-    public SingleResult<?> updateFirstLogin(@RequestBody @Valid FirstLoginRequestManagerVO firstLoginRequestManagerVO,
-                                            HttpServletRequest httpServletRequest) throws Throwable {
+    public SingleResult<?> updateFirstLogin(@RequestBody @Valid FirstLoginRequestManagerVO firstLoginRequestManagerVO) throws Throwable {
         boolean result = true;
         firstLoginRequestManagerVO.setDepartmentIdx(
                 managerService.findById(firstLoginRequestManagerVO.getUserId()).getDepartmentIdx());
@@ -96,19 +94,13 @@ public class ManagerController {
 
     @PutMapping(value = "lock")
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-    public SingleResult<?> updateManagerLock(@RequestBody @Valid ManagerLockVO managerLockVO,
-                                             HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        managerLockVO.setDepartmentIdx(User_Idx);
+    public SingleResult<?> updateManagerLock(@RequestBody @Valid ManagerLockVO managerLockVO) {
         managerService.updateManagerLock(managerLockVO);
         return responseService.getSingleResult(true);
     }
 
     @PutMapping(value = "unlock")
-    public SingleResult<?> updateManagerUnLock(@RequestBody @Valid ManagerLockVO managerLockVO,
-                                               HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        managerLockVO.setDepartmentIdx(User_Idx);
+    public SingleResult<?> updateManagerUnLock(@RequestBody @Valid ManagerLockVO managerLockVO) {
         managerService.updateManagerUnLock(managerLockVO);
         return responseService.getSingleResult(true);
     }

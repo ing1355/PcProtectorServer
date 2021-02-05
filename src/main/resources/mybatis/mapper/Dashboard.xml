@@ -7,10 +7,10 @@
         SELECT NVL(AVG(u.score), 0)
         FROM user_result u,
              dashboard_period da,
-             (SELECT c.user_id, user.department_idx
+             (SELECT c.user_id, c.department_idx
               FROM client c,
-                   user user
-              WHERE c.user_id = user.user_id) c
+                   user user, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+              WHERE c.user_id = user.user_id AND c.department_idx = d.idx) c
         WHERE u.user_id = c.user_id
           AND (u.item1_result +
                u.item2_result +
@@ -34,11 +34,11 @@
     </select>
 
     <select id="selectClientCount" resultType="Integer">
-        SELECT COUNT(*)
-        FROM client,
-             user
-        WHERE client.user_id = user.user_id
-          AND user.department_idx LIKE CONCAT(#{departmentIdx}, '%')
+        SELECT COUNT(c.user_id)
+        FROM client c,
+             user u, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE c.user_id = u.user_id
+          AND c.department_idx = d.idx
     </select>
 
     <select id="selectAvgScoreByRecentMonths"
@@ -47,9 +47,9 @@
         SELECT NVL(AVG(t2.score), 0)
         FROM (SELECT c.user_id, c.ip_address
               FROM user u,
-                   client c
+                   client c, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
               WHERE u.user_id = c.user_id
-                AND u.department_idx LIKE CONCAT(#{idx}, '%')) AS t1
+                AND c.department_idx = d.idx) AS t1
                  LEFT OUTER JOIN
              (SELECT *,
                      ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
@@ -77,18 +77,17 @@
 
     <select id="selectUserCountByScore" resultType="Integer">
         SELECT COUNT(*)
-        FROM dashboard_period da,
+        FROM (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = #{departmentIdx}) da,
              user_result t1,
              (SELECT c.user_id, user.department_idx, c.ip_address
               FROM client c,
-                   user user
+                   user user, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
               WHERE c.user_id = user.user_id
-                AND c.department_idx LIKE CONCAT(#{idx}, '%')) c
+                AND c.department_idx = d.idx) c
         WHERE c.user_id = t1.user_id
           AND c.ip_address = t1.ip_address
-          AND in_schedule = 1
-          AND da.department_idx = t1.department_idx
-          AND c.department_idx = da.department_idx
+          AND t1.in_schedule = 1
+          AND c.department_idx = t1.department_idx
           AND DATE_FORMAT(t1.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND score BETWEEN #{startScore} AND #{endScore}
           AND (t1.item1_result +

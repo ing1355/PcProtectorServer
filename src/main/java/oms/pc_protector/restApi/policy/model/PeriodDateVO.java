@@ -1,6 +1,5 @@
 package oms.pc_protector.restApi.policy.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class PeriodDateVO {
 
-    private Long idx;
+    private String departmentIdx;
     private int period;
     private int fromWeek;
     private int fromDay;

@@ -5,7 +5,6 @@ import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
-import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.user.model.RequestUserVO;
 import oms.pc_protector.restApi.user.model.UserRequestVO;
 import oms.pc_protector.restApi.user.model.UserSearchInputVO;
@@ -27,14 +26,13 @@ public class UserController {
 
     private final ResponseService responseService;
     private final UserService userService;
-    private final DepartmentService departmentService;
     private final ClientService clientService;
 
-    public UserController(ResponseService responseService, UserService userService,
-                          DepartmentService departmentService, ClientService clientService) {
+    public UserController(ResponseService responseService,
+                          UserService userService,
+                          ClientService clientService) {
         this.responseService = responseService;
         this.userService = userService;
-        this.departmentService = departmentService;
         this.clientService = clientService;
     }
 
@@ -48,8 +46,10 @@ public class UserController {
     }
 
     @GetMapping(value = "client")
-    public SingleResult<?> findClientList(@RequestParam @Valid String id) {
-        List<ClientVO> clientVO = clientService.selectClientListById(id);
+    public SingleResult<?> findClientList(@RequestParam @Valid String id,
+                                          HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        List<ClientVO> clientVO = clientService.selectClientListById(id, User_Idx);
         return responseService.getSingleResult(clientVO);
     }
 
@@ -109,7 +109,6 @@ public class UserController {
         RequestUserVO requestUserVO = new RequestUserVO();
         requestUserVO.setUserId(id);
         requestUserVO.setName(userVO.getName());
-        requestUserVO.setDepartment(userVO.getDepartment());
         requestUserVO.setDepartmentIdx(userVO.getDepartmentIdx());
         requestUserVO.setPhone(userVO.getPhone());
         requestUserVO.setEmail(userVO.getEmail());

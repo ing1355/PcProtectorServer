@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.department.controller;
 import lombok.extern.slf4j.Slf4j;
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.department.model.DepartmentDeleteVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
@@ -20,7 +21,8 @@ public class DepartmentController {
     private final ResponseService responseService;
     private final DepartmentService departmentService;
 
-    public DepartmentController(ResponseService responseService, DepartmentService departmentService) {
+    public DepartmentController(ResponseService responseService,
+                                DepartmentService departmentService) {
         this.responseService = responseService;
         this.departmentService = departmentService;
     }
@@ -33,16 +35,24 @@ public class DepartmentController {
     }
 
     @GetMapping(value = "check")
-    public SingleResult<?> findUserInDepartment(@RequestParam(value = "department") String department) {
-        boolean result = departmentService.findUserInDepartment(department);
+    public SingleResult<?> findUserInDepartment(@RequestParam(value = "departmentIdx") String departmentIdx) {
+        boolean result = departmentService.findUserInDepartment(departmentIdx);
         return responseService.getSingleResult(result);
     }
 
     @PostMapping(value = "/change")
     public SingleResult<?> changeDepartment(@RequestBody @Valid List<DepartmentVO> departmentVOList,
-                                                     HttpServletRequest httpServletRequest) {
+                                            HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
         departmentService.changeDepartment(departmentVOList, User_Idx);
+        return responseService.getSingleResult(true);
+    }
+
+    @PostMapping(value = "/delete")
+    public SingleResult<?> deleteDepartment(@RequestBody @Valid DepartmentDeleteVO departmentDeleteVO,
+                                            HttpServletRequest httpServletRequest) {
+        String User_Idx = httpServletRequest.getHeader("dptIdx");
+        departmentService.delete(departmentDeleteVO, User_Idx);
         return responseService.getSingleResult(true);
     }
 
@@ -55,9 +65,7 @@ public class DepartmentController {
     }
 
     @PostMapping(value = "")
-    public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO,
-                                            HttpServletRequest httpServletRequest) {
-        departmentVO.setDptCode(httpServletRequest.getHeader("dptIdx"));
+    public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
         return responseService.getSingleResult(departmentService.register(departmentVO));
     }
 

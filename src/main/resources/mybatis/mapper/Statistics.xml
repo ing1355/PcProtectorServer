@@ -78,12 +78,13 @@
 
     </select>
 
-    <select id="countClientByDepartment" parameterType="Long" resultType="int">
+    <select id="countClientByDepartment" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM user u,
-             client c
+             client c, (SELECT b.idx
+                        FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE u.user_id = c.user_id
-          AND u.department_idx LIKE CONCAT(#{value}, '%')
+          AND c.department_idx = d.idx
     </select>
 
     <select id="countRunPcByMonth" parameterType="oms.pc_protector.restApi.statistics.model.StatisticsResponseVO"
@@ -93,9 +94,10 @@
         FROM (
                  SELECT t1.user_id, t1.ip_address
                  FROM client AS t1,
-                      user AS t2
+                      user AS t2, (SELECT b.idx
+                                   FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE t1.user_id = t2.user_id
-                   AND t2.department_idx LIKE CONCAT(#{departmentIdx}, '%')
+                   AND t2.department_idx = d.idx
              ) AS A
                  LEFT OUTER JOIN
              (SELECT *,
@@ -144,9 +146,10 @@
         FROM (
                  SELECT t1.user_id, t1.ip_address
                  FROM client AS t1,
-                      user AS t2
+                      user AS t2, (SELECT b.idx
+                                   FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE t1.user_id = t2.user_id
-                   AND t2.department_idx LIKE CONCAT(#{departmentIdx}, '%')
+                   AND t2.department_idx = d.idx
              ) AS A
                  LEFT OUTER JOIN
              (SELECT *,

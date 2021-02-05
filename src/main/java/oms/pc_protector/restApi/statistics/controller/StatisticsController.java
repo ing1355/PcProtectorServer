@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.statistics.controller;
 
 import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
+import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
 import oms.pc_protector.restApi.statistics.service.StatisticsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,13 @@ import java.util.List;
 public class StatisticsController {
 
     private StatisticsService statisticsService;
-
+    private DepartmentMapper departmentMapper;
     private ResponseService responseService;
 
-    public StatisticsController(StatisticsService statisticsService, ResponseService responseService) {
+    public StatisticsController(StatisticsService statisticsService,
+                                ResponseService responseService,
+                                DepartmentMapper departmentMapper) {
+        this.departmentMapper = departmentMapper;
         this.statisticsService = statisticsService;
         this.responseService = responseService;
     }

@@ -31,7 +31,6 @@ import java.util.List;
 public class ClientFileController {
 
     private final ResponseService responseService;
-
     private final ClientFileService clientFileService;
 
     public ClientFileController(ResponseService responseService,
@@ -48,7 +47,6 @@ public class ClientFileController {
             HttpServletResponse httpServletResponse) throws IOException, NoSuchAlgorithmException, SizeLimitExceededException {
 
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-
         String b64 = "";
         for(int i=0;i<inputFile.getB64temp().length;i++) {
             b64 += inputFile.getB64temp()[i];
@@ -68,7 +66,7 @@ public class ClientFileController {
                 .fileSize(inputFile.getFileSize())
                 .md5(fileMd5)
                 .version(inputFile.getVersion())
-                .idx(User_Idx)
+                .departmentIdx(User_Idx)
                 .build();
         if (clientFileService.findExistMd5(fileMd5, User_Idx)) {
             httpServletResponse.sendError(400, "Md5 중복!");
@@ -135,7 +133,7 @@ public class ClientFileController {
             httpServletResponse.sendError(400, "Md5 중복!");
             return null;
         }
-        clientFileVO.setIdx(User_Idx);
+        clientFileVO.setDepartmentIdx(User_Idx);
         clientFileService.update(clientFileVO);
         return responseService.getSingleResult(clientFileService.findClientFile(User_Idx));
     }

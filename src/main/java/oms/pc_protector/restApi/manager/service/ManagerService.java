@@ -46,8 +46,8 @@ public class ManagerService {
 
 
    @Transactional(readOnly = true)
-    public boolean duplicatedManager(String id, String User_Idx) {
-        return managerMapper.selectSameId(id, User_Idx) > 0;
+    public boolean duplicatedManager(String id) {
+        return managerMapper.selectSameId(id) > 0;
     }
 
 

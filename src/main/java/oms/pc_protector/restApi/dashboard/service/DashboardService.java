@@ -128,7 +128,7 @@ public class DashboardService {
         for (DepartmentVO department : departmentList) {
             if(department.getCode() == 1) continue;
             List<Integer> scoreList =
-                    resultService.findScoreByDepartmentWithMonth(Long.toString(department.getCode()));
+                    resultService.findScoreByDepartmentWithMonth(department.getIdx());
             int scoreSum = 0;
             int totalPc = scoreList.size();
 

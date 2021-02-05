@@ -54,9 +54,9 @@ public class StatisticsService {
         }
 
         for (DepartmentVO departmentVO : departmentList) {
-            int TotalPc = statisticsMapper.countClientByDepartment(departmentVO.getCode());
+            int TotalPc = statisticsMapper.countClientByDepartment(departmentVO.getIdx());
             LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
-            StatisticsResponseVO statisticsResponseVO = new StatisticsResponseVO(yearMonth, departmentVO.getCode());
+            StatisticsResponseVO statisticsResponseVO = new StatisticsResponseVO(yearMonth, departmentVO.getIdx());
 
             RunPcAndScoreVO runPcAndScoreVO = statisticsMapper.countRunPcByMonth(statisticsResponseVO);
             List<StatisticsVO> statisticsVO = statisticsMapper.selectItemsByMonth(statisticsResponseVO);

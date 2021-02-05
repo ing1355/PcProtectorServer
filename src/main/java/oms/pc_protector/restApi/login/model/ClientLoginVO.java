@@ -8,11 +8,11 @@ import lombok.Setter;
 public class ClientLoginVO {
     private String id;
     private String ipAddress;
-    private String dptCode;
+    private String departmentIdx;
 
-    public ClientLoginVO(String userId, String ipAddress, String dptCode) {
+    public ClientLoginVO(String userId, String ipAddress, String departmentIdx) {
         this.id = userId;
         this.ipAddress = ipAddress;
-        this.dptCode = dptCode;
+        this.departmentIdx = departmentIdx;
     }
 }

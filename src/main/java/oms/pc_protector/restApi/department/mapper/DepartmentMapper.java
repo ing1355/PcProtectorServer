@@ -9,9 +9,13 @@ import java.util.List;
 @Repository
 public interface DepartmentMapper {
 
-    public List<DepartmentVO> selectAll(String idx);
+    public List<DepartmentVO> selectAll(String departmentIdx);
 
-    public Integer findUserInDepartment(String department);
+    public Integer findUserInDepartment(String code);
+
+    public Integer findManagerInDepartment(String code);
+
+    public String selectCodeByIdx(String departmentIdx);
 
     public Integer findDepartmentCode(String code);
 
@@ -31,9 +35,13 @@ public interface DepartmentMapper {
 
     public void changeDepartment(DepartmentVO departmentVO);
 
-    public Integer insert(DepartmentVO departmentVO);
+    public String insert(DepartmentVO departmentVO);
 
-    public Integer insertRoot(DepartmentVO departmentVO);
+    public String insertRoot(DepartmentVO departmentVO);
 
     public void update(UpdateDepartmentVO updateDepartmentVO);
+
+    public void deleteRoot(String departmentIdx);
+
+    public void delete(String departmentIdx);
 }

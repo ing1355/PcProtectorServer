@@ -22,7 +22,6 @@ import java.util.List;
 public class ProcessController {
 
     private final ResponseService responseService;
-
     private final ProcessService processService;
 
     public ProcessController(ResponseService responseService,
@@ -132,6 +131,7 @@ public class ProcessController {
     public SingleResult<?> insertRequiredProcess(@RequestBody @Valid ProcessVO processVO, HttpServletResponse response,
                                                  HttpServletRequest httpServletRequest) throws IOException {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
+        processVO.setDepartmentIdx(User_Idx);
         ProcessVO isProcess = processService.existProcess(processVO);
         if (isProcess != null && isProcess.getType().equals("required")) {
             response.sendError(400, "중복된 프로세스입니다.");

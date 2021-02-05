@@ -1,6 +1,7 @@
 package oms.pc_protector.restApi.department.service;
 
 import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
+import oms.pc_protector.restApi.department.model.DepartmentDeleteVO;
 import oms.pc_protector.restApi.department.model.DepartmentResponseVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
@@ -24,8 +25,13 @@ public class DepartmentService {
     }
 
     @Transactional
-    public boolean findUserInDepartment(String department) {
-        return departmentMapper.findUserInDepartment(department) > 0;
+    public boolean findUserInDepartment(String departmentIdx) {
+        String code = departmentMapper.selectCodeByIdx(departmentIdx);
+        if(code.length() == 3) {
+            return departmentMapper.findManagerInDepartment(code) > 0;
+        } else {
+            return departmentMapper.findUserInDepartment(code) > 0;
+        }
     }
 
     @Transactional
@@ -105,6 +111,18 @@ public class DepartmentService {
     @Transactional
     public void update(UpdateDepartmentVO updateDepartmentVO) {
         departmentMapper.update(updateDepartmentVO);
+    }
+
+    @Transactional
+    public void delete(DepartmentDeleteVO departmentDeleteVO, String User_Idx) {
+        String code = departmentMapper.selectCodeByIdx(departmentDeleteVO.getIdx());
+        if(code.length() == 3) {
+            departmentMapper.deleteRoot(departmentDeleteVO.getIdx());
+        } else {
+            departmentMapper.delete(departmentDeleteVO.getIdx());
+            changeDepartment(departmentDeleteVO.getDepartmentVOList(), User_Idx);
+        }
+
     }
 
     private String CreateRandomDptCode() {

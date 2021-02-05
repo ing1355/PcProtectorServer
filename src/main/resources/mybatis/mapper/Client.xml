@@ -5,9 +5,10 @@
     <select id="selectClientAll" resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT c.idx, c.ip_address, c.user_id, c.mac_address, c.pc_name, c.os, c.pc_protector_version, c.vaccine_version,
                c.check_time, c.create_time, c.update_time, c.wrong_md5, c.roles, c.active, c.department_idx
-        FROM client c, user u
+        FROM client c, user u, (SELECT b.idx, b.name, b.parent_code, b.dpt_code, b.code
+                                FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE c.user_id = u.user_id
-        AND u.department_idx LIKE CONCAT(#{idx}, '%');
+        AND c.department_idx = d.idx;
     </select>
 
     <select id="selectClientHistory" parameterType="String"
@@ -22,14 +23,14 @@
         WHERE user_id = #{userId} AND department_idx = #{departmentIdx}
     </select>
 
-    <select id="selectSameIpAddress" resultType="int" parameterType="String">
-        SELECT COUNT(*) FROM client WHERE ip_address = #{value}
+    <select id="selectDepartmentByDepartmentIdx" resultType="String">
+        SELECT name FROM department WHERE idx = #{departmentidx}
     </select>
 
-    <select id="selectClient" parameterType="String" resultType="Int">
-        SELECT COUNT(u.user_id)
-        FROM user u, (SELECT code FROM department WHERE dpt_code = #{code}) d
-        WHERE u.department_idx LIKE CONCAT(d.code, '%') AND u.user_id = #{id}
+    <select id="selectClient" parameterType="String" resultType="String">
+        SELECT u.department_idx
+        FROM user u, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE u.department_idx = d.idx AND u.user_id = #{id}
     </select>
 
     <select id="selectById" parameterType="String" resultType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -46,8 +47,8 @@
                c.update_time,
                c.wrong_md5,
                c.roles,
-               c.active FROM client c
-        WHERE c.user_id = #{id} AND c.department_idx LIKE CONCAT(#{UserIdx}, '%')
+               c.active FROM client c, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE c.user_id = #{id} AND c.department_idx = d.idx
     </select>
 
     <select id="selectClientHistoryFirstById" parameterType="String"
@@ -59,7 +60,8 @@
     <select id="selectClientListById" parameterType="String"
             resultType="oms.pc_protector.restApi.client.model.ClientVO">
         SELECT * FROM client_history
-        WHERE user_id = #{value} ORDER BY check_time DESC
+        WHERE user_id = #{id} AND department_idx = #{departmentIdx}
+        ORDER BY check_time DESC
     </select>
 
     <insert id="insertClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -107,7 +109,7 @@
     <update id="loginUpdateTime" parameterType="String">
         UPDATE client
         SET check_time  = now()
-        WHERE user_id = #{value}
+        WHERE user_id = #{id} AND department_idx = #{departmentIdx}
     </update>
 
     <update id="updateClientInfo" parameterType="oms.pc_protector.restApi.client.model.ClientVO">
@@ -139,7 +141,7 @@
         SET wrong_md5            = true,
             pc_protector_version = #{pcProtectorVersion},
             update_time          = now()
-        WHERE user_id = #{userId}
+        WHERE user_id = #{userId} AND department_idx = #{departmentIdx}
     </update>
 
     <delete id="deleteClientDuplicated" parameterType="oms.pc_protector.restApi.client.model.ClientVO">

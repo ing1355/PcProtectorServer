@@ -27,21 +27,14 @@
 
     <insert id="insertClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
         INSERT INTO client_file (file_name, file_size, md5, version, department_idx)
-        VALUES (#{fileName}, #{fileSize}, #{md5}, #{version}, #{idx})
+        VALUES (#{fileName}, #{fileSize}, #{md5}, #{version}, #{departmentIdx})
     </insert>
-
-    <select id="selectExistFile" parameterType="String" resultType="int">
-        SELECT COUNT(*)
-        FROM client_file
-        WHERE version = #{version}
-          AND department_idx = #{idx}
-    </select>
 
     <select id="selectExistMd5" parameterType="String" resultType="int">
         SELECT COUNT(*)
         FROM client_file
         WHERE md5 = #{md5}
-          AND department_idx = #{idx}
+          AND department_idx = #{departmentIdx}
     </select>
 
     <update id="update" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
@@ -51,7 +44,7 @@
             md5         = #{md5},
             update_time = now()
         WHERE version = #{version}
-          AND department_idx = #{idx}
+          AND department_idx = #{departmentIdx}
     </update>
 
     <delete id="deleteClientFile" parameterType="oms.pc_protector.restApi.clientFile.model.ClientFileVO">
@@ -61,7 +54,7 @@
           AND file_name = #{fileName}
           AND file_size = #{fileSize}
           AND md5 = #{md5}
-          AND department_idx = #{idx}
+          AND department_idx = #{departmentIdx}
     </delete>
 
 </mapper>

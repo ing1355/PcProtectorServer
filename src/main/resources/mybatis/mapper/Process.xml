@@ -7,14 +7,14 @@
         SELECT *
         FROM process
         WHERE type = #{processType}
-          AND department_idx = #{idx}
+          AND department_idx = #{departmentIdx}
     </select>
 
     <select id="selectProcessAll" resultType="oms.pc_protector.restApi.process.model.ProcessVO">
         SELECT *
         FROM process
         WHERE type = 'none'
-          AND department_idx = #{idx}
+          AND department_idx = #{departmentIdx}
     </select>
 
     <select id="searchProcess" parameterType="String"
@@ -55,21 +55,25 @@
     </insert>
 
     <insert id="insertUnApprovedProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        INSERT INTO process (type, registry_item, display_name)
+        INSERT INTO process (type, registry_item, display_name, department_idx)
         SELECT 'unApproved',
                #{registryItem},
-               #{displayName}
+               #{displayName},
+               #{departmentIdx}
         FROM DUAL
-        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem} AND display_name = #{displayName})
+        WHERE NOT EXISTS(SELECT * FROM process
+        WHERE registry_item = #{registryItem} AND display_name = #{displayName} AND department_idx = #{departmentIdx})
     </insert>
 
     <insert id="insertRequiredProcess" parameterType="oms.pc_protector.restApi.process.model.ProcessVO">
-        INSERT INTO process (type, registry_item, display_name)
+        INSERT INTO process (type, registry_item, display_name, department_idx)
         SELECT 'required',
                #{registryItem},
-               #{displayName}
+               #{displayName},
+               #{departmentIdx}
         FROM DUAL
-        WHERE NOT EXISTS(SELECT * FROM process WHERE registry_item = #{registryItem} AND display_name = #{displayName})
+        WHERE NOT EXISTS(SELECT * FROM process
+        WHERE registry_item = #{registryItem} AND display_name = #{displayName} AND department_idx = #{departmentIdx})
     </insert>
 
 
@@ -99,6 +103,7 @@
         FROM process
         WHERE display_name = #{displayName}
           AND registry_item = #{registryItem}
+          AND department_idx = #{departmentIdx}
     </delete>
 
 

@@ -51,21 +51,21 @@ public class ConfigurationService {
         EditProgramVO editProgramVO = findEditProgramFlag(idx);
         if (configurationVO == null) {
             ConfigurationVO empty_config = new ConfigurationVO();
-            empty_config.setIdx(idx);
+            empty_config.setDepartmentIdx(idx);
             configurationMapper.insertConfiguration(empty_config);
         } else {
             configMap.put("config", configurationVO);
         }
         if (editProgramVO == null) {
             EditProgramVO empty_edit = new EditProgramVO();
-            empty_edit.setIdx(idx);
+            empty_edit.setDepartmentIdx(idx);
             configurationMapper.insertEditProgramFlag(empty_edit);
         } else {
             configMap.put("editProgram_set", editProgramVO);
         }
         if (securityUsbMap == null) {
             SecurityUsbDetailsVO empty_security = new SecurityUsbDetailsVO();
-            empty_security.setIdx(idx);
+            empty_security.setDepartmentIdx(idx);
             configurationMapper.insertSecurityUsbDetails(empty_security);
         } else {
             configMap.put("securityUsb_input", securityUsbMap);
@@ -81,7 +81,7 @@ public class ConfigurationService {
 
     @Transactional
     public void updateSecurityUsbDetails_service(SecurityUsbDetailsVO securityUsbDetailsVO) {
-        if(configurationMapper.countSecurityUsbDetails(securityUsbDetailsVO.getIdx()) == 0) {
+        if(configurationMapper.countSecurityUsbDetails(securityUsbDetailsVO.getDepartmentIdx()) == 0) {
             configurationMapper.insertSecurityUsbDetails(securityUsbDetailsVO);
         }
         else {
@@ -116,13 +116,6 @@ public class ConfigurationService {
         return Optional.ofNullable(configurationMapper.selectAppliedSchedule(idx))
                 .orElseGet(PeriodDateVO::new);
     }
-
-
-    @Transactional
-    public int registerSchedule(PeriodDateVO periodDateVO) {
-        return configurationMapper.insertSchedule(periodDateVO);
-    }
-
 
     @Transactional
     public int updateSchedule(RequestPeriodDateVO requestPeriodDateVO) throws ParseException {
@@ -219,17 +212,9 @@ public class ConfigurationService {
         } else {
             configurationMapper.updateNextSchedule(new NowScheduleVO(df.format(start.getTime()), df.format(end.getTime()), requestPeriodDateVO.getDepartmentIdx()));
         }
-        return configurationMapper.updateSchedule(requestPeriodDateVO.getNew_data());
-    }
-
-    @Transactional
-    public int updateApply(Long old_idx, Long new_idx) {
-        return configurationMapper.updateApply(old_idx, new_idx);
-    }
-
-    @Transactional
-    public int deleteSchedule(PeriodDateVO periodDateVO) {
-        return configurationMapper.deleteSchedule(periodDateVO);
+        PeriodDateVO periodDateVO = requestPeriodDateVO.getNew_data();
+        periodDateVO.setDepartmentIdx(requestPeriodDateVO.getDepartmentIdx());
+        return configurationMapper.updateSchedule(periodDateVO);
     }
 
     @Transactional
@@ -252,10 +237,8 @@ public class ConfigurationService {
 
 
     @Transactional
-    public ForceRunVO findForceRun(String idx) {
-        ForceRunVO forceRunVO = new ForceRunVO();
-        forceRunVO.setForceRun(configurationMapper.selectForceRun(idx));
-        return forceRunVO;
+    public boolean findForceRun(String idx) {
+        return configurationMapper.selectForceRun(idx);
     }
 
 

@@ -15,7 +15,7 @@ public interface StatisticsMapper {
 
     public int countClientByMonth(StatisticsResponseVO responseVO);
 
-    public int countClientByDepartment(Long departmentIdx);
+    public int countClientByDepartment(String departmentIdx);
 
     public RunPcAndScoreVO countRunPcByMonth(StatisticsResponseVO responseVO);
 

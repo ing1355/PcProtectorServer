@@ -28,8 +28,8 @@
                c.wrong_md5,
                c.roles,
                c.active,
-               c.department_idx FROM client c, (SELECT code FROM department WHERE dpt_code = #{dptCode}) d
-        WHERE user_id = #{id} AND c.department_idx = d.code
+               c.department_idx FROM client c
+        WHERE user_id = #{id} AND c.department_idx = #{departmentIdx}
     </select>
 
     <select id="findPasswordById" resultType="String" parameterType="String">
