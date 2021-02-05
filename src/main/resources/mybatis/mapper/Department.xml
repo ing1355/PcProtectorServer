@@ -150,7 +150,7 @@
     <delete id="deleteRoot">
         DELETE
         FROM audit_log
-        WHERE department_idx IN ((SELECT b.idx as dptIdx
+        WHERE department_idx IN ((SELECT b.idx
                                   FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM client_history

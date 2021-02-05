@@ -6,7 +6,6 @@ import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
-import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.result.mapper.ResultMapper;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
@@ -60,20 +59,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserVO> findBySearchInput(UserSearchInputVO userSearchVO) {
-        List<UserVO> userList = new ArrayList<>();
-        if (userSearchVO.getDepartmentIdx() != null) {
-            Long code = userSearchVO.getDepartmentIdx();
-            List<DepartmentVO> childCodeList = new ArrayList<>();
-            childCodeList.add(departmentService.findByDepartmentIdx(code));
-            childCodeList.addAll(departmentService.findChildAscByParentCode(code));
-            for (DepartmentVO childCode : childCodeList) {
-                userSearchVO.setDepartmentIdx(childCode.getCode());
-                userList.addAll(userMapper.search(userSearchVO));
-            }
-            return userList;
-        }
-        userList.addAll(userMapper.search(userSearchVO));
-        return userList;
+        return userMapper.search(userSearchVO);
     }
 
     @Transactional(readOnly = true)
@@ -89,11 +75,12 @@ public class UserService {
 
 
     @Transactional
-    public void registryFromAdminList(List<UserVO> userVOList) {
+    public void registryFromAdminList(UserExcelVO userExcelVO, String User_Idx) {
+        departmentService.registerByExcel(userExcelVO.getDepartmentList(), User_Idx);
         userMapper.deleteAllUserInfo();
         log.info("-------------------------");
         log.info("------사용자 등록 EXCEL----");
-        for (UserVO user : userVOList) {
+        for (UserVO user : userExcelVO.getUserList()) {
             log.info("-------------------------");
             log.info("ID : {}", user.getUserId());
             log.info("NAME {}: ", user.getName());

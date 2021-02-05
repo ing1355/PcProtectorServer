@@ -35,7 +35,7 @@
 
     <select id="search" parameterType="oms.pc_protector.restApi.user.model.UserSearchInputVO"
             resultType="oms.pc_protector.restApi.user.model.UserVO">
-        SELECT * FROM user u, (SELECT b.idx
+        SELECT u.idx, u.user_id, u.name, u.department_idx, u.email, u.phone, d.name as department FROM user u, (SELECT b.idx, b.name
         FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE u.department_idx = d.idx
         <if test='userId != null and userId != ""'>
@@ -45,19 +45,13 @@
             AND u.name LIKE CONCAT('%',#{name},'%')
         </if>
         <if test='departmentIdx != null and departmentIdx != ""'>
-            AND u.department_idx = #{departmentIdx}
+            AND u.department_idx IN ((SELECT b.idx
+            FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')))
         </if>
         <if test='phone != null and phone != ""'>
             AND u.phone LIKE CONCAT('%',#{phone},'%')
         </if>
-        ORDER BY idx DESC
     </select>
-
-    <update id="departmentModified" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
-        UPDATE user
-        SET department = #{new_name}
-        WHERE department = #{old_name}
-    </update>
 
     <insert id="insertUserInfo" parameterType="String">
         INSERT INTO user (

@@ -1,7 +1,9 @@
 package oms.pc_protector.restApi.user.mapper;
 
-import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
-import oms.pc_protector.restApi.user.model.*;
+import oms.pc_protector.restApi.user.model.RequestUserVO;
+import oms.pc_protector.restApi.user.model.UserRequestVO;
+import oms.pc_protector.restApi.user.model.UserSearchInputVO;
+import oms.pc_protector.restApi.user.model.UserVO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,8 +26,6 @@ public interface UserMapper {
     public void RegisterUserInfo(UserVO userVO);
 
     public boolean updateUserInfo_Front(RequestUserVO requestUserVO);
-
-    public void departmentModified(UpdateDepartmentVO updateDepartmentVO);
 
     public boolean deleteUserInfo(String id, String UserIdx);
 

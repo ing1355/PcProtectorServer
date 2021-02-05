@@ -5,10 +5,7 @@ import oms.pc_protector.apiConfig.model.SingleResult;
 import oms.pc_protector.apiConfig.service.ResponseService;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.client.service.ClientService;
-import oms.pc_protector.restApi.user.model.RequestUserVO;
-import oms.pc_protector.restApi.user.model.UserRequestVO;
-import oms.pc_protector.restApi.user.model.UserSearchInputVO;
-import oms.pc_protector.restApi.user.model.UserVO;
+import oms.pc_protector.restApi.user.model.*;
 import oms.pc_protector.restApi.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -80,13 +77,13 @@ public class UserController {
 
 
     @PostMapping(value = "/registerList")
-    public SingleResult<?> registerList(@RequestBody @Valid List<UserVO> userVOList,
+    public SingleResult<?> registerList(@RequestBody @Valid UserExcelVO userList,
                                         HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        userService.registryFromAdminList(userVOList);
+        userService.registryFromAdminList(userList, User_Idx);
         List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
-        return responseService.getSingleResult(list);
+        return responseService.getSingleResult(true);
     }
 
 

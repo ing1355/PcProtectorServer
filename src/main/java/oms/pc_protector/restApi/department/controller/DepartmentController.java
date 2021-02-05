@@ -56,14 +56,6 @@ public class DepartmentController {
         return responseService.getSingleResult(true);
     }
 
-    @PostMapping(value = "/excel")
-    public SingleResult<?> registerDepartmentByExcel(@RequestBody @Valid List<DepartmentVO> departmentVOList,
-                                                     HttpServletRequest httpServletRequest) {
-        String User_Idx = httpServletRequest.getHeader("dptIdx");
-        departmentService.registerByExcel(departmentVOList, User_Idx);
-        return responseService.getSingleResult(true);
-    }
-
     @PostMapping(value = "")
     public SingleResult<?> insertDepartment(@RequestBody @Valid DepartmentVO departmentVO) {
         return responseService.getSingleResult(departmentService.register(departmentVO));
