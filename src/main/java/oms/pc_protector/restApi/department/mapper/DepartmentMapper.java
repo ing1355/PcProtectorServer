@@ -31,7 +31,9 @@ public interface DepartmentMapper {
 
     public void registerByExcel(DepartmentVO departmentVO);
 
-    public void deleteAll(String idx);
+    public String selectIdxByCode(String code);
+
+    public void deleteAll(String rootIdx);
 
     public void changeDepartment(DepartmentVO departmentVO);
 

@@ -6,7 +6,6 @@ import oms.pc_protector.restApi.client.mapper.ClientMapper;
 import oms.pc_protector.restApi.client.model.ClientVO;
 import oms.pc_protector.restApi.dashboard.mapper.DashboardMapper;
 import oms.pc_protector.restApi.dashboard.model.DashboardPeriodVO;
-import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.service.DepartmentService;
 import oms.pc_protector.restApi.policy.mapper.ConfigurationMapper;
 import oms.pc_protector.restApi.policy.service.ConfigurationService;
@@ -57,20 +56,21 @@ public class ResultService {
     /* 사용자의 검색 파라미터에 해당하는 점검결과를 반환한다. */
     @Transactional
     public List<ResponseResultVO> findBySearchInput(SearchInputVO searchInputVO) {
-        List<ResponseResultVO> resultList = new ArrayList<>();
-        if (searchInputVO.getDepartmentIdx() != null) {
-            Long code = searchInputVO.getDepartmentIdx();
-            List<DepartmentVO> childCodeList = new ArrayList<>();
-            childCodeList.add(departmentService.findByDepartmentIdx(code));
-            childCodeList.addAll(departmentService.findChildAscByParentCode(code));
-            for (DepartmentVO childCode : childCodeList) {
-                searchInputVO.setDepartmentIdx(childCode.getCode());
-                resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
-            }
-            return resultList;
-        }
-        resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
-        return resultList;
+//        List<ResponseResultVO> resultList = new ArrayList<>();
+//        if (searchInputVO.getDepartmentIdx() != null) {
+//            Long code = searchInputVO.getDepartmentIdx();
+//            List<DepartmentVO> childCodeList = new ArrayList<>();
+//            childCodeList.add(departmentService.findByDepartmentIdx(code));
+//            childCodeList.addAll(departmentService.findChildAscByParentCode(code));
+//            for (DepartmentVO childCode : childCodeList) {
+//                searchInputVO.setDepartmentIdx(childCode.getCode());
+//                resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
+//            }
+//            return resultList;
+//        }
+//        resultList.addAll(resultMapper.selectBySearchInput(searchInputVO));
+//        return resultList;
+        return resultMapper.selectBySearchInput(searchInputVO);
     }
 
 

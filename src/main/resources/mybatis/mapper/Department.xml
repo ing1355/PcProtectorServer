@@ -42,6 +42,12 @@
         WHERE idx = #{departmentIdx}
     </select>
 
+    <select id="selectIdxByCode">
+        SELECT idx
+        FROM department
+        WHERE code = #{code}
+    </select>
+
     <select id="selectBycode"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="Long">
         SELECT *
@@ -89,9 +95,6 @@
     <insert id="registerByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
         INSERT INTO department (name, code, parent_code, dpt_code)
         VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
-        UPDATE user
-        SET department_idx = #{code}
-        WHERE idx = #{idx}
     </insert>
 
     <select id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO"
@@ -144,7 +147,8 @@
     <delete id="deleteAll">
         DELETE
         FROM department
-        WHERE code LIKE CONCAT(#{idx}, '%');
+        WHERE idx IN ((SELECT b.idx
+                       FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
     </delete>
 
     <delete id="deleteRoot">

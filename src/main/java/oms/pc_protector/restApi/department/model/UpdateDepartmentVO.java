@@ -8,5 +8,5 @@ import lombok.Setter;
 public class UpdateDepartmentVO {
     private String old_name;
     private String new_name;
-    private String code;
+    private String idx;
 }

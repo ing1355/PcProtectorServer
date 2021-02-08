@@ -12,8 +12,6 @@ public interface ClientMapper {
 
     public String selectClient(String id, String departmentIdx);
 
-    public List<ClientVO> selectClientHistory(String userId);
-
     public String selectDepartmentByDepartmentIdx(String departmentidx);
 
     public void loginUpdateTime(String id, String departmentIdx);

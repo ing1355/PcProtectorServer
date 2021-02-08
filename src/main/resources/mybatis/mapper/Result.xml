@@ -7,7 +7,7 @@
         FROM user_result AS t1,
              user AS t2,
              client AS t3,
-             (SELECT b.idx
+             (SELECT b.idx, b.name as department
               FROM department a
                        JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE t2.user_id = t3.user_id
@@ -119,7 +119,7 @@
 
     <select id="selectBySearchInput" resultType="oms.pc_protector.restApi.result.model.ResponseResultVO"
             parameterType="oms.pc_protector.restApi.result.model.SearchInputVO">
-        SELECT * FROM (SELECT b.idx, b.name
+        SELECT * FROM (SELECT b.idx, b.name as department, b.code
         FROM department a JOIN department b ON a.idx = #{userIdx} AND b.code LIKE CONCAT(a.code, '%')) d,
         (SELECT t0.user_id, t0.name, t1.ip_address, t0.department_idx FROM user t0 , client t1
         WHERE t0.user_id = t1.user_id
@@ -136,7 +136,7 @@
             AND A.ip_address LIKE concat('%', #{ipAddress}, '%')
         </if>
         <if test="departmentIdx != null">
-            AND B.department_idx = #{departmentIdx}
+            AND B.department_idx = d.idx AND d.code LIKE CONCAT(#{departmentIdx}, '%')
         </if>
         <if test="startDate != null and endDate != null">
             And A.check_time BETWEEN #{startDate} AND #{endDate}

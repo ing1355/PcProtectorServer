@@ -11,12 +11,6 @@
         AND c.department_idx = d.idx;
     </select>
 
-    <select id="selectClientHistory" parameterType="String"
-            resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client_history
-        WHERE user_id = #{value}
-    </select>
-
     <select id="selectClientByIdIp" parameterType="oms.pc_protector.restApi.client.model.ClientVO"
             resultType="int">
         SELECT COUNT(*) FROM client
@@ -59,8 +53,8 @@
 
     <select id="selectClientListById" parameterType="String"
             resultType="oms.pc_protector.restApi.client.model.ClientVO">
-        SELECT * FROM client_history
-        WHERE user_id = #{id} AND department_idx = #{departmentIdx}
+        SELECT * FROM client_history, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE user_id = #{id} AND department_idx = d.idx
         ORDER BY check_time DESC
     </select>
 
