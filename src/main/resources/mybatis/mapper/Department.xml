@@ -93,8 +93,11 @@
     </select>
 
     <insert id="registerByExcel" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
-        INSERT INTO department (name, code, parent_code, dpt_code)
-        VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
+        <selectKey resultType="string" keyProperty="idx" order="BEFORE">
+            SELECT MAX(idx)+1 FROM department
+        </selectKey>
+        INSERT INTO department (idx, name, code, parent_code, dpt_code)
+        VALUES (#{idx}, #{name}, #{code}, #{parentCode}, #{dptCode});
     </insert>
 
     <select id="insert" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO"
@@ -138,6 +141,13 @@
     </update>
 
     <update id="update" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
+        UPDATE department
+        SET name        = #{new_name},
+            update_time = now()
+        WHERE name = #{old_name} AND idx = #{idx}
+    </update>
+
+    <update id="updateByExcel" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
         UPDATE department
         SET name        = #{new_name},
             update_time = now()

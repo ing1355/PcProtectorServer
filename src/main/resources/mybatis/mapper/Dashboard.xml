@@ -37,7 +37,7 @@
         SELECT COUNT(c.user_id)
         FROM client c,
              user u, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-        WHERE c.user_id = u.user_id
+        WHERE c.user_id = u.user_id AND c.department_idx = u.department_idx
           AND c.department_idx IN (d.idx)
     </select>
 

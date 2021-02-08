@@ -101,16 +101,11 @@ public class UserController {
     @PutMapping(value = "/{id}")
     public SingleResult<?> update(@PathVariable(value = "id") String id,
                                   HttpServletRequest httpServletRequest,
-                                  @RequestBody UserVO userVO) {
+                                  @RequestBody RequestUserVO userVO) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        RequestUserVO requestUserVO = new RequestUserVO();
-        requestUserVO.setUserId(id);
-        requestUserVO.setName(userVO.getName());
-        requestUserVO.setDepartmentIdx(userVO.getDepartmentIdx());
-        requestUserVO.setPhone(userVO.getPhone());
-        requestUserVO.setEmail(userVO.getEmail());
-        requestUserVO.setUserIdx(User_Idx);
-        boolean update = userService.updateUserInfo(requestUserVO);
+        userVO.setUserId(id);
+        userVO.setUserIdx(User_Idx);
+        boolean update = userService.updateUserInfo(userVO);
         List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
                 .orElseGet(ArrayList::new);
         return responseService.getSingleResult(list);

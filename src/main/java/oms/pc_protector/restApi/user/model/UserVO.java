@@ -13,5 +13,5 @@ public class UserVO {
     private String email;
     private String phone;
     private String department;
-
+    private String change;
 }

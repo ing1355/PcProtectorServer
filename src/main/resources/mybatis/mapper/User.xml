@@ -89,10 +89,20 @@
     </insert>
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
+        <if test='change != null'>
+            UPDATE client c
+            SET department_idx = #{departmentIdx}
+            WHERE c.user_id = #{userId} AND c.department_idx = #{change};
+            UPDATE client_history c
+            SET department_idx = #{departmentIdx}
+            WHERE c.user_id = #{userId} AND c.department_idx = #{change};
+            UPDATE user_result ur
+            SET department_idx = #{departmentIdx}
+            WHERE ur.user_id = #{userId} AND ur.department_idx = #{change};
+        </if>
         UPDATE user user, (SELECT b.idx
                            FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-        SET user.user_id        = #{userId},
-            user.name           = #{name},
+        SET user.name           = #{name},
             user.department_idx = #{departmentIdx},
             user.email          = #{email},
             user.phone          = #{phone},

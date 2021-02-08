@@ -25,7 +25,7 @@
                 AND create_time BETWEEN #{startDay} AND #{endDay}
             </if>
         AND m.department_idx = #{departmentIdx}
-        ORDER BY m.idx DESC
+        ORDER BY a.idx DESC
     </select>
 
     <insert id="insert" parameterType="oms.pc_protector.restApi.log.model.LogVO">

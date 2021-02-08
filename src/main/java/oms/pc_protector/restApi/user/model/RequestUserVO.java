@@ -14,4 +14,5 @@ public class RequestUserVO {
     private String department;
     private String departmentIdx;
     private String UserIdx;
+    private String change;
 }

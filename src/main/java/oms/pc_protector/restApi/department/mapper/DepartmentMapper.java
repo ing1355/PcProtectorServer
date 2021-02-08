@@ -43,6 +43,8 @@ public interface DepartmentMapper {
 
     public void update(UpdateDepartmentVO updateDepartmentVO);
 
+    public void updateByExcel(DepartmentVO departmentVO);
+
     public void deleteRoot(String departmentIdx);
 
     public void delete(String departmentIdx);
