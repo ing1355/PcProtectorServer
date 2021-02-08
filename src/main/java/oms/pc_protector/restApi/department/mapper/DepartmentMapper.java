@@ -23,6 +23,8 @@ public interface DepartmentMapper {
 
     public DepartmentVO selectBycode(Long departmentIdx);
 
+    public String selectDptCode(String departmentIdx);
+
     public DepartmentVO selectByDptCode(String code);
 
     public List<DepartmentVO> selectChildCodeDescByParentCode(Long parentCode);

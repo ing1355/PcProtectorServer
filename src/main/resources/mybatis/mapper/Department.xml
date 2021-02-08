@@ -48,6 +48,12 @@
         WHERE code = #{code}
     </select>
 
+    <select id="selectDptCode" resultType="String">
+        SELECT dpt_code
+        FROM department
+        WHERE idx = #{departmentIdx}
+    </select>
+
     <select id="selectBycode"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO" parameterType="Long">
         SELECT *
