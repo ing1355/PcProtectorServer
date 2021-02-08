@@ -85,7 +85,7 @@
                 #{name},
                 #{email},
                 #{phone},
-                #{departmentIdx})
+                (SELECT idx FROM department WHERE code = #{departmentIdx}))
     </insert>
 
     <update id="updateUserInfo_Front" parameterType="oms.pc_protector.restApi.user.model.RequestUserVO">
@@ -132,6 +132,20 @@
     <delete id="deleteAllUserInfo">
         DELETE
         FROM user
+        WHERE department_idx IN ((SELECT b.idx
+                                  FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
+        DELETE
+        FROM user_result
+        WHERE department_idx IN ((SELECT b.idx
+                                  FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
+        DELETE
+        FROM client
+        WHERE department_idx IN ((SELECT b.idx
+                                  FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
+        DELETE
+        FROM client_history
+        WHERE department_idx IN ((SELECT b.idx
+                                  FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
     </delete>
 
 </mapper>

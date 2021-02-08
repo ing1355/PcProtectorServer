@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,10 +81,13 @@ public class UserController {
     public SingleResult<?> registerList(@RequestBody @Valid UserExcelVO userList,
                                         HttpServletRequest httpServletRequest) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        userService.registryFromAdminList(userList, User_Idx);
-        List<UserVO> list = Optional.ofNullable(userService.findAll(User_Idx))
+        String new_idx = userService.registryFromAdminList(userList, User_Idx);
+        List<UserVO> list = Optional.ofNullable(userService.findAll(new_idx))
                 .orElseGet(ArrayList::new);
-        return responseService.getSingleResult(true);
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("List",list);
+        result.put("newIdx",new_idx);
+        return responseService.getSingleResult(result);
     }
 
 

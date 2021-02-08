@@ -83,14 +83,20 @@ public class DepartmentService {
 
 
     @Transactional
-    public void registerByExcel(List<DepartmentVO> departmentVO, String rootIdx) {
-        List<DepartmentVO> prev_departmentList = findAll(rootIdx);
+    public String registerByExcel(List<DepartmentVO> departmentVO, String rootIdx) {
         departmentMapper.deleteAll(rootIdx);
+        Integer count = 0;
+        String userIdx = null;
         for (DepartmentVO dept : departmentVO) {
             dept.setDptCode(CreateRandomDptCode());
             departmentMapper.registerByExcel(dept);
-            departmentMapper.updateByExcel(dept);
+            if(count == 0) {
+                departmentMapper.updateByExcel(rootIdx, dept.getIdx());
+                userIdx = dept.getIdx();
+            }
+            count++;
         }
+        return userIdx;
     }
 
 

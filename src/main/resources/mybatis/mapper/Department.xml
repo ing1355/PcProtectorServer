@@ -147,18 +147,47 @@
         WHERE name = #{old_name} AND idx = #{idx}
     </update>
 
-    <update id="updateByExcel" parameterType="oms.pc_protector.restApi.department.model.UpdateDepartmentVO">
-        UPDATE department
-        SET name        = #{new_name},
-            update_time = now()
-        WHERE name = #{old_name} AND idx = #{idx}
+    <update id="updateByExcel" parameterType="String">
+        UPDATE audit_log
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE process
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE configuration
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE dashboard_period
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE edit_program_check
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE manager
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE next_period_date_configuration
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE period_date_configuration
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE security_usb_details
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE unlicensed_program_list
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
+        UPDATE un_approved_details
+        SET department_idx = #{new_idx}
+        WHERE department_idx = #{old_idx};
     </update>
 
     <delete id="deleteAll">
         DELETE
         FROM department
         WHERE idx IN ((SELECT b.idx
-                       FROM department a JOIN department b ON a.idx = #{UserIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                       FROM department a JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')));
     </delete>
 
     <delete id="deleteRoot">

@@ -75,23 +75,24 @@ public class UserService {
 
 
     @Transactional
-    public void registryFromAdminList(UserExcelVO userExcelVO, String User_Idx) {
-        departmentService.registerByExcel(userExcelVO.getDepartmentList(), User_Idx);
-//        userMapper.deleteAllUserInfo();
-//        log.info("-------------------------");
-//        log.info("------사용자 등록 EXCEL----");
-//        for (UserVO user : userExcelVO.getUserList()) {
-//            log.info("-------------------------");
-//            log.info("ID : {}", user.getUserId());
-//            log.info("NAME {}: ", user.getName());
-//            log.info("DEPARTMENTIDX : {}", user.getDepartmentIdx());
-//            log.info("DEPARTMENT : {}", user.getDepartment());
-//            log.info("PHONE : {}", user.getPhone());
-//            log.info("EMAIL : {}", user.getEmail());
-//            log.info("-------------------------");
-//            userMapper.RegisterUserInfo(user);
-//        }
-//        log.info("-------------------------");
+    public String registryFromAdminList(UserExcelVO userExcelVO, String User_Idx) {
+        userMapper.deleteAllUserInfo(User_Idx);
+        String new_rootIdx = departmentService.registerByExcel(userExcelVO.getDepartmentList(), User_Idx);
+        log.info("-------------------------");
+        log.info("------사용자 등록 EXCEL----");
+        for (UserVO user : userExcelVO.getUserList()) {
+            log.info("-------------------------");
+            log.info("ID : {}", user.getUserId());
+            log.info("NAME {}: ", user.getName());
+            log.info("DEPARTMENTIDX : {}", user.getDepartmentIdx());
+            log.info("DEPARTMENT : {}", user.getDepartment());
+            log.info("PHONE : {}", user.getPhone());
+            log.info("EMAIL : {}", user.getEmail());
+            log.info("-------------------------");
+            userMapper.RegisterUserInfo(user);
+        }
+        log.info("-------------------------");
+        return new_rootIdx;
     }
 
 

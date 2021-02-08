@@ -41,4 +41,11 @@ public class DashboardController {
 //        log.info("대시보드 전체 걸린시간 : " + secDiffTime + "초");
         return responseService.getSingleResult(result);
     }
+
+    @GetMapping(value = "bottom")
+    public SingleResult<?> dashboardBottom(@RequestParam(value = "term") String term, HttpServletRequest httpServletRequest) {
+        HashMap<String, Object> dashboardBottomMap = dashboardService.dashboardBottom(term,
+                httpServletRequest.getHeader("dptIdx"));
+        return responseService.getSingleResult(dashboardBottomMap);
+    }
 }

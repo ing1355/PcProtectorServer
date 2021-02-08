@@ -29,5 +29,5 @@ public interface UserMapper {
 
     public boolean deleteUserInfo(String id, String UserIdx);
 
-    public void deleteAllUserInfo();
+    public void deleteAllUserInfo(String UserIdx);
 }
