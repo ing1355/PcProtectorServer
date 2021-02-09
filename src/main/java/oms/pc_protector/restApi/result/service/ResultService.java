@@ -90,8 +90,8 @@ public class ResultService {
 
     @SneakyThrows
     @Transactional
-    public List<Integer> findScoreByDepartmentWithMonth(String department) {
-        return resultMapper.selectScoreByDepartmentWithMonth(department);
+    public List<Integer> findScoreByDepartmentWithMonth(String departmentIdx) {
+        return resultMapper.selectScoreByDepartmentWithMonth(departmentIdx);
     }
 
 

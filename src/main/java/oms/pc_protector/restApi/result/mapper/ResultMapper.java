@@ -27,7 +27,7 @@ public interface ResultMapper {
     public int selectCountRunByMonth(String departmentIdx);
 
     public List<Integer> selectScoreByDepartmentWithMonth(
-            @Param("department") String department);
+            @Param("departmentIdx") String departmentIdx);
 
     public int selectByScheduleIsExist(@Param(value = "userId") String userId,
                                        @Param(value = "ipAddress") String IpAddress,

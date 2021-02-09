@@ -6,12 +6,18 @@
 
         SELECT NVL(AVG(u.score), 0)
         FROM user_result u,
-             dashboard_period da,
-             (SELECT c.user_id, c.department_idx
+             (SELECT * FROM dashboard_period WHERE department_idx = #{departmentIdx}) da,
+             (SELECT c.user_id, c.department_idx, c.ip_address
               FROM client c,
-                   user user, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-              WHERE c.user_id = user.user_id AND c.department_idx = d.idx) c
+                   user user,
+                   (SELECT b.idx
+                    FROM department a
+                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+              WHERE c.user_id = user.user_id
+                AND c.department_idx = d.idx) c
         WHERE u.user_id = c.user_id
+          AND u.department_idx = c.department_idx
+          AND u.ip_address = c.ip_address
           AND (u.item1_result +
                u.item2_result +
                u.item3_result +
@@ -30,14 +36,17 @@
                u.item16_result) > 0
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND u.in_schedule = 1
-          AND c.department_idx LIKE CONCAT(#{departmentIdx}, '%')
     </select>
 
     <select id="selectClientCount" resultType="Integer">
         SELECT COUNT(c.user_id)
         FROM client c,
-             user u, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-        WHERE c.user_id = u.user_id AND c.department_idx = u.department_idx
+             user u,
+             (SELECT b.idx
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE c.user_id = u.user_id
+          AND c.department_idx = u.department_idx
           AND c.department_idx IN (d.idx)
     </select>
 
@@ -47,7 +56,10 @@
         SELECT NVL(AVG(t2.score), 0)
         FROM (SELECT c.user_id, c.ip_address
               FROM user u,
-                   client c, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+                   client c,
+                   (SELECT b.idx
+                    FROM department a
+                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
               WHERE u.user_id = c.user_id
                 AND c.department_idx = d.idx) AS t1
                  LEFT OUTER JOIN
@@ -81,7 +93,10 @@
              user_result t1,
              (SELECT c.user_id, user.department_idx, c.ip_address
               FROM client c,
-                   user user, (SELECT b.idx FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+                   user user,
+                   (SELECT b.idx
+                    FROM department a
+                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
               WHERE c.user_id = user.user_id
                 AND c.department_idx = d.idx) c
         WHERE c.user_id = t1.user_id

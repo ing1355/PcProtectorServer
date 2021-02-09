@@ -32,7 +32,7 @@
     <select id="selectCountRunByMonth" resultType="int">
         SELECT COUNT(DISTINCT u.idx)
         FROM user_result u,
-             dashboard_period da,
+             (SELECT * FROM dashboard_period WHERE department_idx = #{departmentIdx}) da,
              (SELECT DISTINCT c.ip_address, c.user_id, c.department_idx
               FROM client c,
                    user user,
@@ -59,7 +59,6 @@
                u.item14_result +
                u.item15_result +
                u.item16_result) > 0
-          AND da.department_idx = c.department_idx
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND u.in_schedule = 1
           AND u.department_idx = c.department_idx
@@ -70,9 +69,11 @@
         FROM (
                  SELECT A.department_idx, A.user_id, B.ip_address
                  FROM user as A,
-                      client as B
+                      client as B, (SELECT b.idx
+                                    FROM department a
+                                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE A.user_id = B.user_id
-                   AND A.department_idx LIKE CONCAT(#{department}, '%')
+                   AND B.department_idx = d.idx
              ) AS t0
                  LEFT OUTER JOIN
              (
@@ -96,9 +97,8 @@
                         ur.user_id,
                         ur.score
                  FROM user_result ur,
-                      dashboard_period d
+                      (SELECT * FROM dashboard_period WHERE  department_idx = #{departmentIdx}) d
                  WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
-                   AND ur.department_idx = d.department_idx
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
