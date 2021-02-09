@@ -59,6 +59,7 @@
                u.item14_result +
                u.item15_result +
                u.item16_result) > 0
+          AND da.department_idx = c.department_idx
           AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
           AND u.in_schedule = 1
           AND u.department_idx = c.department_idx
@@ -75,28 +76,29 @@
              ) AS t0
                  LEFT OUTER JOIN
              (
-                 SELECT item1_result,
-                        item2_result,
-                        item3_result,
-                        item4_result,
-                        item5_result,
-                        item6_result,
-                        item7_result,
-                        item8_result,
-                        item9_result,
-                        item10_result,
-                        item11_result,
-                        item12_result,
-                        item13_result,
-                        item14_result,
-                        item15_result,
-                        item16_result,
-                        ip_address,
-                        user_id,
-                        score
-                 FROM user_result,
+                 SELECT ur.item1_result,
+                        ur.item2_result,
+                        ur.item3_result,
+                        ur.item4_result,
+                        ur.item5_result,
+                        ur.item6_result,
+                        ur.item7_result,
+                        ur.item8_result,
+                        ur.item9_result,
+                        ur.item10_result,
+                        ur.item11_result,
+                        ur.item12_result,
+                        ur.item13_result,
+                        ur.item14_result,
+                        ur.item15_result,
+                        ur.item16_result,
+                        ur.ip_address,
+                        ur.user_id,
+                        ur.score
+                 FROM user_result ur,
                       dashboard_period d
-                 WHERE DATE_FORMAT(check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
+                 WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
+                   AND ur.department_idx = d.department_idx
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
 
@@ -181,6 +183,7 @@
                            JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
             WHERE ch.user_id = #{id}
               AND u.department_idx = d.idx
+              AND u.department_idx = ch.department_idx
               AND ch.user_id = u.user_id
         ) AS A
            , (
@@ -188,7 +191,6 @@
             FROM user_result
             WHERE user_id = #{id}
         ) AS B
-
         WHERE A.ip_address = B.ip_address
           AND B.in_schedule = 1
         ORDER BY B.check_time DESC
