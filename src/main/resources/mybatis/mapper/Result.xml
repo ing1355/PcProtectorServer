@@ -132,6 +132,7 @@
         ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1 AND A.ip_address =
         B.ip_address
         WHERE A.user_id = B.user_id
+        AND A.department_idx = d.idx
         AND B.department_idx = d.idx
         <if test="userId != null">
             AND A.user_id LIKE concat('%', #{userId}, '%')

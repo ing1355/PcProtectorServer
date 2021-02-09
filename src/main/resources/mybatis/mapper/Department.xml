@@ -80,7 +80,7 @@
 
     <select id="selectChildCodeDescByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
             parameterType="Long">
-        SELECT code, name, parent_code
+        SELECT code, name, parent_code, idx
         FROM (
                  SELECT *
                  FROM department
