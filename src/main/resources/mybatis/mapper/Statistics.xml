@@ -98,6 +98,7 @@
                       user AS t2, (SELECT b.idx
                                    FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE t1.user_id = t2.user_id
+                   AND t1.department_idx = t2.department_idx
                    AND t1.department_idx = d.idx
              ) AS A
                  LEFT OUTER JOIN
@@ -150,6 +151,7 @@
                       user AS t2, (SELECT b.idx
                                    FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE t1.user_id = t2.user_id
+                   AND t1.department_idx = t2.department_idx
                    AND t1.department_idx = d.idx
              ) AS A
                  LEFT OUTER JOIN
