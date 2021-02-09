@@ -97,7 +97,7 @@
                         ur.user_id,
                         ur.score
                  FROM user_result ur,
-                      (SELECT * FROM dashboard_period WHERE  department_idx = #{departmentIdx}) d
+                      (SELECT * FROM dashboard_period WHERE  department_idx = #{UserIdx}) d
                  WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
