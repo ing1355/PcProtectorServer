@@ -6,19 +6,44 @@
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO">
         SELECT *
         FROM (SELECT b.idx, b.name, b.parent_code, b.dpt_code, b.code
-        FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        ORDER BY d.code
+    </select>
+
+    <select id="selectAllRoot"
+            resultType="oms.pc_protector.restApi.department.model.DepartmentRootVO">
+        SELECT *
+        FROM (SELECT b.idx, b.name, b.parent_code, b.dpt_code, b.code
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx}
+                  AND (b.parent_code = '1' OR b.parent_code = '0')
+                  AND b.code LIKE CONCAT(a.code, '%')) d
+        ORDER BY d.code
+    </select>
+
+    <select id="selectAllClientByIdx"
+            resultType="int">
+        SELECT COUNT(c.idx)
+        FROM (SELECT b.idx, b.name, b.parent_code, b.dpt_code, b.code
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d,
+             client c
+        WHERE c.department_idx = d.idx
         ORDER BY d.code
     </select>
 
     <select id="findUserInDepartment" parameterType="String" resultType="Int">
         SELECT COUNT(user_id)
-        FROM user u, (SELECT idx FROM department WHERE code LIKE CONCAT(#{code}, '%')) d
+        FROM user u,
+             (SELECT idx FROM department WHERE code LIKE CONCAT(#{code}, '%')) d
         WHERE u.department_idx = d.idx
     </select>
 
     <select id="findManagerInDepartment" parameterType="String" resultType="Int">
         SELECT COUNT(id)
-        FROM manager m, (SELECT idx FROM department WHERE code LIKE CONCAT(#{code}, '%')) d
+        FROM manager m,
+             (SELECT idx FROM department WHERE code LIKE CONCAT(#{code}, '%')) d
         WHERE m.department_idx = d.idx
     </select>
 
@@ -63,7 +88,9 @@
 
     <select id="selectByDptCode" parameterType="String"
             resultType="oms.pc_protector.restApi.department.model.DepartmentVO">
-        SELECT * FROM department WHERE dpt_code = #{code}
+        SELECT *
+        FROM department
+        WHERE dpt_code = #{code}
     </select>
 
     <select id="selectChildCodeAscByParentCode" resultType="oms.pc_protector.restApi.department.model.DepartmentVO"
@@ -110,7 +137,9 @@
             resultType="String">
         INSERT INTO department (name, code, parent_code, dpt_code)
         VALUES (#{name}, #{code}, #{parentCode}, #{dptCode});
-        SELECT idx FROM department WHERE code = #{code};
+        SELECT idx
+        FROM department
+        WHERE code = #{code};
     </select>
 
     <select id="insertRoot" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO"
@@ -123,17 +152,17 @@
         VALUES (DATE_FORMAT(NOW(), '%Y-%m-%d'),
                 DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 1 DAY), INTERVAL 1 SECOND),
                 (SELECT idx FROM department WHERE code = #{code}));
-        INSERT INTO period_date_configuration (period,apply, department_idx)
-        VALUES (3,1, (SELECT idx FROM department WHERE code = #{code}));
+        INSERT INTO period_date_configuration (period, apply, department_idx)
+        VALUES (3, 1, (SELECT idx FROM department WHERE code = #{code}));
         INSERT INTO configuration (department_idx)
         VALUES ((SELECT idx FROM department WHERE code = #{code}));
         INSERT INTO next_period_date_configuration (start_date, end_date, department_idx)
-        VALUES (
-                   DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL 1 DAY),
-                   DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(),'%Y-%m-%d'), INTERVAL 2 DAY), INTERVAL 1 SECOND),
-                   (SELECT idx FROM department WHERE code = #{code})
-               );
-        SELECT idx FROM department WHERE code = #{code};
+        VALUES (DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 1 DAY),
+                DATE_SUB(DATE_ADD(DATE_FORMAT(NOW(), '%Y-%m-%d'), INTERVAL 2 DAY), INTERVAL 1 SECOND),
+                (SELECT idx FROM department WHERE code = #{code}));
+        SELECT idx
+        FROM department
+        WHERE code = #{code};
     </select>
 
     <update id="changeDepartment" parameterType="oms.pc_protector.restApi.department.model.DepartmentVO">
@@ -150,7 +179,8 @@
         UPDATE department
         SET name        = #{new_name},
             update_time = now()
-        WHERE name = #{old_name} AND idx = #{idx}
+        WHERE name = #{old_name}
+          AND idx = #{idx}
     </update>
 
     <update id="updateByExcel" parameterType="String">
@@ -193,22 +223,29 @@
         DELETE
         FROM department
         WHERE idx IN ((SELECT b.idx
-                       FROM department a JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                       FROM department a
+                                JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')));
     </delete>
 
     <delete id="deleteRoot">
         DELETE
         FROM audit_log
         WHERE department_idx IN ((SELECT b.idx
-                                  FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                                  FROM department a
+                                           JOIN department b
+                                                ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM client_history
         WHERE department_idx IN ((SELECT b.idx
-                                FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                                  FROM department a
+                                           JOIN department b
+                                                ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM client
         WHERE department_idx IN ((SELECT b.idx
-                                FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                                  FROM department a
+                                           JOIN department b
+                                                ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM client_file
         WHERE department_idx = #{departmentIdx};
@@ -236,11 +273,15 @@
         DELETE
         FROM user
         WHERE department_idx IN ((SELECT b.idx
-                                  FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                                  FROM department a
+                                           JOIN department b
+                                                ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM user_result
         WHERE department_idx IN ((SELECT b.idx
-                                FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                                  FROM department a
+                                           JOIN department b
+                                                ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
         DELETE
         FROM unlicensed_program_list
         WHERE department_idx = #{departmentIdx};
@@ -250,7 +291,8 @@
         DELETE
         FROM department
         WHERE idx IN ((SELECT b.idx
-                     FROM department a JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
+                       FROM department a
+                                JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')));
     </delete>
 
     <delete id="delete">

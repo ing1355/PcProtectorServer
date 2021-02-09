@@ -28,10 +28,14 @@ public class DepartmentController {
     }
 
     @GetMapping(value = "")
-    public SingleResult<?> findDepartmentAll(HttpServletRequest httpServletRequest) {
+    public SingleResult<?> findDepartmentAll(HttpServletRequest httpServletRequest,
+                                             @RequestParam(value = "isAdmin") boolean isAdmin) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
-        List<DepartmentVO> departmentVOList = departmentService.findAll(User_Idx);
-        return responseService.getSingleResult(departmentVOList);
+        if (isAdmin) {
+            return responseService.getSingleResult(departmentService.findAllRoot(User_Idx));
+        } else {
+            return responseService.getSingleResult(departmentService.findAll(User_Idx));
+        }
     }
 
     @GetMapping(value = "check")

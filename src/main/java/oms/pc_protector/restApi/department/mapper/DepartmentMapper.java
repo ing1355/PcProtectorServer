@@ -1,5 +1,6 @@
 package oms.pc_protector.restApi.department.mapper;
 
+import oms.pc_protector.restApi.department.model.DepartmentRootVO;
 import oms.pc_protector.restApi.department.model.DepartmentVO;
 import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,10 @@ import java.util.List;
 public interface DepartmentMapper {
 
     public List<DepartmentVO> selectAll(String departmentIdx);
+
+    public List<DepartmentRootVO> selectAllRoot(String departmentIdx);
+
+    public Integer selectAllClientByIdx(String departmentIdx);
 
     public Integer findUserInDepartment(String code);
 

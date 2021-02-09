@@ -1,10 +1,7 @@
 package oms.pc_protector.restApi.department.service;
 
 import oms.pc_protector.restApi.department.mapper.DepartmentMapper;
-import oms.pc_protector.restApi.department.model.DepartmentDeleteVO;
-import oms.pc_protector.restApi.department.model.DepartmentResponseVO;
-import oms.pc_protector.restApi.department.model.DepartmentVO;
-import oms.pc_protector.restApi.department.model.UpdateDepartmentVO;
+import oms.pc_protector.restApi.department.model.*;
 import oms.pc_protector.restApi.user.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +35,16 @@ public class DepartmentService {
     public List<DepartmentVO> findAll(String User_Idx) {
         return Optional.ofNullable(departmentMapper.selectAll(User_Idx))
                 .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+    }
+
+    @Transactional
+    public List<DepartmentRootVO> findAllRoot(String User_Idx) {
+        List<DepartmentRootVO> departmentRootVO = Optional.ofNullable(departmentMapper.selectAllRoot(User_Idx))
+                .orElseThrow(() -> new RuntimeException("값이 존재하지 않습니다."));
+        for(DepartmentRootVO departmentRootVO1 : departmentRootVO) {
+            departmentRootVO1.setAgentNum(departmentMapper.selectAllClientByIdx(departmentRootVO1.getIdx()));
+        }
+        return departmentRootVO;
     }
 
 
