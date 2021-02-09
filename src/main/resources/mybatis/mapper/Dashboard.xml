@@ -3,21 +3,45 @@
 <mapper namespace="oms.pc_protector.restApi.dashboard.mapper.DashboardMapper">
 
     <select id="selectAvgScoreByMonth" resultType="Integer">
-
         SELECT NVL(AVG(u.score), 0)
-        FROM user_result u,
-             (SELECT * FROM dashboard_period WHERE department_idx = #{departmentIdx}) da,
-             (SELECT c.user_id, c.department_idx, c.ip_address
-              FROM client c,
-                   user user,
-                   (SELECT b.idx
-                    FROM department a
-                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-              WHERE c.user_id = user.user_id
-                AND c.department_idx = d.idx) c
-        WHERE u.user_id = c.user_id
-          AND u.department_idx = c.department_idx
-          AND u.ip_address = c.ip_address
+        FROM (
+                 (SELECT u.ip_address,
+                         u.user_id,
+                         u.score,
+                         u.check_time,
+                         u.item1_result,
+                         u.item2_result,
+                         u.item3_result,
+                         u.item4_result,
+                         u.item5_result,
+                         u.item6_result,
+                         u.item7_result,
+                         u.item8_result,
+                         u.item9_result,
+                         u.item10_result,
+                         u.item11_result,
+                         u.item12_result,
+                         u.item13_result,
+                         u.item14_result,
+                         u.item15_result,
+                         u.item16_result,
+                         u.department_idx
+                  FROM user_result u,
+                       client c, user user
+                  WHERE u.user_id = c.user_id
+                    AND user.user_id = c.user_id
+                    AND user.department_idx = c.department_idx
+                    AND u.department_idx = c.department_idx
+                    AND u.ip_address = c.ip_address
+                    AND u.in_schedule = 1) u
+                     JOIN
+                     (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = '144') da
+                     ON DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date),
+             (SELECT b.idx
+              FROM department a
+                       JOIN department b
+                            ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        WHERE u.department_idx = d.idx
           AND (u.item1_result +
                u.item2_result +
                u.item3_result +
@@ -33,9 +57,7 @@
                u.item13_result +
                u.item14_result +
                u.item15_result +
-               u.item16_result) > 0
-          AND DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date
-          AND u.in_schedule = 1
+               u.item16_result) > 0;
     </select>
 
     <select id="selectClientCount" resultType="Integer">

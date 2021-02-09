@@ -21,9 +21,10 @@
 
     <select id="selectExistByDay" resultType="int">
         SELECT COUNT(ur.idx)
-        FROM user_result ur, (SELECT b.idx
-                              FROM department a
-                                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        FROM user_result ur,
+             (SELECT b.idx
+              FROM department a
+                       JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE ur.in_schedule = 0
           AND DATE_FORMAT(ur.check_time, '%Y-%m-%d') = #{day}
           AND ur.department_idx = d.idx
@@ -69,11 +70,13 @@
         FROM (
                  SELECT A.department_idx, A.user_id, B.ip_address
                  FROM user as A,
-                      client as B, (SELECT b.idx
-                                    FROM department a
-                                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+                      client as B,
+                      (SELECT b.idx
+                       FROM department a
+                                JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
                  WHERE A.user_id = B.user_id
                    AND B.department_idx = d.idx
+                   AND A.department_idx = d.idx
              ) AS t0
                  LEFT OUTER JOIN
              (
@@ -97,7 +100,7 @@
                         ur.user_id,
                         ur.score
                  FROM user_result ur,
-                      (SELECT * FROM dashboard_period WHERE  department_idx = #{UserIdx}) d
+                      (SELECT * FROM dashboard_period WHERE department_idx = #{UserIdx}) d
                  WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN d.start_date AND d.end_date
                    AND in_schedule = 1
              ) AS t1 ON t0.user_id = t1.user_id AND t0.ip_address = t1.ip_address
@@ -126,7 +129,8 @@
         FROM department a JOIN department b ON a.idx = #{userIdx} AND b.code LIKE CONCAT(a.code, '%')) d,
         (SELECT t0.user_id, t0.name, t1.ip_address, t0.department_idx FROM user t0 , client t1
         WHERE t0.user_id = t1.user_id
-        ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1 AND A.ip_address = B.ip_address
+        ) AS B LEFT OUTER JOIN user_result A ON A.user_id = B.user_id AND A.in_schedule = 1 AND A.ip_address =
+        B.ip_address
         WHERE A.user_id = B.user_id
         AND B.department_idx = d.idx
         <if test="userId != null">
@@ -198,10 +202,12 @@
 
     <select id="selectByScheduleIsExist" parameterType="String" resultType="int">
         SELECT COUNT(*)
-        FROM user_result ur, client c,
-             dashboard_period dp, (SELECT b.idx
-                                  FROM department a
-                                           JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+        FROM user_result ur,
+             client c,
+             dashboard_period dp,
+             (SELECT b.idx
+              FROM department a
+                       JOIN department b ON a.idx = #{rootIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         WHERE DATE_FORMAT(ur.check_time, '%Y-%m-%d %T') BETWEEN dp.start_date AND dp.end_date
           AND dp.department_idx = #{rootIdx}
           AND ur.department_idx = d.idx
@@ -272,8 +278,9 @@
 
     <update id="updateResultClient" parameterType="oms.pc_protector.restApi.result.model.ResultVO">
         UPDATE user_result ur, dashboard_period dp, (SELECT b.idx
-                                                 FROM department a
-                                                          JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+                                                     FROM department a
+                                                              JOIN department b
+                                                                   ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
         SET score                           = #{score},
             check_time                      = #{checkTime},
             item1_result                    = #{item1Result},
