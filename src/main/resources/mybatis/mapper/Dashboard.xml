@@ -5,38 +5,39 @@
     <select id="selectAvgScoreByMonth" resultType="Integer">
         SELECT NVL(AVG(u.score), 0)
         FROM (
-                 (SELECT u.ip_address,
-                         u.user_id,
-                         u.score,
-                         u.check_time,
-                         u.item1_result,
-                         u.item2_result,
-                         u.item3_result,
-                         u.item4_result,
-                         u.item5_result,
-                         u.item6_result,
-                         u.item7_result,
-                         u.item8_result,
-                         u.item9_result,
-                         u.item10_result,
-                         u.item11_result,
-                         u.item12_result,
-                         u.item13_result,
-                         u.item14_result,
-                         u.item15_result,
-                         u.item16_result,
-                         u.department_idx
-                  FROM user_result u,
-                       client c, user user
-                  WHERE u.user_id = c.user_id
-                    AND user.user_id = c.user_id
-                    AND user.department_idx = c.department_idx
-                    AND u.department_idx = c.department_idx
-                    AND u.ip_address = c.ip_address
-                    AND u.in_schedule = 1) u
-                     JOIN
-                     (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = '144') da
-                     ON DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date),
+              (SELECT u.ip_address,
+                      u.user_id,
+                      u.score,
+                      u.check_time,
+                      u.item1_result,
+                      u.item2_result,
+                      u.item3_result,
+                      u.item4_result,
+                      u.item5_result,
+                      u.item6_result,
+                      u.item7_result,
+                      u.item8_result,
+                      u.item9_result,
+                      u.item10_result,
+                      u.item11_result,
+                      u.item12_result,
+                      u.item13_result,
+                      u.item14_result,
+                      u.item15_result,
+                      u.item16_result,
+                      u.department_idx
+               FROM user_result u,
+                    client c,
+                    user user
+               WHERE u.user_id = c.user_id
+                 AND user.user_id = c.user_id
+                 AND user.department_idx = c.department_idx
+                 AND u.department_idx = c.department_idx
+                 AND u.ip_address = c.ip_address
+                 AND u.in_schedule = 1) u
+                 JOIN
+             (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = '144') da
+             ON DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date),
              (SELECT b.idx
               FROM department a
                        JOIN department b
@@ -75,38 +76,52 @@
     <select id="selectAvgScoreByRecentMonths"
             resultType="Integer"
             parameterType="String">
-        SELECT NVL(AVG(t2.score), 0)
-        FROM (SELECT c.user_id, c.ip_address
-              FROM user u,
-                   client c,
+        SELECT NVL(AVG(t1.score), 0)
+        FROM (SELECT c.user_id, c.ip_address, c.department_idx
+              FROM client c,
+                   user u,
                    (SELECT b.idx
                     FROM department a
-                             JOIN department b ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
-              WHERE u.user_id = c.user_id
-                AND c.department_idx = d.idx) AS t1
-                 LEFT OUTER JOIN
-             (SELECT *,
-                     ROW_NUMBER() over (PARTITION BY user_id ORDER BY check_time DESC) AS r0
-              FROM user_result
-              WHERE DATE_FORMAT(check_time, '%Y-%m') = #{month}
-                AND in_schedule = 1
-                AND (item1_result +
-                     item2_result +
-                     item3_result +
-                     item4_result +
-                     item5_result +
-                     item6_result +
-                     item7_result +
-                     item8_result +
-                     item9_result +
-                     item10_result +
-                     item11_result +
-                     item12_result +
-                     item13_result +
-                     item14_result +
-                     item15_result +
-                     item16_result) > 0) AS t2 ON t1.user_id = t2.user_id
-        WHERE t2.r0 = 1
+                             JOIN department b
+                                  ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+              WHERE c.department_idx = d.idx
+                AND u.department_idx = d.idx
+                AND u.user_id = c.user_id) AS t0
+                 JOIN (SELECT ur.score,
+                              ur.department_idx,
+                              ur.user_id,
+                              ur.ip_address,
+                              ROW_NUMBER() over (PARTITION BY ur.user_id ORDER BY ur.check_time DESC) AS r0
+                       FROM user_result ur,
+                            (SELECT b.idx
+                             FROM department a
+                                      JOIN department b
+                                           ON a.idx = #{departmentIdx} AND b.code LIKE CONCAT(a.code, '%')) d
+                       WHERE ur.department_idx = d.idx
+                         AND DATE_FORMAT(ur.check_time
+                                 , '%Y-%m') = #{month}
+                         AND (item1_result +
+                              item2_result +
+                              item3_result +
+                              item4_result +
+                              item5_result +
+                              item6_result +
+                              item7_result +
+                              item8_result +
+                              item9_result +
+                              item10_result +
+                              item11_result +
+                              item12_result +
+                              item13_result +
+                              item14_result +
+                              item15_result +
+                              item16_result)
+                           > 0
+                         AND in_schedule = 1) AS t1
+                      ON t0.department_idx = t1.department_idx
+                          AND t0.user_id = t1.user_id
+                          AND t0.ip_address = t1.ip_address
+                          AND t1.r0 = 1
     </select>
 
     <select id="selectUserCountByScore" resultType="Integer">
