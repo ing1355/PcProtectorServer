@@ -34,7 +34,7 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @GetMapping(value = "confirm")
+    @GetMapping(value = "confirm") // 중복확인
     public SingleResult<?> confirm(@RequestParam(value = "id") String id,
                                    @RequestParam(value = "password") String password) {
         String db_password = loginService.findPasswordById(id);
@@ -42,7 +42,7 @@ public class LoginController {
         return responseService.getSingleResult(result);
     }
 
-    @GetMapping(value = "refresh")
+    @GetMapping(value = "refresh") // 세션 갱신
     public SingleResult<?> refresh(HttpServletResponse response,
                         HttpServletRequest request) throws IOException {
         String header = request.getHeader(JwtProperties.HEADER_STRING);

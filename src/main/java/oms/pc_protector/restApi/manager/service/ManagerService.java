@@ -32,6 +32,12 @@ public class ManagerService {
         return Optional.ofNullable(managerMapper.findAll(User_Idx)).orElseGet(() -> Collections.EMPTY_LIST);
     }
 
+    @Transactional
+    public void manageOmpass(String userId,String toggle){
+        managerMapper.manageOmpass(userId,toggle);
+
+    }
+
 
     @Transactional(readOnly = true)
     public ManagerVO findById(String id) throws Throwable {

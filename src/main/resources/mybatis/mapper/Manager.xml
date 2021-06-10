@@ -126,6 +126,12 @@
         WHERE id = #{userId};
     </update>
 
+    <update id="manageOmpass" parameterType="String">
+        UPDATE manager
+        SET ompass = #{toggle}
+        WHERE id = #{id};
+    </update>
+
 </mapper>
 
 

@@ -128,8 +128,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         if (authResult.getPrincipal().getClass() == ManagerPrincipal.class) {
             ManagerPrincipal principal = (ManagerPrincipal) authResult.getPrincipal();
             this.managerService.initManagerLock(principal.getUsername());
+            String ompassUrl = "";
+             if(principal.getManagerVO().getOmpass().equals("Y")){
+                ompassUrl = "https://www.ompass.kr:8383/authenticate/did/30?type=u2f"+"&access_key=test&domain=192.168.182.32:3000&redirect_uri=192.168.182.32:3000/fido-login&username="+principal.getUsername();
+            }
             token = JWT.create()
                     .withSubject(principal.getUsername())
+                    .withClaim("ompass",ompassUrl)
                     .withClaim("role", "MANAGER")
                     .withClaim("idx", principal.getManagerVO().getDepartmentIdx())
                     .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESS_TIME))

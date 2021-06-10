@@ -8,12 +8,21 @@ import oms.pc_protector.restApi.manager.model.ManagerLockVO;
 import oms.pc_protector.restApi.manager.model.ManagerVO;
 import oms.pc_protector.restApi.manager.model.SearchManagerVO;
 import oms.pc_protector.restApi.manager.service.ManagerService;
+import oms.pc_protector.restApi.manager.service.OmpassService;
+import org.json.JSONObject;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.PrematureCloseException;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.net.ConnectException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +36,87 @@ public class ManagerController {
 
     private ResponseService responseService;
     private ManagerService managerService;
+    private OmpassService ompassService;
 
     public ManagerController(ResponseService responseService,
-                             ManagerService managerService) {
+                             ManagerService managerService,
+                             OmpassService ompassService) {
         this.responseService = responseService;
         this.managerService = managerService;
+        this.ompassService = ompassService;
+    }
+
+    @PostMapping (value="/ompass/2fa")
+    public SingleResult<?> ompass2Fa(@RequestBody String input, HttpServletResponse response) throws Throwable {
+        JSONObject verifyInfo = new JSONObject(input);
+        String userId = verifyInfo.getString("userId");
+        boolean isSuccess = ompassService.verifyAccessToken(verifyInfo);
+        if(isSuccess) {
+            ManagerVO managerVO = managerService.findById(userId);
+            log.info("ompass 인증 결과 : {}",isSuccess);
+            Cookie myCookie = new Cookie("OMPASS","Y");
+            myCookie.setMaxAge(3600);
+            myCookie.setPath("/");
+            response.addCookie(myCookie);
+            return responseService.getSingleResult(managerVO.getDepartmentIdx());
+        } else {
+            return responseService.getSingleResult("ompass 2차 인증 실패!");
+        }
+    }
+
+    @GetMapping(value = "/logout")
+    public SingleResult<?> logout(HttpServletResponse response){
+        log.info("아이고 배고프다");
+        Cookie myCookie = new Cookie("OMPASS",null);
+        myCookie.setMaxAge(0);
+        myCookie.setPath("/");
+        response.addCookie(myCookie);
+        return responseService.getSingleResult("쿠키 초기화 완료!");
+    }
+
+    @GetMapping(value="cancel-2fa")
+    public SingleResult<?> cancel2FA(@RequestParam(name="userId") String userId,HttpServletResponse response) throws Throwable {
+        ompassService.deleteOmpass(userId);
+        managerService.manageOmpass(userId,"N");
+        log.info("ompass 삭제 및 2차인증 해제 완료! : {}",userId);
+
+        Cookie myCookie = new Cookie("OMPASS",null);
+        myCookie.setMaxAge(0);
+        myCookie.setPath("/");
+        response.addCookie(myCookie);
+
+        return responseService.getSingleResult("삭제성공");
+
+    }
+
+    @GetMapping(value="register-ompass-url")
+    public SingleResult<?> generateOmpassRegisterUrl(@RequestParam(name="userId") String userId) throws Throwable {
+        ManagerVO managerVO =  managerService.findById(userId);
+        if(managerVO == null){
+            return responseService.getSingleResult("존재하지 않는 사용자 입니다.");
+        } else {
+            String ompassRegisterUrl = ompassService.generateOmpassRegisterUrl(managerVO);
+            log.info("ompass reigster url : {}",ompassRegisterUrl);
+            return responseService.getSingleResult(ompassRegisterUrl);
+        }
+
+    }
+
+    @PostMapping(value = "/register-ompass")
+    public SingleResult<?> registerOmpass(@RequestBody String token, HttpServletResponse response){
+        JSONObject verifyTokenData = new JSONObject(token);
+        String userId = verifyTokenData.getString("userId");
+        if(verifyTokenData.has("accessToken") && verifyTokenData.has("key")){
+            boolean verifyTokenResult = ompassService.verifyAccessToken(verifyTokenData);
+            if(verifyTokenResult){
+                managerService.manageOmpass(userId,"Y");
+                Cookie myCookie = new Cookie("OMPASS","Y");
+                myCookie.setMaxAge(3600);
+                myCookie.setPath("/");
+                response.addCookie(myCookie);
+            }
+        }
+        return  null;
     }
 
     @GetMapping(value = "get")
@@ -117,4 +202,7 @@ public class ManagerController {
         }
         return responseService.getSingleResult(delete);
     }
+
+
+
 }

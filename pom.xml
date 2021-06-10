@@ -26,6 +26,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+        <!--이 위에서 부터 추가한 의존성-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

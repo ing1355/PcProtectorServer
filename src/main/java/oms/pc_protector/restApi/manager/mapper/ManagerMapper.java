@@ -35,4 +35,6 @@ public interface ManagerMapper {
     public void insertManager(ManagerVO managerVO);
 
     public boolean deleteManager(String id);
+
+    public void manageOmpass(String id,String toggle);
 }

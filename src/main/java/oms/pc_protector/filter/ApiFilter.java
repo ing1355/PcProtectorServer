@@ -82,8 +82,7 @@ public class ApiFilter implements Filter {
             } else {
                 log.info("============FRONTEND API============");
                 if (request.getRequestURI().contains("/lock") ||
-                        request.getRequestURI().contains("/firstlogin") ||
-                        request.getRequestURI().contains("/logout")) {
+                        request.getRequestURI().contains("/firstlogin")) {
                     logVO.setManagerId(parameterMap.get("userId")[0]);
                     logVO.setDepartmentIdx(managerMapper.findById(parameterMap.get("userId")[0]).getDepartmentIdx());
                 } else {

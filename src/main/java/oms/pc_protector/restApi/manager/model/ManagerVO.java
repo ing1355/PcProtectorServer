@@ -3,6 +3,7 @@ package oms.pc_protector.restApi.manager.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 public class ManagerVO {
 
     private String id;
@@ -25,6 +27,7 @@ public class ManagerVO {
     private int active;
     private String roles = "";
     private String permissions = "";
+    private String ompass;
 
     //@JsonIgnore
     public List<String> getRoleList(){
