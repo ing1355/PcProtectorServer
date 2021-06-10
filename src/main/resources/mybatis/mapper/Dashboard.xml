@@ -36,7 +36,7 @@
                  AND u.ip_address = c.ip_address
                  AND u.in_schedule = 1) u
                  JOIN
-             (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = '144') da
+             (SELECT start_date, end_date FROM dashboard_period WHERE department_idx = #{departmentIdx}) da
              ON DATE_FORMAT(u.check_time, '%Y-%m-%d %T') BETWEEN da.start_date AND da.end_date),
              (SELECT b.idx
               FROM department a

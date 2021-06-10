@@ -29,7 +29,7 @@ public class DepartmentController {
 
     @GetMapping(value = "")
     public SingleResult<?> findDepartmentAll(HttpServletRequest httpServletRequest,
-                                             @RequestParam(value = "isAdmin") boolean isAdmin) {
+                                             @RequestParam(value = "isAdmin", required = false) boolean isAdmin) {
         String User_Idx = httpServletRequest.getHeader("dptIdx");
         if (isAdmin) {
             return responseService.getSingleResult(departmentService.findAllRoot(User_Idx));
