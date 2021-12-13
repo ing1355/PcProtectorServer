@@ -1,0 +1,25 @@
+INFO  12:21:39.470 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 27716 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:21:39.473 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+INFO  12:21:39.506 [restartedMain DeferredLog.java:225] logTo - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+INFO  12:21:39.506 [restartedMain DeferredLog.java:225] logTo - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+INFO  12:21:40.491 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:21:40.498 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:21:40.498 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:21:40.498 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:21:40.590 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:21:40.590 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 1082 ms
+INFO  12:21:40.944 [restartedMain HikariDataSource.java:110] getConnection - HikariPool-1 - Starting...
+INFO  12:21:40.980 [restartedMain HikariDataSource.java:123] getConnection - HikariPool-1 - Start completed.
+INFO  12:21:41.464 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1e0e1134, org.springframework.security.web.context.SecurityContextPersistenceFilter@4896591c, org.springframework.security.web.header.HeaderWriterFilter@3f5bbbc6, org.springframework.web.filter.CorsFilter@239469f0, org.springframework.security.web.authentication.logout.LogoutFilter@1139d43b, oms.pc_protector.jwt.JwtAuthenticationFilter@679aced6, oms.pc_protector.jwt.JwtAuthorizationFilter@5cf71ac9, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@b40895b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@eab37e3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@321e37d2, org.springframework.security.web.session.SessionManagementFilter@319c7b13, org.springframework.security.web.access.ExceptionTranslationFilter@6e5d3e40, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7f94c778]
+INFO  12:21:41.530 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:21:41.581 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:21:42.190 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:21:42.208 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService
+INFO  12:21:42.212 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:21:42.629 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:21:42.633 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 3.53 seconds (JVM running for 4.646)
+INFO  12:21:42.635 [restartedMain PcProtectorApplication.java:15] main - log testtest
+ERROR 12:21:42.635 [restartedMain PcProtectorApplication.java:16] main - errror test
+INFO  12:22:06.481 [SpringContextShutdownHook ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:22:06.483 [SpringContextShutdownHook HikariDataSource.java:350] close - HikariPool-1 - Shutdown initiated...
+INFO  12:22:06.488 [SpringContextShutdownHook HikariDataSource.java:352] close - HikariPool-1 - Shutdown completed.

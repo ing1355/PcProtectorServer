@@ -1,6 +1,6 @@
 package oms.pc_protector.apiConfig;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 public class ReadableRequestWrapper extends HttpServletRequestWrapper {
 
     private final Charset encoding;

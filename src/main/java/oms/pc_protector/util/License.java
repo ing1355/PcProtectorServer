@@ -1,6 +1,6 @@
 //package oms.pc_protector.util;
 //
-//import lombok.extern.log4j.Log4j2;
+//import lombok.extern.slf4j.Slf4j;
 //import org.apache.commons.codec.digest.DigestUtils;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.CommandLineRunner;
@@ -15,7 +15,7 @@
 //import java.net.SocketException;
 //import java.net.UnknownHostException;
 //
-//@Log4j2
+//@Slf4j
 //@Component
 //public class License implements CommandLineRunner {
 //

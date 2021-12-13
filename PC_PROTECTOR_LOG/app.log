@@ -1,0 +1,578 @@
+INFO  12:26:15.218 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:26:15.219 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+INFO  12:26:15.246 [restartedMain DeferredLog.java:225] logTo - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+INFO  12:26:15.246 [restartedMain DeferredLog.java:225] logTo - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+INFO  12:26:16.140 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:26:16.146 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:16.147 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:26:16.147 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:26:16.231 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:26:16.232 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 986 ms
+INFO  12:26:16.517 [restartedMain HikariDataSource.java:110] getConnection - HikariPool-1 - Starting...
+INFO  12:26:16.549 [restartedMain HikariDataSource.java:123] getConnection - HikariPool-1 - Start completed.
+INFO  12:26:16.997 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@52a29a6d, org.springframework.security.web.context.SecurityContextPersistenceFilter@9fcd6e8, org.springframework.security.web.header.HeaderWriterFilter@56137aa6, org.springframework.web.filter.CorsFilter@3c5fc1d0, org.springframework.security.web.authentication.logout.LogoutFilter@725d6014, oms.pc_protector.jwt.JwtAuthenticationFilter@46a9455a, oms.pc_protector.jwt.JwtAuthorizationFilter@e78c42b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4460536, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@ed7f178, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@484f467b, org.springframework.security.web.session.SessionManagementFilter@7600f244, org.springframework.security.web.access.ExceptionTranslationFilter@32797dce, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@66e99799]
+INFO  12:26:17.083 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:26:17.147 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:26:17.818 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:26:17.836 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService
+INFO  12:26:17.841 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:18.286 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:26:18.289 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 3.632 seconds (JVM running for 4.964)
+INFO  12:26:31.670 [Thread-5 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:26:31.672 [Thread-5 HikariDataSource.java:350] close - HikariPool-1 - Shutdown initiated...
+INFO  12:26:31.679 [Thread-5 HikariDataSource.java:352] close - HikariPool-1 - Shutdown completed.
+INFO  12:26:32.215 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:26:32.215 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+WARN  12:26:32.417 [restartedMain Logger.java:44] warn - No MyBatis mapper was found in '[oms.pc_protector]' package. Please check your configuration.
+INFO  12:26:32.476 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:26:32.477 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:32.477 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:26:32.477 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:26:32.505 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:26:32.505 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 288 ms
+INFO  12:26:32.555 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:26:32.564 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:26:32.644 [restartedMain UserDetailsServiceAutoConfiguration.java:86] getOrDeducePassword - 
+
+Using generated security password: aae7ce45-47cc-4566-b4b1-665b2d60aef3
+
+INFO  12:26:32.661 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6580c2fd, org.springframework.security.web.context.SecurityContextPersistenceFilter@4b4aec58, org.springframework.security.web.header.HeaderWriterFilter@7046643c, org.springframework.security.web.csrf.CsrfFilter@40cb39c2, org.springframework.security.web.authentication.logout.LogoutFilter@25bde77, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@43dc4dd5, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@46be0d36, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@4b213819, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@319ddaeb, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@61ffe581, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@22db0a06, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6ab2664d, org.springframework.security.web.session.SessionManagementFilter@52d6cae9, org.springframework.security.web.access.ExceptionTranslationFilter@3da2f7bf, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1e06112d]
+INFO  12:26:32.666 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'taskScheduler'
+INFO  12:26:32.746 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:26:32.757 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:33.053 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:26:33.054 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 0.876 seconds (JVM running for 19.728)
+INFO  12:26:33.057 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory matched:
+      - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler matched:
+      - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) found bean 'org.springframework.context.annotation.internalScheduledAnnotationProcessor'; @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) found bean 'transactionManager'; @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.ObjectPostProcessor; SearchStrategy: all) found bean 'objectPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration#inMemoryUserDetailsManager matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.registration.ClientRegistrationRepository; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebSecurityEnablerConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found bean 'org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$DefaultConfigurerAdapter'; @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+    None
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:26:35.341 [Thread-8 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'taskScheduler'
+INFO  12:26:35.342 [Thread-8 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:26:35.990 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:26:35.991 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+INFO  12:26:36.510 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:26:36.511 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:36.511 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:26:36.511 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:26:36.539 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:26:36.539 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 545 ms
+INFO  12:26:36.773 [restartedMain HikariDataSource.java:110] getConnection - HikariPool-2 - Starting...
+INFO  12:26:36.776 [restartedMain HikariDataSource.java:123] getConnection - HikariPool-2 - Start completed.
+INFO  12:26:37.151 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2feab269, org.springframework.security.web.context.SecurityContextPersistenceFilter@5ebc0878, org.springframework.security.web.header.HeaderWriterFilter@507355f2, org.springframework.web.filter.CorsFilter@6235e912, org.springframework.security.web.authentication.logout.LogoutFilter@53e899d, oms.pc_protector.jwt.JwtAuthenticationFilter@661517c3, oms.pc_protector.jwt.JwtAuthorizationFilter@11bc8ba3, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1c1ade68, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@568cc4dc, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6b3f1a07, org.springframework.security.web.session.SessionManagementFilter@53d7d936, org.springframework.security.web.access.ExceptionTranslationFilter@3cafd96e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1a2dae6c]
+INFO  12:26:37.185 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:26:37.210 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:26:37.346 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:26:37.355 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService
+INFO  12:26:37.356 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:37.740 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:26:37.741 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 1.79 seconds (JVM running for 24.415)
+INFO  12:26:37.748 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) found beans of type 'org.apache.ibatis.session.SqlSessionFactory' sqlSessionFactory (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) found beans of type 'org.mybatis.spring.SqlSessionTemplate' sqlSessionTemplate (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) found beans of type 'org.mybatis.spring.mapper.MapperScannerConfigurer' oms.pc_protector.db.DatabaseConfig#MapperScannerRegistrar#0 (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found beans of type 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' securityConfig (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+         - found 'session' scope (OnWebApplicationCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) found beans of type 'org.springframework.scheduling.annotation.SchedulingConfigurer' schedulerConfig (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) found beans of type 'org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration' org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration:
+      Did not match:
+         - Ancestor org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$EnableTransactionManagementConfiguration did not match (ConditionEvaluationReport.AncestorsMatchedCondition)
+      Matched:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' clientPrincipalDetailService, managerPrincipalDetailsService and found beans of type 'org.springframework.security.authentication.AuthenticationProvider' authenticationProvider (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+
+   WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - found 'session' scope (OnWebApplicationCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:26:39.471 [Thread-13 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:26:39.472 [Thread-13 HikariDataSource.java:350] close - HikariPool-2 - Shutdown initiated...
+INFO  12:26:39.476 [Thread-13 HikariDataSource.java:352] close - HikariPool-2 - Shutdown completed.
+INFO  12:26:40.772 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:26:40.772 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+WARN  12:26:41.052 [restartedMain Logger.java:44] warn - No MyBatis mapper was found in '[oms.pc_protector]' package. Please check your configuration.
+INFO  12:26:41.143 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:26:41.144 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:41.144 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:26:41.144 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:26:41.182 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:26:41.182 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 408 ms
+INFO  12:26:41.242 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:26:41.251 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:26:41.312 [restartedMain UserDetailsServiceAutoConfiguration.java:86] getOrDeducePassword - 
+
+Using generated security password: 0800a385-2043-434f-89ff-07151a7edfe8
+
+INFO  12:26:41.325 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@29ebc8b5, org.springframework.security.web.context.SecurityContextPersistenceFilter@17c7b6a9, org.springframework.security.web.header.HeaderWriterFilter@7d999ed, org.springframework.security.web.csrf.CsrfFilter@37daa28, org.springframework.security.web.authentication.logout.LogoutFilter@25b8cc27, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@6df374f5, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@1ee2e6a7, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@56e847e9, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@64707e45, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@792d02c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4ccf27c2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@204ac51d, org.springframework.security.web.session.SessionManagementFilter@79857f5b, org.springframework.security.web.access.ExceptionTranslationFilter@4acb41dc, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@1d0c5e07]
+INFO  12:26:41.328 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'taskScheduler'
+INFO  12:26:41.435 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:26:41.463 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:42.038 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:26:42.040 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 1.337 seconds (JVM running for 28.715)
+INFO  12:26:42.073 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory matched:
+      - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler matched:
+      - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) found bean 'org.springframework.context.annotation.internalScheduledAnnotationProcessor'; @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) found bean 'transactionManager'; @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.ObjectPostProcessor; SearchStrategy: all) found bean 'objectPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration#inMemoryUserDetailsManager matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.registration.ClientRegistrationRepository; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebSecurityEnablerConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found bean 'org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$DefaultConfigurerAdapter'; @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+    None
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:26:44.999 [Thread-18 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'taskScheduler'
+INFO  12:26:45.001 [Thread-18 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:26:45.608 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:26:45.609 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+INFO  12:26:46.004 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:26:46.004 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:46.004 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:26:46.004 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:26:46.034 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:26:46.034 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 423 ms
+INFO  12:26:46.208 [restartedMain HikariDataSource.java:110] getConnection - HikariPool-3 - Starting...
+INFO  12:26:46.211 [restartedMain HikariDataSource.java:123] getConnection - HikariPool-3 - Start completed.
+INFO  12:26:46.537 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@624ab9bd, org.springframework.security.web.context.SecurityContextPersistenceFilter@30ab72c0, org.springframework.security.web.header.HeaderWriterFilter@379cd7a6, org.springframework.web.filter.CorsFilter@794bf500, org.springframework.security.web.authentication.logout.LogoutFilter@7b64a5ba, oms.pc_protector.jwt.JwtAuthenticationFilter@24c28a2c, oms.pc_protector.jwt.JwtAuthorizationFilter@50343db8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@67ac40e7, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@365c8a53, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@6784f152, org.springframework.security.web.session.SessionManagementFilter@492decba, org.springframework.security.web.access.ExceptionTranslationFilter@61f6c4c6, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@ecf59bd]
+INFO  12:26:46.563 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:26:46.587 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:26:46.723 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:26:46.730 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService
+INFO  12:26:46.731 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:26:47.127 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:26:47.127 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 1.573 seconds (JVM running for 33.802)
+INFO  12:26:47.129 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) found beans of type 'org.apache.ibatis.session.SqlSessionFactory' sqlSessionFactory (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) found beans of type 'org.mybatis.spring.SqlSessionTemplate' sqlSessionTemplate (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) found beans of type 'org.mybatis.spring.mapper.MapperScannerConfigurer' oms.pc_protector.db.DatabaseConfig#MapperScannerRegistrar#0 (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found beans of type 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' securityConfig (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+         - found 'session' scope (OnWebApplicationCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) found beans of type 'org.springframework.scheduling.annotation.SchedulingConfigurer' schedulerConfig (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) found beans of type 'org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration' org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration:
+      Did not match:
+         - Ancestor org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$EnableTransactionManagementConfiguration did not match (ConditionEvaluationReport.AncestorsMatchedCondition)
+      Matched:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' clientPrincipalDetailService, managerPrincipalDetailsService and found beans of type 'org.springframework.security.authentication.AuthenticationProvider' authenticationProvider (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+
+   WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - found 'session' scope (OnWebApplicationCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:30:43.014 [Thread-23 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:30:43.015 [Thread-23 HikariDataSource.java:350] close - HikariPool-3 - Shutdown initiated...
+INFO  12:30:43.019 [Thread-23 HikariDataSource.java:352] close - HikariPool-3 - Shutdown completed.
+INFO  12:30:43.879 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:30:43.880 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+WARN  12:30:44.077 [restartedMain Logger.java:44] warn - No MyBatis mapper was found in '[oms.pc_protector]' package. Please check your configuration.
+INFO  12:30:44.126 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:30:44.127 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:30:44.127 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:30:44.127 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:30:44.151 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:30:44.151 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 269 ms
+INFO  12:30:44.194 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:30:44.202 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:30:44.246 [restartedMain UserDetailsServiceAutoConfiguration.java:86] getOrDeducePassword - 
+
+Using generated security password: df9deb13-479a-4678-a632-bc54d95903a5
+
+INFO  12:30:44.253 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@112570a4, org.springframework.security.web.context.SecurityContextPersistenceFilter@775f5d51, org.springframework.security.web.header.HeaderWriterFilter@6bd910a1, org.springframework.security.web.csrf.CsrfFilter@347fccc9, org.springframework.security.web.authentication.logout.LogoutFilter@4cbc9c34, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@bb07524, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@c82f5c9, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@1aedc9d1, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@1985a098, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@74172b8d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@57e861b6, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@12fc96fd, org.springframework.security.web.session.SessionManagementFilter@3d0cd7bd, org.springframework.security.web.access.ExceptionTranslationFilter@3bd70394, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@3ec6b0a9]
+INFO  12:30:44.256 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'taskScheduler'
+INFO  12:30:44.342 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:30:44.350 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:30:44.358 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:30:44.359 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 0.513 seconds (JVM running for 271.033)
+INFO  12:30:44.360 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory matched:
+      - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler matched:
+      - @ConditionalOnBean (names: org.springframework.context.annotation.internalScheduledAnnotationProcessor; SearchStrategy: all) found bean 'org.springframework.context.annotation.internalScheduledAnnotationProcessor'; @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.transaction.TransactionManager; SearchStrategy: all) found bean 'transactionManager'; @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration matched:
+      - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.ObjectPostProcessor; SearchStrategy: all) found bean 'objectPostProcessor'; @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   UserDetailsServiceAutoConfiguration#inMemoryUserDetailsManager matched:
+      - @ConditionalOnMissingBean (types: org.springframework.security.oauth2.client.registration.ClientRegistrationRepository; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   WebSecurityEnablerConfiguration matched:
+      - found 'session' scope (OnWebApplicationCondition)
+      - @ConditionalOnBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found bean 'org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$DefaultConfigurerAdapter'; @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+    None
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:30:46.461 [Thread-28 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'taskScheduler'
+INFO  12:30:46.463 [Thread-28 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:30:47.034 [restartedMain StartupInfoLogger.java:55] logStarting - Starting PcProtectorApplication on DESKTOP-OMS03 with PID 38892 (D:\intelij\git_PcProtector_Server\target\classes started by user in D:\intelij\git_PcProtector_Server)
+INFO  12:30:47.034 [restartedMain SpringApplication.java:655] logStartupProfileInfo - The following profiles are active: real-db,local
+INFO  12:30:47.333 [restartedMain TomcatWebServer.java:92] initialize - Tomcat initialized with port(s): 3000 (https)
+INFO  12:30:47.334 [restartedMain DirectJDKLog.java:173] log - Initializing ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:30:47.334 [restartedMain DirectJDKLog.java:173] log - Starting service [Tomcat]
+INFO  12:30:47.334 [restartedMain DirectJDKLog.java:173] log - Starting Servlet engine: [Apache Tomcat/9.0.37]
+INFO  12:30:47.355 [restartedMain DirectJDKLog.java:173] log - Initializing Spring embedded WebApplicationContext
+INFO  12:30:47.355 [restartedMain ServletWebServerApplicationContext.java:284] prepareWebApplicationContext - Root WebApplicationContext: initialization completed in 318 ms
+INFO  12:30:47.457 [restartedMain HikariDataSource.java:110] getConnection - HikariPool-4 - Starting...
+INFO  12:30:47.461 [restartedMain HikariDataSource.java:123] getConnection - HikariPool-4 - Start completed.
+INFO  12:30:47.779 [restartedMain DefaultSecurityFilterChain.java:43] <init> - Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@458b4b63, org.springframework.security.web.context.SecurityContextPersistenceFilter@2fbf5876, org.springframework.security.web.header.HeaderWriterFilter@2723205e, org.springframework.web.filter.CorsFilter@2c504e5c, org.springframework.security.web.authentication.logout.LogoutFilter@7e762eb2, oms.pc_protector.jwt.JwtAuthenticationFilter@3e1156ad, oms.pc_protector.jwt.JwtAuthorizationFilter@67ae6b3, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@38828b0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@3d17d94f, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@19b5654c, org.springframework.security.web.session.SessionManagementFilter@22669705, org.springframework.security.web.access.ExceptionTranslationFilter@60a9965f, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@97634a8]
+INFO  12:30:47.809 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService 'applicationTaskExecutor'
+INFO  12:30:47.835 [restartedMain WelcomePageHandlerMapping.java:54] <init> - Adding welcome page: class path resource [static/index.html]
+INFO  12:30:47.970 [restartedMain OptionalLiveReloadServer.java:58] startServer - LiveReload server is running on port 35729
+INFO  12:30:47.979 [restartedMain ExecutorConfigurationSupport.java:181] initialize - Initializing ExecutorService
+INFO  12:30:47.980 [restartedMain DirectJDKLog.java:173] log - Starting ProtocolHandler ["https-jsse-nio-3000"]
+INFO  12:30:47.986 [restartedMain TomcatWebServer.java:204] start - Tomcat started on port(s): 3000 (https) with context path ''
+INFO  12:30:47.986 [restartedMain StartupInfoLogger.java:61] logStarted - Started PcProtectorApplication in 0.984 seconds (JVM running for 274.661)
+INFO  12:30:47.988 [restartedMain ConditionEvaluationDeltaLoggingListener.java:58] onApplicationEvent - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   MybatisAutoConfiguration#sqlSessionFactory:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.apache.ibatis.session.SqlSessionFactory; SearchStrategy: all) found beans of type 'org.apache.ibatis.session.SqlSessionFactory' sqlSessionFactory (OnBeanCondition)
+
+   MybatisAutoConfiguration#sqlSessionTemplate:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.SqlSessionTemplate; SearchStrategy: all) found beans of type 'org.mybatis.spring.SqlSessionTemplate' sqlSessionTemplate (OnBeanCondition)
+
+   MybatisAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) found beans of type 'org.mybatis.spring.mapper.MapperScannerConfigurer' oms.pc_protector.db.DatabaseConfig#MapperScannerRegistrar#0 (OnBeanCondition)
+
+   SpringBootWebSecurityConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter; SearchStrategy: all) found beans of type 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' securityConfig (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter' (OnClassCondition)
+         - found 'session' scope (OnWebApplicationCondition)
+
+   TaskSchedulingAutoConfiguration#taskScheduler:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.scheduling.annotation.SchedulingConfigurer,org.springframework.scheduling.TaskScheduler,java.util.concurrent.ScheduledExecutorService; SearchStrategy: all) found beans of type 'org.springframework.scheduling.annotation.SchedulingConfigurer' schedulerConfig (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration; SearchStrategy: all) found beans of type 'org.springframework.transaction.annotation.AbstractTransactionManagementConfiguration' org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration (OnBeanCondition)
+
+   TransactionAutoConfiguration.EnableTransactionManagementConfiguration.CglibAutoProxyConfiguration:
+      Did not match:
+         - Ancestor org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$EnableTransactionManagementConfiguration did not match (ConditionEvaluationReport.AncestorsMatchedCondition)
+      Matched:
+         - @ConditionalOnProperty (spring.aop.proxy-target-class=true) matched (OnPropertyCondition)
+
+   UserDetailsServiceAutoConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.security.authentication.AuthenticationManager,org.springframework.security.authentication.AuthenticationProvider,org.springframework.security.core.userdetails.UserDetailsService,org.springframework.security.oauth2.jwt.JwtDecoder,org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector; SearchStrategy: all) found beans of type 'org.springframework.security.core.userdetails.UserDetailsService' clientPrincipalDetailService, managerPrincipalDetailsService and found beans of type 'org.springframework.security.authentication.AuthenticationProvider' authenticationProvider (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required class 'org.springframework.security.authentication.AuthenticationManager' (OnClassCondition)
+
+   WebSecurityEnablerConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (names: springSecurityFilterChain; SearchStrategy: all) found beans named springSecurityFilterChain (OnBeanCondition)
+      Matched:
+         - found 'session' scope (OnWebApplicationCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+INFO  12:31:38.822 [Thread-33 ExecutorConfigurationSupport.java:218] shutdown - Shutting down ExecutorService 'applicationTaskExecutor'
+INFO  12:31:38.823 [Thread-33 HikariDataSource.java:350] close - HikariPool-4 - Shutdown initiated...
+INFO  12:31:38.827 [Thread-33 HikariDataSource.java:352] close - HikariPool-4 - Shutdown completed.
